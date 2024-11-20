@@ -5,7 +5,7 @@ import { TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native";
 // import { StyleSheet } from "nativewind";
 
-const CustomButton = ({ onPress, text }) => {
+const CustomButton = ({ onPress, children }) => {
   return (
     <TouchableOpacity className="my-1" activeOpacity={0.8} onPress={onPress}>
       <LinearGradient
@@ -21,7 +21,7 @@ const CustomButton = ({ onPress, text }) => {
             fontSize: 15,
           }}
         >
-          {text}
+          {children}
         </Text>
       </LinearGradient>
     </TouchableOpacity>

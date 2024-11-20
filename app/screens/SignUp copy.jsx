@@ -30,69 +30,18 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import OutlineButton from "../components/OutlineButton";
 import CustomButton from "../components/CustomButton";
 import { ScrollView } from "react-native";
-import axios from "axios";
-import * as SecureStore from "expo-secure-store"; // Import expo-secure-store
+
 const SignUp = () => {
   const navigation = useNavigation();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
-
-  const handleSignup = async () => {
-    try {
-      const response = await fetch(
-        "http://192.168.1.159:7000/api/k1/users/signup",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username,
-            email,
-            password,
-            passwordConfirm,
-          }),
-        }
-      );
-
-      // Check if the response is ok (status code 200-299)
-      if (!response.ok) {
-        // If not OK, throw an error with response details
-        const responseBody = await response.json(); // Read response body once
-        throw new Error(
-          `Error: ${response.status} - ${
-            responseBody.message || "Failed to sign up"
-          }`
-        );
-      }
-
-      // Only read response body once
-      const responseBody = await response.json();
-      if (responseBody.token) {
-        console.log("Token:", responseBody.token);
-        // Store JWT token securely using SecureStore
-        await SecureStore.setItemAsync("jwtToken", responseBody.token);
-        alert("User successfully signed up!");
-      } else {
-        alert("Token not found in response.");
-      }
-    } catch (error) {
-      console.error("Error during sign-up:", error);
-      alert("Failed to sign up, please try again.");
-    }
-  };
-  console.log("username:", username);
-  console.log("email:", email);
-  console.log("password:", password);
-  console.log("Confirm:", passwordConfirm);
   return (
     <ScrollView className=" bg-white">
       <SafeAreaView className="bg-white h-full  px-3 relative">
@@ -126,10 +75,10 @@ const SignUp = () => {
             <TextInput
               placeholder="Username"
               className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-3"
-              value={username}
+              value={email}
               autoCapitalize="none"
-              onChangeText={(text) => setUsername(text)}
-              keyboardType="default"
+              onChangeText={(text) => setEmail(text)}
+              keyboardType="email-address"
             />
           </View>
           <View className="mt-3 relative">
@@ -184,8 +133,8 @@ const SignUp = () => {
               placeholder="Confirm Password"
               autoCapitalize="none"
               className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-3"
-              value={passwordConfirm}
-              onChangeText={(text) => setPasswordConfirm(text)}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
               keyboardType="default"
               // This hides the password text
             />
@@ -215,9 +164,7 @@ const SignUp = () => {
               <ActivityIndicator size="large" color="#0000ff" />
             ) : (
               <>
-                <CustomButton onPress={handleSignup}>
-                  Create Account
-                </CustomButton>
+                <CustomButton onPress={""}>Create Account</CustomButton>
               </>
             )}
           </View>
