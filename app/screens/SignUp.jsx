@@ -25,7 +25,7 @@ import {
   ArrowLeftIcon,
 } from "react-native-heroicons/outline";
 import { TouchableOpacity } from "react-native";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import OutlineButton from "../components/OutlineButton";
 import CustomButton from "../components/CustomButton";
@@ -34,6 +34,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store"; // Import expo-secure-store
 const SignUp = () => {
   const navigation = useNavigation();
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -47,21 +48,18 @@ const SignUp = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await fetch(
-        "http://192.168.1.159:7000/api/k1/users/signup",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username,
-            email,
-            password,
-            passwordConfirm,
-          }),
-        }
-      );
+      const response = await fetch("http://10.0.2.2:7000/api/k1/users/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+          passwordConfirm,
+        }),
+      });
 
       // Check if the response is ok (status code 200-299)
       if (!response.ok) {
@@ -81,6 +79,7 @@ const SignUp = () => {
         // Store JWT token securely using SecureStore
         await SecureStore.setItemAsync("jwtToken", responseBody.token);
         alert("User successfully signed up!");
+        router.replace("navigation/BottomTabs");
       } else {
         alert("Token not found in response.");
       }

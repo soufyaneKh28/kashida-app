@@ -20,7 +20,7 @@ import {
   EyeIcon,
 } from "react-native-heroicons/outline";
 import { TouchableOpacity } from "react-native";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import CustomButton from "../components/CustomButton";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -34,6 +34,7 @@ import * as SecureStore from "expo-secure-store";
 
 const Login = () => {
   const navigation = useNavigation();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -76,25 +77,25 @@ const Login = () => {
   // };
 
   const handleLogin = async () => {
+    if (email === "" || password === "" || !email.includes("@"))
+      return alert("please add valid email and password");
     try {
-      const response = await fetch(
-        "http://192.168.1.159:7000/api/k1/users/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
-        }
-      );
+      const response = await fetch("http://10.0.2.2:7000/api/k1/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
       // Check if the response is ok (status code 200-299)
       if (!response.ok) {
         // If not OK, throw an error with response details
         const responseBody = await response.json(); // Read response body once
+
         throw new Error(
           `Error: ${response.status} - ${
             responseBody.message || "Failed to log in"
@@ -104,19 +105,24 @@ const Login = () => {
 
       // Only read response body once
       const responseBody = await response.json();
+
       if (responseBody.token) {
+        // console.log(responseBody.user.id);
+        console.log("response", responseBody);
         console.log("Token:", responseBody.token);
         // Store JWT token securely using SecureStore
         await SecureStore.setItemAsync("jwtToken", responseBody.token);
         alert("Login successful!");
         // Optionally navigate to home or another screen
-        navigation.navigate("HomeScreen");
+        router.replace("navigation/BottomTabs");
+        const token = await SecureStore.getItemAsync("jwtToken");
+        console.log("token from secure Store", token);
       } else {
         alert("Token not found in response.");
       }
     } catch (error) {
-      console.error("Error during login:", error);
-      alert("Failed to log in, please try again.");
+      // console.error("Error during login:", error);
+      alert(`Failed to log in, please try again.${error}`);
     }
   };
   console.log("email: ", email);

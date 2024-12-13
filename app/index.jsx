@@ -59,45 +59,21 @@ export default function App() {
   if (isLoggedIn === null) {
     return <ActivityIndicator size="large" />; // Replace with your loading screen component
   }
-  return isLoggedIn ? (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <HomeIcon color={color} size={size} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={SignUp}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <UserIcon color={color} size={size} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
-  ) : (
+  return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="OnBoarding"
-        component={OnBoarding}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Login"
-        component={Login}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="SignUp"
-        component={SignUp}
-        options={{ headerShown: false }}
-      />
-      {/* <Stack.Screen name="Restaurent" component={RestaurentScreen} /> */}
+      {isLoggedIn ? (
+        <Stack.Screen
+          name="bottomTabs"
+          component={BottomTabs}
+          options={{ headerShown: false }}
+        />
+      ) : (
+        <Stack.Screen
+          name="AuthStack"
+          component={AuthStack}
+          options={{ headerShown: false }}
+        />
+      )}
     </Stack.Navigator>
   );
 }
