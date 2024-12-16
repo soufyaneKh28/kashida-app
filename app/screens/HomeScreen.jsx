@@ -28,18 +28,59 @@ import { LinearGradient } from "expo-linear-gradient";
 import Pin from "../components/Pin";
 // import { MagnifyingGlassIcon } from "@heroicons/react/16/solid";
 
-const customTransition = SharedTransition.custom((values) => {
-  "worklet";
-  return {
-    height: withSpring(values.targetHeight),
-    width: withSpring(values.targetWidth),
-    originX: withSpring(values.targetOriginX),
-    originY: withSpring(values.targetOriginY),
-  };
-});
 
-const HomeScreen = () => {
-  const navigation = useNavigation();
+// <Pin title="test data" uri="https://picsum.photos/id/21/200" />
+//             <Pin title="test data" uri="https://picsum.photos/id/22/200" />
+//             <Pin title="test data" uri="https://picsum.photos/id/23/200" />
+//             <Pin title="test data" uri="https://picsum.photos/500/700" />
+//             <Pin title="test data" uri="https://picsum.photos/500/200" />
+
+const postsData = [
+{
+  title:"test data",
+  uri:"https://picsum.photos/id/21/200"
+},
+{
+  title:"test data",
+  uri:"https://picsum.photos/id/22/200"
+},
+{
+  title:"test data",
+  uri:"https://picsum.photos/500/700"
+},
+{
+  title:"test data",
+  uri:"https://picsum.photos/id/22/200"
+},
+{
+  title:"test data",
+  uri:"https://picsum.photos/500/200"
+},
+{
+  title:"test data",
+  uri:"https://picsum.photos/id/34/200"
+},
+{
+  title:"test data",
+  uri:"https://picsum.photos/id/32/200"
+},
+{
+  title:"test data",
+  uri:"https://picsum.photos/300/700"
+},
+{
+  title:"test data",
+  uri:"https://picsum.photos/id/52/200"
+},
+{
+  title:"test data",
+  uri:"https://picsum.photos/500/200"
+},
+]
+
+
+const HomeScreen = ({navigation}) => {
+  // const navigation = useNavigation();
   const router = useRouter();
   const [userData, setUserData] = useState();
   const [isloading, setIsLoading] = useState(true);
@@ -58,7 +99,7 @@ const HomeScreen = () => {
       }
 
       // Make the GET request
-      const response = await fetch("http://10.0.2.2:7000/api/k1/users/me", {
+      const response = await fetch("http://10.0.2.2:7000/api/k1/posts", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -75,8 +116,8 @@ const HomeScreen = () => {
 
       // Parse the JSON response
       const userData = await response.json();
-      setUserData(userData);
-      console.log("User Data:", userData);
+      setUserData(userData.data.data);
+      console.log("User Data:", userData.data.data);
       console.log("Success", "User data retrieved successfully!");
       setIsLoading(false);
       // Handle the user data (e.g., update state or UI)
@@ -90,7 +131,7 @@ const HomeScreen = () => {
     getUserData();
   }, []);
 
-  // console.log("conmsssssssssss", userData);
+  console.log("conmsssssssssss", userData);
   return (
     <SafeAreaView className=" flex-1 px-4 bg-white">
       {isloading ? (
@@ -130,54 +171,21 @@ const HomeScreen = () => {
           </ScrollView>
 
           {/* Feed pins MAsonary View */}
-          {/* first Row */}
+         
+        <View className='flex-row justify-between'>
 
-          <View>
-            <TouchableOpacity className="rounded-[10px] h-fit overflow-hidden">
-              <Image
-                source={{ uri: "https://picsum.photos/id/10/200" }}
-                className="w-full h-[300px] rounded-[10px]"
-              />
-              {/* Title + Like Button */}
-              <View className="flex-row justify-between  w-full   ">
-                <LinearGradient
-                  // Gradient colors from transparent black to solid black
-                  colors={["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, 0.8)"]}
-                  style={{
-                    width: "100%",
-                    height: 50,
-                    bottom: 0,
-
-                    position: "absolute",
-
-                    paddingHorizontal: 10,
-                    borderRadius: 10,
-                  }}
-                >
-                  <View className="justify-between flex-row w-full items-center">
-                    <View>
-                      <Text className=" font-bold text-xl text-white">
-                        Kashida
-                      </Text>
-                    </View>
-                    <TouchableOpacity className="bg-white h-10 w-10 justify-center items-center rounded-full">
-                      <HeartIcon color="black" />
-                    </TouchableOpacity>
-                  </View>
-                </LinearGradient>
-              </View>
-            </TouchableOpacity>
-            <Pin title="test data" uri="https://picsum.photos/id/20/200" />
-            <Pin title="test data" uri="https://picsum.photos/id/21/200" />
-            <Pin title="test data" uri="https://picsum.photos/id/22/200" />
+          {/* first Col */}
+          <View className=" w-[50%] px-1   ">
+            {userData.filter((_, i)=> i % 2 === 1).map((pin,i)=> (  <Pin title={pin.title} uri={pin.photos[0]} key={i} id={i} isEven={false} navigation={navigation} />))}
+          
           </View>
-
-          {/* <Button title="pin" onPress={() => navigation.push("Pin")} />
-
-          <Image
-            source={{ uri: "https://picsum.photos/id/39/200" }}
-            style={{ width: 300, height: 300 }}
-          /> */}
+        {/* second col */}
+            <View className=' w-[50%]  px-1   '>
+            {userData.filter((_, i)=> i % 2 === 0).map((pin,i)=> (  <Pin title={pin.title} uri={pin.photos[0]} key={i} id={i} isEven={true} />))}
+            </View>
+        </View>
+         
+ 
         </ScrollView>
       )}
     </SafeAreaView>

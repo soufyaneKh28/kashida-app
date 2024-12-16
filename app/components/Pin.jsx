@@ -2,16 +2,26 @@ import { View, Text, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { HeartIcon } from "react-native-heroicons/outline";
+import { useNavigation } from "@react-navigation/native";
 
-const Pin = ({ title, uri, onPress }) => {
+const Pin = ({ title, uri, onPress, id, isEven }) => {
+  const navigation = useNavigation();
+
   return (
     <TouchableOpacity
-      className="rounded-[10px] h-fit overflow-hidden my-3"
-      onPress={onPress}
+      className="rounded-[10px] w-full m-1"
+      style={{ height: isEven ? 300 : 320 }}
+      onPress={() =>
+        navigation.navigate("Pin", {
+          uri: uri,
+          title: title,
+        })
+      }
     >
       <Image
         source={{ uri: uri }}
-        className="w-full h-[300px] rounded-[10px]"
+        className="w-full h-full rounded-[10px]"
+        // style={{ aspectRatio: 1 / 1 }}
       />
       {/* Title + Like Button */}
       <View className="flex-row justify-between  w-full   ">
@@ -31,7 +41,12 @@ const Pin = ({ title, uri, onPress }) => {
         >
           <View className="justify-between flex-row w-full items-center">
             <View>
-              <Text className=" font-bold text-xl text-white">{title}</Text>
+              <Text
+                className=" font-bold text-xl text-white max-w-[100px] leading-5"
+                numberOfLines={2}
+              >
+                {title}
+              </Text>
             </View>
             <TouchableOpacity className="bg-white h-10 w-10 justify-center items-center rounded-full">
               <HeartIcon color="black" />
