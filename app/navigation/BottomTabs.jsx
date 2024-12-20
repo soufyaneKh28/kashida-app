@@ -7,12 +7,16 @@ import HomeScreen from "../screens/HomeScreen";
 import SignUp from "../screens/SignUp";
 import Profile from "../screens/Profile";
 import Spaces from "../screens/Spaces";
+import Posting from "../screens/Posting";
+import Roadmaps from "../screens/Roadmaps";
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import PinScreen from "../screens/PinScreen";
 import { useNavigation } from "@react-navigation/native";
 import { UsersIcon } from "react-native-heroicons/outline";
 // import { BlurView } from "expo-blur";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -34,8 +38,8 @@ function HomeStackNavigator() {
   );
 }
 
-
 // profile Stack
+
 function ProfileStackNavigator() {
   const navigation = useNavigation();
   return (
@@ -52,7 +56,6 @@ function ProfileStackNavigator() {
   );
 }
 
-
 // bottom tabs
 const BottomTabs = () => {
   return (
@@ -61,18 +64,18 @@ const BottomTabs = () => {
         tabBarShowLabel: false, // Hides the tab labels
         headerShown: false,
         tabBarStyle: {
-          position: "absolute",
-          marginBottom: 15,
-          marginHorizontal: 20,
+          // position: "absolute",
+          // marginBottom: 15,
+          // marginHorizontal: 20,
           display: "flex",
           justifyContent: "center",
-          borderRadius: 16,
+          // borderRadius: 16,
           height: 70,
-          backgroundColor: "#0E1922",
+          // backgroundColor: "#0E1922",
         },
 
-        tabBarActiveTintColor: "white", // Text/icon color for active tab
-        tabBarInactiveTintColor: "gray", // Text/icon color for inactive tabs
+        tabBarActiveTintColor: "#00C8D1", // Text/icon color for active tab
+        tabBarInactiveTintColor: "black", // Text/icon color for inactive tabs
       }}
     >
       <Tab.Screen
@@ -85,11 +88,29 @@ const BottomTabs = () => {
         }}
       />
       <Tab.Screen
+        name="Roadmaps"
+        component={Roadmaps}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="map-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Posting"
+        component={Posting}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="add-circle-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="Spaces"
         component={Spaces}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <UserIcon color={color} size={size} />
+            <Ionicons name="grid-outline" size={size} color={color} />
           ),
         }}
       />

@@ -18,13 +18,14 @@ import {
   ShareIcon,
 } from "react-native-heroicons/solid";
 import Pin from "../components/Pin";
-
+import { getUserPosts } from "../api/user"; // Import the API call
 import { Animated, useAnimatedValue } from "react-native";
 const Profile = () => {
   const router = useRouter();
   const [isLikes, setIsLikes] = useState(false);
   const [isPosts, setIsPosts] = useState(true);
-  const [userData, setUserData] = useState();
+  const [userData, setUserData] = useState(null);
+  const [me, setMe] = useState({});
   const [isloading, setIsLoading] = useState(true);
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync("jwtToken"); // Clear the token from SecureStore
@@ -57,7 +58,7 @@ const Profile = () => {
     }).start();
   }, [fadeAnim, transAnim, isPosts, isLikes]);
 
-  const getUserData = async () => {
+  const getMe = async () => {
     try {
       // Retrieve the JWT token from SecureStore
       const token = await SecureStore.getItemAsync("jwtToken");
@@ -67,7 +68,7 @@ const Profile = () => {
       }
 
       // Make the GET request
-      const response = await fetch("http://10.0.2.2:7000/api/k1/posts", {
+      const response = await fetch("http://10.0.2.2:7000/api/k1/users/me", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -83,9 +84,9 @@ const Profile = () => {
       }
 
       // Parse the JSON response
-      const userData = await response.json();
-      setUserData(userData.data.data);
-      console.log("User Data:", userData.data.data);
+      const me = await response.json();
+      setMe(me?.data.data);
+      console.log("User MEeee:", me?.data.data);
       console.log("Success", "User data retrieved successfully!");
       setIsLoading(false);
       // Handle the user data (e.g., update state or UI)
@@ -96,7 +97,8 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    getUserData();
+    // getUserPosts({ setUserData, setIsLoading });
+    getMe();
   }, []);
 
   // useEffect(() => {
@@ -116,20 +118,16 @@ const Profile = () => {
             height={142}
             className="rounded-full"
           />
-          <Text className="text-2xl font-bold mt-3 text-dark">
-            Youssef Khaled
-          </Text>
+          <Text className="text-2xl font-bold mt-3 text-dark">{me?.name}</Text>
           {/* username / role */}
           <View className="flex-row my-2 ">
-            <Text className=" text-lg text-textSecondary">
-              @Abderahman-al3orabi
-            </Text>
+            <Text className=" text-lg text-textSecondary">@{me?.username}</Text>
             <View className="w-[2px] mx-4 bg-secLight"></View>
-            <Text className="text-lg text-textSecondary">Co-founder</Text>
+            <Text className="text-lg text-textSecondary">{me?.role}</Text>
           </View>
           {/* bio */}
-          <Text className="text-xl max-w-[250px] text-center my-2 text-textSecondary">
-            Graphic Designer, Calligrapher and Dreamer
+          <Text className="text-xl max-w-[350px] text-center my-2 text-textSecondary">
+            {me?.bio}
           </Text>
         </View>
 
@@ -155,7 +153,9 @@ const Profile = () => {
           {/* posts */}
           <View className=" items-center">
             {/* number */}
-            <Text className=" text-2xl text-secLight font-bold">1000</Text>
+            <Text className=" text-2xl text-secLight font-bold">
+              {me?.posts}
+            </Text>
             {/* text */}
             <Text className="text-base  text-textSecondary ">Posts</Text>
           </View>
@@ -166,7 +166,9 @@ const Profile = () => {
           {/* Followers */}
           <View className=" items-center">
             {/* number */}
-            <Text className=" text-2xl text-secLight font-bold">500k</Text>
+            <Text className=" text-2xl text-secLight font-bold">
+              {me?.followers}
+            </Text>
             {/* text */}
             <Text className="text-base  text-textSecondary ">Followers</Text>
           </View>
@@ -177,7 +179,10 @@ const Profile = () => {
           {/* Following */}
           <View className=" items-center">
             {/* number */}
-            <Text className=" text-2xl text-secLight font-bold">1</Text>
+            <Text className=" text-2xl text-secLight font-bold">
+              {" "}
+              {me?.following}
+            </Text>
             {/* text */}
             <Text className="text-base  text-textSecondary ">Following</Text>
           </View>
@@ -227,7 +232,7 @@ const Profile = () => {
                 {/* first Col */}
                 <View className=" w-[50%] px-1   ">
                   {userData
-                    .filter((_, i) => i % 2 === 1)
+                    ?.filter((_, i) => i % 2 === 1)
                     .map((pin, i) => (
                       <Pin
                         title={pin.title}
@@ -241,7 +246,7 @@ const Profile = () => {
                 {/* second col */}
                 <View className=" w-[50%]  px-1   ">
                   {userData
-                    .filter((_, i) => i % 2 === 0)
+                    ?.filter((_, i) => i % 2 === 0)
                     .map((pin, i) => (
                       <Pin
                         title={pin.title}

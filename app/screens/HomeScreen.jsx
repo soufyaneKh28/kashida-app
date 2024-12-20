@@ -33,63 +33,48 @@ import Pin from "../components/Pin";
 //             <Pin title="test data" uri="https://picsum.photos/id/22/200" />
 //             <Pin title="test data" uri="https://picsum.photos/id/23/200" />
 //             <Pin title="test data" uri="https://picsum.photos/500/700" />
-//             <Pin title="test data" uri="https://picsum.photos/500/200" />
+// //             <Pin title="test data" uri="https://picsum.photos/500/200" />
+// <Category title="All" />
+// <Category title="Ruq’aa" />
+// <Category title="Naskh" />
+// <Category title="Thuluth" />
+// <Category title="Diwani" />
+// <Category title="Wessam" />
+const CategoriesData = [
+{
+  title:"All",
+},
+{
+  title:"Ruq’aa",
+},
+{
+  title:"Naskh",
+},
+{
+  title:"Thuluth",
+},
+{
+  title:"Diwani",
+},
+{
+  title:"Wessam",
+},
 
-const postsData = [
-{
-  title:"test data",
-  uri:"https://picsum.photos/id/21/200"
-},
-{
-  title:"test data",
-  uri:"https://picsum.photos/id/22/200"
-},
-{
-  title:"test data",
-  uri:"https://picsum.photos/500/700"
-},
-{
-  title:"test data",
-  uri:"https://picsum.photos/id/22/200"
-},
-{
-  title:"test data",
-  uri:"https://picsum.photos/500/200"
-},
-{
-  title:"test data",
-  uri:"https://picsum.photos/id/34/200"
-},
-{
-  title:"test data",
-  uri:"https://picsum.photos/id/32/200"
-},
-{
-  title:"test data",
-  uri:"https://picsum.photos/300/700"
-},
-{
-  title:"test data",
-  uri:"https://picsum.photos/id/52/200"
-},
-{
-  title:"test data",
-  uri:"https://picsum.photos/500/200"
-},
 ]
 
 
 const HomeScreen = ({navigation}) => {
   // const navigation = useNavigation();
-  const router = useRouter();
+  const router = useRouter()
   const [userData, setUserData] = useState();
+  const [category, setCategory] = useState('Naskh');
   const [isloading, setIsLoading] = useState(true);
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync("jwtToken"); // Clear the token from SecureStore
     router.replace("navigation/AuthStack");
   };
 
-  const getUserData = async () => {
+  const getPostData = async () => {
     try {
       // Retrieve the JWT token from SecureStore
       const token = await SecureStore.getItemAsync("jwtToken");
@@ -128,10 +113,10 @@ const HomeScreen = ({navigation}) => {
   };
 
   useEffect(() => {
-    getUserData();
+    getPostData();
+    console.log("conmsssssssssss", userData);
   }, []);
 
-  console.log("conmsssssssssss", userData);
   return (
     <SafeAreaView className=" flex-1 px-4 bg-white">
       {isloading ? (
@@ -139,7 +124,7 @@ const HomeScreen = ({navigation}) => {
       ) : (
         <ScrollView className="">
           {/* home screen Header  */}
-          <View className="flex-row justify-between mt-3">
+          <View className="flex-row justify-between my-3">
             <MagnifyingGlassIcon color="black" />
             <View className="flex-row gap-8">
               <View>
@@ -162,12 +147,8 @@ const HomeScreen = ({navigation}) => {
             showsHorizontalScrollIndicator={false}
           >
             {/* single Category */}
-            <Category title="All" />
-            <Category title="Ruq’aa" />
-            <Category title="Naskh" />
-            <Category title="Thuluth" />
-            <Category title="Diwani" />
-            <Category title="Wessam" />
+            {CategoriesData.map((catergory,i)=>(  <Category title={catergory.title} key={i} onPress={()=> setCategory(catergory.title)} />))}
+           
           </ScrollView>
 
           {/* Feed pins MAsonary View */}
@@ -176,12 +157,16 @@ const HomeScreen = ({navigation}) => {
 
           {/* first Col */}
           <View className=" w-[50%] px-1   ">
-            {userData.filter((_, i)=> i % 2 === 1).map((pin,i)=> (  <Pin title={pin.title} uri={pin.photos[0]} key={i} id={i} isEven={false} navigation={navigation} />))}
+            {userData.filter((post)=> {if (category ==='All') return post; else{
+              return post.categories ===category
+            }}).filter((_, i)=> i % 2 === 1).map((pin,i)=> (  <Pin title={pin.title} uri={pin.photos[0]} key={i} id={i} isEven={false} navigation={navigation} />))}
           
           </View>
         {/* second col */}
             <View className=' w-[50%]  px-1   '>
-            {userData.filter((_, i)=> i % 2 === 0).map((pin,i)=> (  <Pin title={pin.title} uri={pin.photos[0]} key={i} id={i} isEven={true} />))}
+            {userData.filter((post)=> {if (category ==='All') return post; else{
+              return post.categories === category
+            }}).filter((_, i)=> i % 2 === 0).map((pin,i)=> (  <Pin title={pin.title} uri={pin.photos[0]} key={i} id={i} isEven={true} />))}
             </View>
         </View>
          

@@ -1,13 +1,19 @@
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { HeartIcon } from "react-native-heroicons/outline";
+// import { HeartIcon } from "react-native-heroicons/outline";
 import { useNavigation } from "@react-navigation/native";
+import { HeartIcon as HeartOutline } from "react-native-heroicons/outline";
+import { HeartIcon as HeartFill } from "react-native-heroicons/solid";
 
 const Pin = ({ title, uri, onPress, id, isEven }) => {
   const navigation = useNavigation();
   const [isLiked, setIsLiked] = useState(false);
 
+
+  const toggleIcon = () => {
+    setIsLiked(!isLiked);
+  };
   return (
     <TouchableOpacity
       className="rounded-[10px] w-full m-1"
@@ -49,9 +55,9 @@ const Pin = ({ title, uri, onPress, id, isEven }) => {
                 {title}
               </Text>
             </View>
-            <TouchableOpacity className="bg-white h-10 w-10 justify-center items-center rounded-full">
-              {/* { isLiked ?} */}
-              <HeartIcon color="#00C8D1" />
+            <TouchableOpacity className=" bg-white h-10 w-10 justify-center items-center rounded-full" onPress={toggleIcon}>
+              { isLiked ?   <HeartFill  color="#00C8D1" /> :    <HeartOutline color="#00C8D1" />}
+          
             </TouchableOpacity>
           </View>
         </LinearGradient>
