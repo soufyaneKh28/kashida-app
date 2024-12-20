@@ -12,7 +12,7 @@ import OnBoarding from "./screens/OnBoarding";
 import AuthStack from "./navigation/AuthStack";
 import BottomTabs from "./navigation/BottomTabs";
 import { ActivityIndicator } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+// import { NavigationContainer } from "@react-navigation/native";
 // import { useState } from "react";
 
 // import { createNativeStackNavigator } from "@react-navigation/native-stack";

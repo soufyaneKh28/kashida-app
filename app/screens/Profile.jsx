@@ -6,8 +6,10 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  Pressable,
+  ActivityIndicator,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import {
@@ -15,15 +17,94 @@ import {
   PencilIcon,
   ShareIcon,
 } from "react-native-heroicons/solid";
+import Pin from "../components/Pin";
+
+import { Animated, useAnimatedValue } from "react-native";
 const Profile = () => {
   const router = useRouter();
+  const [isLikes, setIsLikes] = useState(false);
+  const [isPosts, setIsPosts] = useState(true);
+  const [userData, setUserData] = useState();
+  const [isloading, setIsLoading] = useState(true);
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync("jwtToken"); // Clear the token from SecureStore
     router.replace("navigation/AuthStack");
   };
+
+  function handleIsLike() {
+    setIsPosts(false);
+    setIsLikes(true);
+  }
+  function handleIsPost() {
+    setIsLikes(false);
+    setIsPosts(true);
+    // animateView();
+  }
+
+  const fadeAnim = useAnimatedValue(0); // Initial value for opacity: 0
+  const transAnim = useAnimatedValue(100); // Initial value for opacity: 0
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+    Animated.timing(transAnim, {
+      toValue: 0,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim, transAnim, isPosts, isLikes]);
+
+  const getUserData = async () => {
+    try {
+      // Retrieve the JWT token from SecureStore
+      const token = await SecureStore.getItemAsync("jwtToken");
+      if (!token) {
+        Alert.alert("Error", "No token found. Please log in again.");
+        return;
+      }
+
+      // Make the GET request
+      const response = await fetch("http://10.0.2.2:7000/api/k1/posts", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+        },
+      });
+
+      // Check if the response is OK
+      if (!response.ok) {
+        // setIsLoading(true);
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Failed to fetch user data.");
+      }
+
+      // Parse the JSON response
+      const userData = await response.json();
+      setUserData(userData.data.data);
+      console.log("User Data:", userData.data.data);
+      console.log("Success", "User data retrieved successfully!");
+      setIsLoading(false);
+      // Handle the user data (e.g., update state or UI)
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      alert("Error", "Failed to fetch user data. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  // useEffect(() => {
+  //   // animateView(); // Automatically start animation on component mount
+  // }, []);
   return (
     <SafeAreaView className=" bg-white ">
-      <ScrollView className="">
+      <ScrollView className=" px-3">
         <Image
           source={require("../../assets/images/kashidaOut.png")}
           className=" absolute top-[50px] z-0 left-[-100px]"
@@ -53,7 +134,7 @@ const Profile = () => {
         </View>
 
         {/* Actions */}
-        <View className="flex-row justify-center gap-2">
+        <View className="flex-row justify-center mt-4 gap-2">
           {/* edit profile */}
           <TouchableOpacity className="bg-secondary w-[170px] h-[41px] gap-3 items-center flex-row justify-center rounded-[5px]">
             <PencilIcon color="white" size={22} />
@@ -100,6 +181,87 @@ const Profile = () => {
             {/* text */}
             <Text className="text-base  text-textSecondary ">Following</Text>
           </View>
+        </View>
+
+        {/* Filtering actions / posts / likes */}
+        <View className="flex-row justify-evenly my-4">
+          <Pressable
+            className={` py-2 px-4 ${isPosts ? "border-b-2" : ""}  `}
+            onPress={handleIsPost}
+          >
+            <Text
+              className={` text-xl ${
+                isPosts ? " font-semibold" : " text-textSecondary"
+              }  `}
+            >
+              Posts
+            </Text>
+          </Pressable>
+          <Pressable
+            className={` py-2 px-4 ${isLikes ? "border-b-2" : ""}  `}
+            onPress={handleIsLike}
+          >
+            <Text
+              className={` text-xl ${
+                isLikes ? " font-semibold" : " text-textSecondary"
+              }  `}
+            >
+              Likes
+            </Text>
+          </Pressable>
+        </View>
+
+        <View className="  items-center">
+          {/* Posts View */}
+          {isPosts ? (
+            isloading ? (
+              <ActivityIndicator size="large" />
+            ) : (
+              <Animated.View
+                style={{
+                  opacity: fadeAnim,
+                  translateY: transAnim, // Bind opacity to animated value
+                }}
+                className="flex-row justify-between"
+              >
+                {/* first Col */}
+                <View className=" w-[50%] px-1   ">
+                  {userData
+                    .filter((_, i) => i % 2 === 1)
+                    .map((pin, i) => (
+                      <Pin
+                        title={pin.title}
+                        uri={pin.photos[0]}
+                        key={i}
+                        id={i}
+                        isEven={false}
+                      />
+                    ))}
+                </View>
+                {/* second col */}
+                <View className=" w-[50%]  px-1   ">
+                  {userData
+                    .filter((_, i) => i % 2 === 0)
+                    .map((pin, i) => (
+                      <Pin
+                        title={pin.title}
+                        uri={pin.photos[0]}
+                        key={i}
+                        id={i}
+                        isEven={true}
+                      />
+                    ))}
+                </View>
+              </Animated.View>
+            )
+          ) : null}
+
+          {/* Likes View */}
+          {isLikes ? (
+            <View>
+              <Text>Likes</Text>
+            </View>
+          ) : null}
         </View>
         <Button title="log out" onPress={handleLogout} />
       </ScrollView>

@@ -34,6 +34,26 @@ function HomeStackNavigator() {
   );
 }
 
+
+// profile Stack
+function ProfileStackNavigator() {
+  const navigation = useNavigation();
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Profile" component={Profile} />
+      {/* <Stack.Screen
+        name="follow-details"
+        component={PinScreen}
+        options={{
+          tabBarStyle: { display: "none" }, // Hide the tab bar
+        }}
+      /> */}
+    </Stack.Navigator>
+  );
+}
+
+
+// bottom tabs
 const BottomTabs = () => {
   return (
     <Tab.Navigator
@@ -74,8 +94,8 @@ const BottomTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={Profile}
+        name="ProfileStack"
+        component={ProfileStackNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
             <UserIcon color={color} size={size} />
