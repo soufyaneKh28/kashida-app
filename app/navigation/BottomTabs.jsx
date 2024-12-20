@@ -45,13 +45,13 @@ function ProfileStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Profile" component={Profile} />
-      {/* <Stack.Screen
-        name="follow-details"
+      <Stack.Screen
+        name="Pin"
         component={PinScreen}
         options={{
           tabBarStyle: { display: "none" }, // Hide the tab bar
         }}
-      /> */}
+      />
     </Stack.Navigator>
   );
 }

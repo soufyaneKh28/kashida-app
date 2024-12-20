@@ -30,8 +30,8 @@ export const getUserPosts = async ({ setUserData, setIsLoading }) => {
 
     // Parse the JSON response
     const userData = await response.json();
-    setUserData(userData.data.data);
-    console.log("User Data:", userData.data.data);
+    setUserData(userData?.data.posts);
+    console.log("User Data:", userData.data.posts);
     console.log("Success", "User data retrieved successfully!");
     setIsLoading(false);
     // Handle the user data (e.g., update state or UI)

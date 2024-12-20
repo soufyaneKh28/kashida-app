@@ -97,7 +97,7 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    // getUserPosts({ setUserData, setIsLoading });
+    getUserPosts({ setUserData, setIsLoading });
     getMe();
   }, []);
 
@@ -238,7 +238,7 @@ const Profile = () => {
                         title={pin.title}
                         uri={pin.photos[0]}
                         key={i}
-                        id={i}
+                        pin={pin}
                         isEven={false}
                       />
                     ))}
@@ -252,7 +252,7 @@ const Profile = () => {
                         title={pin.title}
                         uri={pin.photos[0]}
                         key={i}
-                        id={i}
+                        pin={pin}
                         isEven={true}
                       />
                     ))}
