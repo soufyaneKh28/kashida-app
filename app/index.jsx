@@ -11,7 +11,7 @@ import OnBoarding from "./screens/OnBoarding";
 // import SignUp from "./screens/SignUp";
 import AuthStack from "./navigation/AuthStack";
 import BottomTabs from "./navigation/BottomTabs";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, StatusBar } from "react-native";
 // import { NavigationContainer } from "@react-navigation/native";
 // import { useState } from "react";
 

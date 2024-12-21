@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   RefreshControl,
+  StatusBar,
 } from "react-native";
 import React, {
   useCallback,
@@ -134,6 +135,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView className=" flex-1 px-4 bg-white">
+      <StatusBar backgroundColor="white" />
       {isloading ? (
         <ActivityIndicator size="large" />
       ) : (

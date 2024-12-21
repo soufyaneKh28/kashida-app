@@ -8,6 +8,7 @@ import {
   Button,
   Pressable,
   KeyboardAvoidingView,
+  StatusBar,
 } from "react-native";
 import React, { useState } from "react";
 // import { FIREBASE_AUTH } from "../../FirebaseConfig";
@@ -128,116 +129,119 @@ const Login = () => {
   console.log("email: ", email);
   console.log("password: ", password);
   return (
-    <ScrollView className=" bg-white">
-      <SafeAreaView className="bg-white h-full flex-1 px-3">
-        <Image
-          source={require("../../assets/images/kashidaMark.png")}
-          className=" absolute top-[-200px] left-[-100px]"
-        />
-        {/* <Image /> */}
-        <View className="mt-[250px]">
-          <Text className="text-[#3C3A36] font-medium text-[20px] text-center">
-            Welcome Artist
-          </Text>
-          <Text className="text-center text-[#78746D]">
-            Enter your Email & Password to Sign in
-          </Text>
-        </View>
-        <KeyboardAvoidingView>
-          <View className="mt-10 relative">
-            <EnvelopeIcon
-              color="#0E1922"
-              style={{ position: "absolute", zIndex: 3, top: 12, left: 12 }}
-            />
-            <TextInput
-              placeholder="Your Email"
-              className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-3"
-              value={email}
-              autoCapitalize="none"
-              onChangeText={(text) => setEmail(text)}
-              keyboardType="email-address"
-            />
-          </View>
-          <View className="mt-3 relative">
-            <LockClosedIcon
-              color="#0E1922"
-              style={{ position: "absolute", zIndex: 3, top: 12, left: 12 }}
-            />
-            <TextInput
-              secureTextEntry={!isPasswordVisible}
-              placeholder="Your Password"
-              autoCapitalize="none"
-              className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-3"
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              keyboardType="default"
-              // This hides the password text
-            />
-
-            <TouchableOpacity
-              onPress={togglePasswordVisibility}
-              style={{ position: "absolute", zIndex: 3, top: 12, right: 12 }}
-            >
-              {isPasswordVisible ? (
-                <EyeIcon size={24} color="#888" />
-              ) : (
-                <EyeSlashIcon size={24} color="#888" />
-              )}
-            </TouchableOpacity>
-          </View>
-          <View
-            className="my-6 flex-row mt-3 "
-            style={{ justifyContent: "flex-end" }}
-          >
-            <TouchableOpacity
-              className=" py-3"
-              onPress={() => console.log("forget password")}
-            >
-              <Text className=" w-[60px] font-bold">Forgot Password?</Text>
-            </TouchableOpacity>
-          </View>
-          <View className=" mt-5">
-            {loading ? (
-              <ActivityIndicator size="large" color="#0000ff" />
-            ) : (
-              <>
-                <CustomButton onPress={handleLogin}>Sign in</CustomButton>
-              </>
-            )}
-          </View>
-          <View className="flex flex-row items-center justify-center mt-5 ">
-            <View className="w-full ms-3 bg-[#ECEEF2] h-[2px]" />
-            <Text className="mx-4">OR</Text>
-            <View className="w-[100%] bg-[#ECEEF2] h-[2px]" />
-          </View>
-          <View className="mt-5">
-            <OutlineButton>
-              <Image
-                className=" mx-3"
-                source={require("../../assets/images/google.png")}
-              />
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 15,
-                }}
-                className="text-black "
-              >
-                Sign In With Google
-              </Text>
-            </OutlineButton>
-          </View>
-          <View className="flex-row justify-center mt-8">
-            <Text className="text-[#565656] text-[14px] font-medium">
-              Don't Have an Account?
+    <>
+      <StatusBar backgroundColor={"transparent"} translucent={true} />
+      <ScrollView className=" bg-white">
+        <SafeAreaView className="bg-white h-full flex-1 px-3">
+          <Image
+            source={require("../../assets/images/kashidaMark.png")}
+            className=" absolute top-[-200px] left-[-100px]"
+          />
+          {/* <Image /> */}
+          <View className="mt-[250px]">
+            <Text className="text-[#3C3A36] font-medium text-[20px] text-center">
+              Welcome Artist
             </Text>
-            <TouchableOpacity onPress={() => navigation.push("SignUp")}>
-              <Text className="text-[#0E1922] font-black ms-1">Sign Up</Text>
-            </TouchableOpacity>
+            <Text className="text-center text-[#78746D]">
+              Enter your Email & Password to Sign in
+            </Text>
           </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </ScrollView>
+          <KeyboardAvoidingView>
+            <View className="mt-10 relative">
+              <EnvelopeIcon
+                color="#0E1922"
+                style={{ position: "absolute", zIndex: 3, top: 12, left: 12 }}
+              />
+              <TextInput
+                placeholder="Your Email"
+                className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-3"
+                value={email}
+                autoCapitalize="none"
+                onChangeText={(text) => setEmail(text)}
+                keyboardType="email-address"
+              />
+            </View>
+            <View className="mt-3 relative">
+              <LockClosedIcon
+                color="#0E1922"
+                style={{ position: "absolute", zIndex: 3, top: 12, left: 12 }}
+              />
+              <TextInput
+                secureTextEntry={!isPasswordVisible}
+                placeholder="Your Password"
+                autoCapitalize="none"
+                className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-3"
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+                keyboardType="default"
+                // This hides the password text
+              />
+
+              <TouchableOpacity
+                onPress={togglePasswordVisibility}
+                style={{ position: "absolute", zIndex: 3, top: 12, right: 12 }}
+              >
+                {isPasswordVisible ? (
+                  <EyeIcon size={24} color="#888" />
+                ) : (
+                  <EyeSlashIcon size={24} color="#888" />
+                )}
+              </TouchableOpacity>
+            </View>
+            <View
+              className="my-6 flex-row mt-3 "
+              style={{ justifyContent: "flex-end" }}
+            >
+              <TouchableOpacity
+                className=" py-3"
+                onPress={() => console.log("forget password")}
+              >
+                <Text className=" w-[60px] font-bold">Forgot Password?</Text>
+              </TouchableOpacity>
+            </View>
+            <View className=" mt-5">
+              {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+              ) : (
+                <>
+                  <CustomButton onPress={handleLogin}>Sign in</CustomButton>
+                </>
+              )}
+            </View>
+            <View className="flex flex-row items-center justify-center mt-5 ">
+              <View className="w-full ms-3 bg-[#ECEEF2] h-[2px]" />
+              <Text className="mx-4">OR</Text>
+              <View className="w-[100%] bg-[#ECEEF2] h-[2px]" />
+            </View>
+            <View className="mt-5">
+              <OutlineButton>
+                <Image
+                  className=" mx-3"
+                  source={require("../../assets/images/google.png")}
+                />
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 15,
+                  }}
+                  className="text-black "
+                >
+                  Sign In With Google
+                </Text>
+              </OutlineButton>
+            </View>
+            <View className="flex-row justify-center mt-8">
+              <Text className="text-[#565656] text-[14px] font-medium">
+                Don't Have an Account?
+              </Text>
+              <TouchableOpacity onPress={() => navigation.push("SignUp")}>
+                <Text className="text-[#0E1922] font-black ms-1">Sign Up</Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </ScrollView>
+    </>
   );
 };
 
