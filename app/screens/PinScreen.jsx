@@ -7,10 +7,14 @@ import {
   Pressable,
   TextInput,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import Animated from "react-native-reanimated";
-
+// import Animated from "react-native-reanimated";
+import { useSharedValue } from "react-native-reanimated";
+import Carousel from "react-native-reanimated-carousel";
+// import { window } from "@/constants/sizes";
+// import { renderItem } from "@/utils/render-item";
 import {
   ArrowLeftIcon,
   ArrowUpCircleIcon,
@@ -24,10 +28,23 @@ import { useNavigation } from "@react-navigation/native";
 import { EnvelopeIcon } from "react-native-heroicons/solid";
 import { getUserPosts } from "../api/user";
 import Pin from "../components/Pin";
+import { StyleSheet } from "react-native";
+
+const windowWidth = Dimensions.get("window").width;
+
+const defaultDataWith6Colors = [
+  { color: "#FF0000" },
+  { color: "#00FF00" },
+  { color: "#0000FF" },
+  { color: "#FFFF00" },
+  { color: "#FF00FF" },
+  { color: "#00FFFF" },
+];
 
 const PinScreen = ({ route }) => {
   const { title, uri, pin } = route.params;
   const navigation = useNavigation();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const [comment, setComment] = useState();
   const [userData, setUserData] = useState();
@@ -40,15 +57,38 @@ const PinScreen = ({ route }) => {
     getUserPosts({ setUserData, setIsLoading });
   }, []);
   console.log("====================================");
-  console.log("userData", userData);
+  console.log("photos", pin.photos);
   console.log("====================================");
+
+  const progress = useSharedValue(0);
+
+  const renderItem =
+    ({ rounded }) =>
+    ({ item }) =>
+      (
+        <Image
+          source={{ uri: item }}
+          style={{ width: "100%", height: "100%" }}
+          className=" rounded-b-[30px]  shadow-2xl"
+        />
+      );
   return (
     <SafeAreaView className=" bg-white flex-1">
       <ScrollView>
-        <Image
-          source={{ uri: uri }}
-          style={{ width: "100%", height: 400 }}
-          className=" rounded-b-[30px]  shadow-2xl"
+        <Carousel
+          loop={false}
+          width={windowWidth}
+          height={400}
+          snapEnabled={true}
+          pagingEnabled={true}
+          autoPlayInterval={1000}
+          data={pin.photos}
+          style={{ width: "100%" }}
+          onSnapToItem={(index) => setCurrentIndex(index)}
+          renderItem={renderItem({
+            rounded: true,
+            style: { marginRight: 8 },
+          })}
         />
         {/* back arrow */}
         <TouchableOpacity
@@ -57,6 +97,15 @@ const PinScreen = ({ route }) => {
         >
           <ArrowLeftIcon color={"black"} />
         </TouchableOpacity>
+        {/* Pagination Dots */}
+        <View className=" flex-row justify-center items-center mt-5">
+          {pin.photos.map((_, index) => (
+            <View
+              key={index}
+              style={[styles.dot, currentIndex === index && styles.activeDot]}
+            />
+          ))}
+        </View>
         <View className="px-3">
           <View className=" flex-row justify-between items-center">
             {/* Actions */}
@@ -128,6 +177,8 @@ const PinScreen = ({ route }) => {
             />
           </View>
 
+          <View></View>
+
           <View className="w-full mt-6 mb-3 bg-[#ECEEF2] h-[2px]" />
 
           <View className="flex-row justify-between">
@@ -169,4 +220,29 @@ const PinScreen = ({ route }) => {
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  paginationContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#ccc",
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: "#333",
+    width: 10,
+    height: 10,
+  },
+});
 export default PinScreen;
