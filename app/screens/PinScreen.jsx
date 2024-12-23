@@ -67,7 +67,9 @@ const PinScreen = ({ route }) => {
     ({ item }) =>
       (
         <Image
-          source={{ uri: item }}
+          source={{
+            uri: require("../../assets/images/placeholder.jpg") && item,
+          }}
           style={{ width: "100%", height: "100%" }}
           className=" rounded-b-[30px]  shadow-2xl"
         />

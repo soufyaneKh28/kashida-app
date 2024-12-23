@@ -11,6 +11,8 @@ import {
   TouchableOpacity,
   RefreshControl,
   StatusBar,
+  Modal,
+  Pressable,
 } from "react-native";
 import React, {
   useCallback,
@@ -67,12 +69,19 @@ const CategoriesData = [
   },
 ];
 
+// function SearchModal({ modalVisible, setModalVisible }) {
+//   return (
+
+//   );
+// }
+
 const HomeScreen = ({ navigation }) => {
   // const navigation = useNavigation();
   const router = useRouter();
   const [userData, setUserData] = useState(null);
   const [category, setCategory] = useState("All");
   const [isloading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   // const handleLogout = async () => {
   //   await SecureStore.deleteItemAsync("jwtToken"); // Clear the token from SecureStore
@@ -99,13 +108,16 @@ const HomeScreen = ({ navigation }) => {
       }
 
       // Make the GET request
-      const response = await fetch("http://10.0.2.2:7000/api/k1/posts", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-        },
-      });
+      const response = await fetch(
+        "https://kashida-app-dep.onrender.com/api/k1/posts",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+          },
+        }
+      );
 
       // Check if the response is OK
       if (!response.ok) {
@@ -117,9 +129,7 @@ const HomeScreen = ({ navigation }) => {
       // Parse the JSON response
       const userData = await response.json();
       setUserData(userData?.data.posts);
-      console.log("User Data:", userData);
-      console.log("User Data:", userData.data.posts);
-      console.log("Success", "User data retrieved successfully!");
+
       setIsLoading(false);
       // Handle the user data (e.g., update state or UI)
     } catch (error) {
@@ -130,7 +140,7 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     getPostData();
-    console.log("conmsssssssssss", userData);
+    // console.log("conmsssssssssss", userData);
   }, []);
 
   return (
@@ -147,7 +157,21 @@ const HomeScreen = ({ navigation }) => {
         >
           {/* home screen Header  */}
           <View className="flex-row justify-between my-3">
-            <MagnifyingGlassIcon color="black" />
+            <Pressable onPress={() => setModalVisible(!modalVisible)}>
+              <MagnifyingGlassIcon color="black" />
+            </Pressable>
+            {/* Search MOdal */}
+            <Modal
+              animationType="slide"
+              visible={modalVisible}
+              onRequestClose={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <View className=" flex-1 bg-red-500">
+                <Text>Hello</Text>
+              </View>
+            </Modal>
             <View className="flex-row gap-8">
               <View>
                 <Text className="text-[#7FB9E6] text-[16px] font-semibold">
@@ -190,7 +214,7 @@ const HomeScreen = ({ navigation }) => {
                     return post.categories === category;
                   }
                 })
-                .filter((_, i) => i % 2 === 1)
+                .filter((post, i) => i % 2 === 1 && post.photos[0])
                 .reverse()
                 .map((pin, i) => (
                   <Pin
@@ -213,7 +237,7 @@ const HomeScreen = ({ navigation }) => {
                     return post.categories === category;
                   }
                 })
-                .filter((_, i) => i % 2 === 0)
+                .filter((post, i) => i % 2 === 0 && post.photos[0])
                 .reverse()
                 .map((pin, i) => (
                   <Pin
@@ -232,5 +256,6 @@ const HomeScreen = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+
 
 export default HomeScreen;

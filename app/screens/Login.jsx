@@ -81,16 +81,19 @@ const Login = () => {
     if (email === "" || password === "" || !email.includes("@"))
       return alert("please add valid email and password");
     try {
-      const response = await fetch("http://10.0.2.2:7000/api/k1/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      const response = await fetch(
+        "https://kashida-app-dep.onrender.com/api/k1/users/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        }
+      );
 
       // Check if the response is ok (status code 200-299)
       if (!response.ok) {
@@ -130,7 +133,7 @@ const Login = () => {
   console.log("password: ", password);
   return (
     <>
-      <StatusBar backgroundColor={"transparent"} translucent={true} />
+      <StatusBar barStyle={"dark-content"} translucent={true} />
       <ScrollView className=" bg-white">
         <SafeAreaView className="bg-white h-full flex-1 px-3">
           <Image
@@ -154,8 +157,9 @@ const Login = () => {
               />
               <TextInput
                 placeholder="Your Email"
-                className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-3"
+                className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-[16px]"
                 value={email}
+                placeholderTextColor="gray"
                 autoCapitalize="none"
                 onChangeText={(text) => setEmail(text)}
                 keyboardType="email-address"
@@ -169,8 +173,9 @@ const Login = () => {
               <TextInput
                 secureTextEntry={!isPasswordVisible}
                 placeholder="Your Password"
+                placeholderTextColor="gray"
                 autoCapitalize="none"
-                className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-3"
+                className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-[16px]"
                 value={password}
                 onChangeText={(text) => setPassword(text)}
                 keyboardType="default"
@@ -189,14 +194,14 @@ const Login = () => {
               </TouchableOpacity>
             </View>
             <View
-              className="my-6 flex-row mt-3 "
+              className="my-6 flex-row mt-2 "
               style={{ justifyContent: "flex-end" }}
             >
               <TouchableOpacity
                 className=" py-3"
                 onPress={() => console.log("forget password")}
               >
-                <Text className=" w-[60px] font-bold">Forgot Password?</Text>
+                <Text className="font-bold">Forgot Password?</Text>
               </TouchableOpacity>
             </View>
             <View className=" mt-5">

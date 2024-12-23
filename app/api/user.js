@@ -13,13 +13,16 @@ export const getUserPosts = async ({ setUserData, setIsLoading }) => {
     }
 
     // Make the GET request
-    const response = await fetch("http://10.0.2.2:7000/api/k1/posts", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-      },
-    });
+    const response = await fetch(
+      "https://kashida-app-dep.onrender.com/api/k1/posts",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+        },
+      }
+    );
 
     // Check if the response is OK
     if (!response.ok) {
@@ -31,7 +34,7 @@ export const getUserPosts = async ({ setUserData, setIsLoading }) => {
     // Parse the JSON response
     const userData = await response.json();
     setUserData(userData?.data.posts);
-    console.log("User Data:", userData.data.posts);
+    console.log("User Data:", userData?.data.posts);
     console.log("Success", "User data retrieved successfully!");
     setIsLoading(false);
     // Handle the user data (e.g., update state or UI)

@@ -17,6 +17,8 @@ import { UsersIcon } from "react-native-heroicons/outline";
 // import { BlurView } from "expo-blur";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import FollowsScreen from "../screens/FollowsScreen";
+import ProfileOther from "../screens/ProfileOther";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -48,6 +50,20 @@ function ProfileStackNavigator() {
       <Stack.Screen
         name="Pin"
         component={PinScreen}
+        options={{
+          tabBarStyle: { display: "none" }, // Hide the tab bar
+        }}
+      />
+      <Stack.Screen
+        name="FollowsScreen"
+        component={FollowsScreen}
+        options={{
+          tabBarStyle: { display: "none" }, // Hide the tab bar
+        }}
+      />
+      <Stack.Screen
+        name="ProfileOther"
+        component={ProfileOther}
         options={{
           tabBarStyle: { display: "none" }, // Hide the tab bar
         }}

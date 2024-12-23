@@ -8,9 +8,8 @@ import {
   TouchableOpacity,
   Pressable,
   ActivityIndicator,
-  RefreshControl,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import {
@@ -22,14 +21,15 @@ import Pin from "../components/Pin";
 import { getUserPosts } from "../api/user"; // Import the API call
 import { Animated, useAnimatedValue } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-const Profile = () => {
+import { ArrowLeftIcon } from "react-native-heroicons/outline";
+const ProfileOther = () => {
   const router = useRouter();
   const navigation = useNavigation();
   const [isLikes, setIsLikes] = useState(false);
   const [isPosts, setIsPosts] = useState(true);
   const [userData, setUserData] = useState(null);
   const [me, setMe] = useState({});
-  const [isloading, setIsLoading] = useState(false);
+  const [isloading, setIsLoading] = useState(true);
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync("jwtToken"); // Clear the token from SecureStore
     router.replace("navigation/AuthStack");
@@ -45,20 +45,25 @@ const Profile = () => {
     // animateView();
   }
 
-  const wait = (timeout) => {
-    return new Promise((resolve) => setTimeout(resolve, timeout));
-  };
+  const fadeAnim = useAnimatedValue(0); // Initial value for opacity: 0
+  const transAnim = useAnimatedValue(100); // Initial value for opacity: 0
 
-  const onRefresh = useCallback(() => {
-    setIsLoading(true);
-    wait(2000).then(() => setIsLoading(false));
-    getMe();
-  }, []);
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+    Animated.timing(transAnim, {
+      toValue: 0,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim, transAnim, isPosts, isLikes]);
 
   const getMe = async () => {
     try {
       // Retrieve the JWT token from SecureStore
-      setIsLoading(true);
       const token = await SecureStore.getItemAsync("jwtToken");
       if (!token) {
         Alert.alert("Error", "No token found. Please log in again.");
@@ -107,12 +112,13 @@ const Profile = () => {
   // }, []);
   return (
     <SafeAreaView className=" bg-white ">
-      <ScrollView
-        className=" px-3"
-        refreshControl={
-          <RefreshControl refreshing={isloading} onRefresh={onRefresh} />
-        }
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        className="bg-white w-[41px] h-[41px] items-center justify-center rounded-[16px] mt-[20px] ms-[10px] shadow-xl shadow-black absolute z-10"
       >
+        <ArrowLeftIcon color={"black"} />
+      </TouchableOpacity>
+      <ScrollView className=" px-3">
         <Image
           source={require("../../assets/images/kashidaOut.png")}
           className=" absolute top-[50px] z-0 left-[-100px]"
@@ -246,7 +252,13 @@ const Profile = () => {
             isloading ? (
               <ActivityIndicator size="large" />
             ) : (
-              <View className="flex-row justify-between">
+              <Animated.View
+                style={{
+                  opacity: fadeAnim,
+                  translateY: transAnim, // Bind opacity to animated value
+                }}
+                className="flex-row justify-between"
+              >
                 {/* first Col */}
                 <View className=" w-[50%] px-1   ">
                   {userData
@@ -275,7 +287,7 @@ const Profile = () => {
                       />
                     ))}
                 </View>
-              </View>
+              </Animated.View>
             )
           ) : null}
 
@@ -292,4 +304,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default ProfileOther;

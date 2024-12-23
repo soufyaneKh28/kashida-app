@@ -26,7 +26,11 @@ const Pin = ({ title, uri, onPress, id, isEven, pin }) => {
       }
     >
       <Image
-        source={{ uri: uri }}
+        source={
+          uri
+            ? { uri } // If `uri` exists, use it
+            : require("../../assets/images/placeholder.jpg") // Fallback to placeholder
+        }
         className="w-full h-full rounded-[10px]"
         // style={{ aspectRatio: 1 / 1 }}
       />
