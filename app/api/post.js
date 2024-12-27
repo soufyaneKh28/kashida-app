@@ -1,11 +1,9 @@
-// api/userApi.js
+import * as SecureStore from "expo-secure-store";
+import { Alert } from "react-native";
 
 const baseurl = "http://10.0.2.2:7000";
 
-import { Alert } from "react-native";
-import * as SecureStore from "expo-secure-store";
-
-export const getUserPosts = async (setUserData, setIsLoading) => {
+export const likePost = async (id) => {
   try {
     // Retrieve the JWT token from SecureStore
     const token = await SecureStore.getItemAsync("jwtToken");
@@ -15,8 +13,8 @@ export const getUserPosts = async (setUserData, setIsLoading) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/posts`, {
-      method: "GET",
+    const response = await fetch(`${baseurl}/api/k1/posts/${id}/likePost`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`, // Add the token to the Authorization header
@@ -32,19 +30,17 @@ export const getUserPosts = async (setUserData, setIsLoading) => {
 
     // Parse the JSON response
     const userData = await response.json();
-    setUserData(userData?.data.posts);
-    console.log("User Poooooooosts:", userData?.data.posts);
-    console.log("Success", "User data retrieved successfully!");
-    setIsLoading(false);
+
+    console.log("User Data:", userData);
+    console.log("post Liked");
+
     // Handle the user data (e.g., update state or UI)
   } catch (error) {
     console.error("Error fetching user data:", error);
     alert("Error", "Failed to fetch user data. Please try again.");
   }
 };
-
-// getting user profile screen data
-export const getUserProfile = async ({ setUserProfile, setIsLoading, id }) => {
+export const unLikePost = async (id) => {
   try {
     // Retrieve the JWT token from SecureStore
     const token = await SecureStore.getItemAsync("jwtToken");
@@ -54,8 +50,8 @@ export const getUserProfile = async ({ setUserProfile, setIsLoading, id }) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/users/${id}`, {
-      method: "GET",
+    const response = await fetch(`${baseurl}/api/k1/posts/${id}/unlikePost`, {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`, // Add the token to the Authorization header
@@ -71,10 +67,10 @@ export const getUserProfile = async ({ setUserProfile, setIsLoading, id }) => {
 
     // Parse the JSON response
     const userData = await response.json();
-    setUserProfile(userData?.data.data);
-    console.log("User Data:", userData?.data.data);
-    console.log("Success", "User data retrieved successfully!");
-    setIsLoading(false);
+
+    console.log("User Data:", userData);
+    console.log("Post UnLiked");
+
     // Handle the user data (e.g., update state or UI)
   } catch (error) {
     console.error("Error fetching user data:", error);

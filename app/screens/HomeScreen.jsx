@@ -35,6 +35,7 @@ import {
 import { BellIcon, HeartIcon } from "react-native-heroicons/outline";
 import { LinearGradient } from "expo-linear-gradient";
 import Pin from "../components/Pin";
+import { getUserPosts } from "../api/user";
 // import { MagnifyingGlassIcon } from "@heroicons/react/16/solid";
 
 // <Pin title="test data" uri="https://picsum.photos/id/21/200" />
@@ -95,7 +96,8 @@ const HomeScreen = ({ navigation }) => {
   const onRefresh = useCallback(() => {
     setIsLoading(true);
     wait(2000).then(() => setIsLoading(false));
-    getPostData();
+    // getPostData();
+    getUserPosts(setUserData, setIsLoading);
   }, []);
   const getPostData = async () => {
     try {
@@ -139,7 +141,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    getPostData();
+    getUserPosts(setUserData, setIsLoading);
     // console.log("conmsssssssssss", userData);
   }, []);
 
@@ -221,7 +223,7 @@ const HomeScreen = ({ navigation }) => {
                     title={pin.title}
                     uri={pin.photos[0]}
                     key={i}
-                    id={i}
+                    id={pin._id}
                     pin={pin}
                     isEven={false}
                     navigation={navigation}

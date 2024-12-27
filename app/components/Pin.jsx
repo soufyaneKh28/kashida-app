@@ -5,13 +5,20 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { HeartIcon as HeartOutline } from "react-native-heroicons/outline";
 import { HeartIcon as HeartFill } from "react-native-heroicons/solid";
+import { likePost, unLikePost } from "../api/post";
 
 const Pin = ({ title, uri, onPress, id, isEven, pin }) => {
   const navigation = useNavigation();
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(pin.hasLiked);
 
   const toggleIcon = () => {
-    setIsLiked(!isLiked);
+    if (isLiked) {
+      unLikePost(pin._id);
+      setIsLiked(!isLiked);
+    } else {
+      likePost(pin._id);
+      setIsLiked(!isLiked);
+    }
   };
   return (
     <TouchableOpacity

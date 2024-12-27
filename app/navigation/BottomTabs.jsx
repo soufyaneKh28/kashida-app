@@ -36,6 +36,13 @@ function HomeStackNavigator() {
           tabBarStyle: { display: "none" }, // Hide the tab bar
         }}
       />
+      <Stack.Screen
+        name="ProfileOther"
+        component={ProfileOther}
+        options={{
+          tabBarStyle: { display: "none" }, // Hide the tab bar
+        }}
+      />
     </Stack.Navigator>
   );
 }

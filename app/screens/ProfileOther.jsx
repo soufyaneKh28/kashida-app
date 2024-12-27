@@ -18,16 +18,22 @@ import {
   ShareIcon,
 } from "react-native-heroicons/solid";
 import Pin from "../components/Pin";
-import { getUserPosts } from "../api/user"; // Import the API call
+import { getUserPosts, getUserProfile } from "../api/user"; // Import the API call
 import { Animated, useAnimatedValue } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeftIcon } from "react-native-heroicons/outline";
-const ProfileOther = () => {
+import FollowBtn from "../components/FollowBtn";
+import { getMyFollowing } from "../api/me";
+const ProfileOther = ({ route, navigation }) => {
+  const { id } = route.params;
   const router = useRouter();
-  const navigation = useNavigation();
+  console.log("====================================");
+  console.log("user id", id);
+  console.log("====================================");
   const [isLikes, setIsLikes] = useState(false);
   const [isPosts, setIsPosts] = useState(true);
-  const [userData, setUserData] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [userFollowing, setUserFollowing] = useState([]);
   const [me, setMe] = useState({});
   const [isloading, setIsLoading] = useState(true);
   const handleLogout = async () => {
@@ -45,6 +51,9 @@ const ProfileOther = () => {
     // animateView();
   }
 
+  function handleFolllowState() {
+    return userFollowing.some((user) => user.following._id === id);
+  }
   const fadeAnim = useAnimatedValue(0); // Initial value for opacity: 0
   const transAnim = useAnimatedValue(100); // Initial value for opacity: 0
 
@@ -61,52 +70,64 @@ const ProfileOther = () => {
     }).start();
   }, [fadeAnim, transAnim, isPosts, isLikes]);
 
-  const getMe = async () => {
-    try {
-      // Retrieve the JWT token from SecureStore
-      const token = await SecureStore.getItemAsync("jwtToken");
-      if (!token) {
-        Alert.alert("Error", "No token found. Please log in again.");
-        return;
-      }
+  // const getMe = async () => {
+  //   try {
+  //     // Retrieve the JWT token from SecureStore
+  //     const token = await SecureStore.getItemAsync("jwtToken");
+  //     if (!token) {
+  //       Alert.alert("Error", "No token found. Please log in again.");
+  //       return;
+  //     }
 
-      // Make the GET request
-      const response = await fetch(
-        "https://kashida-app-dep.onrender.com/api/k1/users/me",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-          },
-        }
-      );
+  //     // Make the GET request
+  //     const response = await fetch(
+  //       `https://kashida-app-dep.onrender.com/api/k1/users/${id ? id : ""}`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+  //         },
+  //       }
+  //     );
 
-      // Check if the response is OK
-      if (!response.ok) {
-        // setIsLoading(true);
-        const errorResponse = await response.json();
-        throw new Error(errorResponse.message || "Failed to fetch user data.");
-      }
+  //     // Check if the response is OK
+  //     if (!response.ok) {
+  //       // setIsLoading(true);
+  //       const errorResponse = await response.json();
+  //       throw new Error(errorResponse.message || "Failed to fetch user data.");
+  //     }
 
-      // Parse the JSON response
-      const me = await response.json();
-      setMe(me?.data.data);
-      console.log("User MEeee:", me?.data.data);
-      console.log("Success", "User data retrieved successfully!");
-      setIsLoading(false);
-      // Handle the user data (e.g., update state or UI)
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      alert("Error", "Failed to fetch user data. Please try again.");
-    }
-  };
+  //     // Parse the JSON response
+  //     const me = await response.json();
+  //     setMe(me?.data.data);
+  //     console.log("====================================");
+  //     console.log("User MEeee:", me?.data.data);
+  //     console.log("====================================");
+  //     console.log("Success", "User data retrieved successfully!");
+  //     setIsLoading(false);
+  //     // Handle the user data (e.g., update state or UI)
+  //   } catch (error) {
+  //     console.error("Error fetching user data:", error);
+  //     alert("Error", "Failed to fetch user data. Please try again.");
+  //   }
+  // };
 
   useEffect(() => {
-    getUserPosts({ setUserData, setIsLoading });
-    getMe();
+    // getUserPosts({ setuserProfile, setIsLoading });
+    getUserProfile({ setUserProfile, setIsLoading, id });
+    getMyFollowing(setUserFollowing, setIsLoading);
+    console.log("====================================");
+    console.log(
+      "hhh",
+      userFollowing?.some((user) => user.following._id === id)
+    );
+    console.log("====================================");
   }, []);
 
+  console.log("====================================");
+  // console.log("this is uder outside:", user);
+  console.log("====================================");
   // useEffect(() => {
   //   // animateView(); // Automatically start animation on component mount
   // }, []);
@@ -130,31 +151,39 @@ const ProfileOther = () => {
             height={142}
             className="rounded-full"
           />
-          <Text className="text-2xl font-bold mt-3 text-dark">{me?.name}</Text>
+          <Text className="text-2xl font-bold mt-3 text-dark">
+            {userProfile?.name}
+          </Text>
           {/* username / role */}
           <View className="flex-row my-2 ">
-            <Text className=" text-lg text-textSecondary">@{me?.username}</Text>
+            <Text className=" text-lg text-textSecondary">
+              @{userProfile?.username}
+            </Text>
             <View className="w-[2px] mx-4 bg-secLight"></View>
-            <Text className="text-lg text-textSecondary">{me?.role}</Text>
+            <Text className="text-lg text-textSecondary">
+              {userProfile?.role}
+            </Text>
           </View>
           {/* bio */}
           <Text className="text-xl max-w-[350px] text-center my-2 text-textSecondary">
-            {me?.bio}
+            {userProfile?.bio}
           </Text>
         </View>
 
         {/* Actions */}
         <View className="flex-row justify-center mt-4 gap-2">
           {/* edit profile */}
-          <TouchableOpacity className="bg-secondary w-[170px] h-[41px] gap-3 items-center flex-row justify-center rounded-[5px]">
-            <PencilIcon color="white" size={22} />
-            <Text className="text-white text-lg">Edit Profile</Text>
-          </TouchableOpacity>
+          {}
+          <FollowBtn
+            userId={id}
+            followState={handleFolllowState}
+            navigation={navigation}
+          />
 
           {/* settings */}
-          <TouchableOpacity className=" bg-secLight w-[41px] h-[41px] py-3 gap-3 items-center flex-row justify-center rounded-[5px]">
+          {/* <TouchableOpacity className=" bg-secLight w-[41px] h-[41px] py-3 gap-3 items-center flex-row justify-center rounded-[5px]">
             <Cog6ToothIcon color="white" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           {/* Share */}
           <TouchableOpacity className=" bg-secLight w-[41px] h-[41px] py-3 gap-3 items-center flex-row justify-center rounded-[5px]">
             <ShareIcon color="white" />
@@ -166,7 +195,7 @@ const ProfileOther = () => {
           <View className=" items-center">
             {/* number */}
             <Text className=" text-2xl text-secLight font-bold">
-              {me?.posts}
+              {userProfile?.posts}
             </Text>
             {/* text */}
             <Text className="text-base  text-textSecondary ">Posts</Text>
@@ -187,7 +216,7 @@ const ProfileOther = () => {
             >
               {/* number */}
               <Text className=" text-2xl text-secLight font-bold">
-                {me?.followers}
+                {userProfile?.followers}
               </Text>
               {/* text */}
               <Text className="text-base  text-textSecondary ">Followers</Text>
@@ -210,7 +239,7 @@ const ProfileOther = () => {
               {/* number */}
               <Text className=" text-2xl text-secLight font-bold">
                 {" "}
-                {me?.following}
+                {userProfile?.following}
               </Text>
               {/* text */}
               <Text className="text-base  text-textSecondary ">Following</Text>
@@ -261,7 +290,7 @@ const ProfileOther = () => {
               >
                 {/* first Col */}
                 <View className=" w-[50%] px-1   ">
-                  {userData
+                  {/* {userProfile
                     ?.filter((_, i) => i % 2 === 1)
                     .map((pin, i) => (
                       <Pin
@@ -271,11 +300,11 @@ const ProfileOther = () => {
                         pin={pin}
                         isEven={false}
                       />
-                    ))}
+                    ))} */}
                 </View>
                 {/* second col */}
                 <View className=" w-[50%]  px-1   ">
-                  {userData
+                  {/* {userProfile
                     ?.filter((_, i) => i % 2 === 0)
                     .map((pin, i) => (
                       <Pin
@@ -285,7 +314,7 @@ const ProfileOther = () => {
                         pin={pin}
                         isEven={true}
                       />
-                    ))}
+                    ))} */}
                 </View>
               </Animated.View>
             )

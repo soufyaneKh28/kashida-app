@@ -5,13 +5,42 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  ActivityIndicator,
+  RefreshControl,
 } from "react-native";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ArrowLeftIcon } from "react-native-heroicons/outline";
 import FollowComponent from "../components/FollowComponent";
+import { getMyFollowers, getMyFollowing } from "../api/me";
 
 const FollowsScreen = ({ navigation, route }) => {
   const { title } = route.params;
+  const [isloading, setIsLoading] = useState(false);
+  const [userFollow, setUserFollow] = useState(null);
+
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = useCallback(() => {
+    setIsLoading(true);
+    wait(2000).then(() => setIsLoading(false));
+    title === "followers"
+      ? getMyFollowers(setUserFollow, setIsLoading)
+      : getMyFollowing(setUserFollow);
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    title === "followers"
+      ? getMyFollowers(setUserFollow, setIsLoading)
+      : setIsLoading(true);
+    getMyFollowing(setUserFollow);
+    setIsLoading(false);
+  }, [title]);
+  console.log("====================================");
+  console.log(userFollow);
+  console.log("====================================");
   return (
     <SafeAreaView className="bg-white flex-1">
       <TouchableOpacity
@@ -20,14 +49,31 @@ const FollowsScreen = ({ navigation, route }) => {
       >
         <ArrowLeftIcon color={"black"} />
       </TouchableOpacity>
+
       <View className=" text-center w-full mt-[25px]">
         <Text className="text-center text-lg font-medium">{title}</Text>
       </View>
-      <ScrollView className="flex-1 p-3 mt-8">
+      <ScrollView
+        className="flex-1 p-3 mt-8"
+        refreshControl={
+          <RefreshControl refreshing={isloading} onRefresh={onRefresh} />
+        }
+      >
         {/* Follower Component */}
-
-        <FollowComponent followState={true} navigation={navigation} />
-        <FollowComponent followState={false} navigation={navigation} />
+        {isloading ? (
+          <ActivityIndicator size="large" />
+        ) : (
+          <>
+            {userFollow?.map((user) => (
+              <FollowComponent
+                key={user._id}
+                user={user}
+                followState={user?.isFollowing}
+                navigation={navigation}
+              />
+            ))}
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

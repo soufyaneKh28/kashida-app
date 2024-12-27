@@ -54,7 +54,7 @@ const PinScreen = ({ route }) => {
   console.log("====================================");
 
   useEffect(() => {
-    getUserPosts({ setUserData, setIsLoading });
+    getUserPosts(setUserData, setIsLoading);
   }, []);
   console.log("====================================");
   console.log("photos", pin.photos);
@@ -142,17 +142,25 @@ const PinScreen = ({ route }) => {
             </Pressable>
           </View>
           {/* user */}
-          <View className="flex-row items-center">
-            <Image
-              source={{ uri: "https://picsum.photos/id/22/200" }}
-              width={35}
-              height={35}
-              className="rounded-full"
-            />
-            <Text className="ms-3 text-lg font-semibold">
-              {pin?.user.username}
-            </Text>
-          </View>
+          <Pressable
+            onPress={() =>
+              navigation.push("ProfileOther", {
+                id: pin?.user?._id,
+              })
+            }
+          >
+            <View className="flex-row items-center">
+              <Image
+                source={{ uri: "https://picsum.photos/id/22/200" }}
+                width={35}
+                height={35}
+                className="rounded-full"
+              />
+              <Text className="ms-3 text-lg font-semibold">
+                {pin?.user.username}
+              </Text>
+            </View>
+          </Pressable>
           {/* post title and Description */}
           <View className="mt-3">
             <Text className="text-black text-2xl font-bold ">{pin?.title}</Text>
