@@ -21,12 +21,9 @@ import React, {
   useState,
 } from "react";
 // import { useNavigation } from "expo-router";
-import * as SecureStore from "expo-secure-store";
-import { useNavigation, useRoute } from "@react-navigation/native";
+
 import { useRouter } from "expo-router";
 
-import Animated, { withSpring } from "react-native-reanimated";
-import { SharedTransition } from "react-native-reanimated";
 import Category from "../components/Category";
 import {
   BellAlertIcon,
@@ -37,75 +34,21 @@ import {
   BellIcon,
   HeartIcon,
 } from "react-native-heroicons/outline";
-import { LinearGradient } from "expo-linear-gradient";
+
 import Pin from "../components/Pin";
 import { getUserPosts } from "../api/user";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import SearchByUser from "../components/SearchByUser";
+
 import { getCategories } from "../api/me";
-import SearchByPost from "../components/SearchByPost";
+
 import SearchTabs from "../navigation/SearchTabs";
-const CategoriesData = [
-  {
-    title: "All",
-  },
-  {
-    title: "Ruq’aa",
-  },
-  {
-    title: "Naskh",
-  },
-  {
-    title: "Thuluth",
-  },
-  {
-    title: "Diwani",
-  },
-  {
-    title: "Wessam",
-  },
-];
 
-// function SearchModal({ modalVisible, setModalVisible }) {
-//   return (
-
-//   );
-// }
-// const Tab = createMaterialTopTabNavigator();
-// function SearchTabs() {
-//   return (
-//     <Tab.Navigator
-//       screenOptions={{
-//         tabBarLabelStyle: { fontSize: 12 },
-//         tabBarItemStyle: {},
-
-//         tabBarStyle: {
-//           backgroundColor: "powderblue",
-//           flexDirection: "row",
-//           justifyContent: "center",
-//           marginHorizontal: 100,
-//         },
-//       }}
-//     >
-//       <Tab.Screen name="Search By Users" component={SearchByUser} />
-//       <Tab.Screen name="Search By Post" component={SearchByPost} />
-//       {/* <Tab.Screen name="Profile" component={} /> */}
-//     </Tab.Navigator>
-//   );
-// }
 const HomeScreen = ({ navigation }) => {
-  // const navigation = useNavigation();
   const router = useRouter();
   const [userData, setUserData] = useState(null);
   const [category, setCategory] = useState("All");
   const [categories, setCategories] = useState([]);
   const [isloading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
-  // const handleLogout = async () => {
-  //   await SecureStore.deleteItemAsync("jwtToken"); // Clear the token from SecureStore
-  //   router.replace("navigation/AuthStack");
-  // };
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -117,51 +60,10 @@ const HomeScreen = ({ navigation }) => {
     // getPostData();
     getUserPosts(setUserData, setIsLoading);
   }, []);
-  // const getPostData = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     // Retrieve the JWT token from SecureStore
-  //     const token = await SecureStore.getItemAsync("jwtToken");
-  //     if (!token) {
-  //       Alert.alert("Error", "No token found. Please log in again.");
-  //       return;
-  //     }
-
-  //     // Make the GET request
-  //     const response = await fetch(
-  //       "https://kashida-app-dep.onrender.com/api/k1/posts",
-  //       {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-  //         },
-  //       }
-  //     );
-
-  //     // Check if the response is OK
-  //     if (!response.ok) {
-  //       // setIsLoading(true);
-  //       const errorResponse = await response.json();
-  //       throw new Error(errorResponse.message || "Failed to fetch user data.");
-  //     }
-
-  //     // Parse the JSON response
-  //     const userData = await response.json();
-  //     setUserData(userData?.data.posts);
-
-  //     setIsLoading(false);
-  //     // Handle the user data (e.g., update state or UI)
-  //   } catch (error) {
-  //     console.error("Error fetching user data:", error);
-  //     alert("Error", "Failed to fetch user data. Please try again.");
-  //   }
-  // };
 
   useEffect(() => {
     getUserPosts(setUserData, setIsLoading);
     getCategories(setCategories);
-    // console.log("conmsssssssssss", userData);
   }, []);
 
   return (
