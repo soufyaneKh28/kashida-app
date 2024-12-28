@@ -1,83 +1,18 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { HomeIcon, UserIcon, CogIcon } from "react-native-heroicons/outline";
 
-import HomeScreen from "../screens/HomeScreen";
-import SignUp from "../screens/SignUp";
-import Profile from "../screens/Profile";
 import Spaces from "../screens/Spaces";
 import Posting from "../screens/Posting";
 import Roadmaps from "../screens/Roadmaps";
-import { LinearGradient } from "expo-linear-gradient";
-import { Image, StyleSheet } from "react-native";
-import PinScreen from "../screens/PinScreen";
-import { useNavigation } from "@react-navigation/native";
-import { UsersIcon } from "react-native-heroicons/outline";
+
 // import { BlurView } from "expo-blur";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import FollowsScreen from "../screens/FollowsScreen";
-import ProfileOther from "../screens/ProfileOther";
+
+import HomeStack from "./HomeStack";
+import ProfileStack from "./ProfileStack";
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
-
-// Stack Navigator for Home Tab
-function HomeStackNavigator() {
-  const navigation = useNavigation();
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen
-        name="Pin"
-        component={PinScreen}
-        options={{
-          tabBarStyle: { display: "none" }, // Hide the tab bar
-        }}
-      />
-      <Stack.Screen
-        name="ProfileOther"
-        component={ProfileOther}
-        options={{
-          tabBarStyle: { display: "none" }, // Hide the tab bar
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-
-// profile Stack
-
-function ProfileStackNavigator() {
-  const navigation = useNavigation();
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Profile" component={Profile} />
-      <Stack.Screen
-        name="Pin"
-        component={PinScreen}
-        options={{
-          tabBarStyle: { display: "none" }, // Hide the tab bar
-        }}
-      />
-      <Stack.Screen
-        name="FollowsScreen"
-        component={FollowsScreen}
-        options={{
-          tabBarStyle: { display: "none" }, // Hide the tab bar
-        }}
-      />
-      <Stack.Screen
-        name="ProfileOther"
-        component={ProfileOther}
-        options={{
-          tabBarStyle: { display: "none" }, // Hide the tab bar
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
 
 // bottom tabs
 const BottomTabs = () => {
@@ -103,7 +38,7 @@ const BottomTabs = () => {
     >
       <Tab.Screen
         name="HomeStack"
-        component={HomeStackNavigator}
+        component={HomeStack}
         options={{
           tabBarIcon: ({ color, size }) => (
             <HomeIcon color={color} size={size} />
@@ -139,7 +74,7 @@ const BottomTabs = () => {
       />
       <Tab.Screen
         name="ProfileStack"
-        component={ProfileStackNavigator}
+        component={ProfileStack}
         options={{
           tabBarIcon: ({ color, size }) => (
             <UserIcon color={color} size={size} />

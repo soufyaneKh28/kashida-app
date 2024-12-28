@@ -32,23 +32,19 @@ import {
   BellAlertIcon,
   MagnifyingGlassIcon,
 } from "react-native-heroicons/solid";
-import { BellIcon, HeartIcon } from "react-native-heroicons/outline";
+import {
+  ArrowLeftIcon,
+  BellIcon,
+  HeartIcon,
+} from "react-native-heroicons/outline";
 import { LinearGradient } from "expo-linear-gradient";
 import Pin from "../components/Pin";
 import { getUserPosts } from "../api/user";
-// import { MagnifyingGlassIcon } from "@heroicons/react/16/solid";
-
-// <Pin title="test data" uri="https://picsum.photos/id/21/200" />
-//             <Pin title="test data" uri="https://picsum.photos/id/22/200" />
-//             <Pin title="test data" uri="https://picsum.photos/id/23/200" />
-//             <Pin title="test data" uri="https://picsum.photos/500/700" />
-// //             <Pin title="test data" uri="https://picsum.photos/500/200" />
-// <Category title="All" />
-// <Category title="Ruq’aa" />
-// <Category title="Naskh" />
-// <Category title="Thuluth" />
-// <Category title="Diwani" />
-// <Category title="Wessam" />
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import SearchByUser from "../components/SearchByUser";
+import { getCategories } from "../api/me";
+import SearchByPost from "../components/SearchByPost";
+import SearchTabs from "../navigation/SearchTabs";
 const CategoriesData = [
   {
     title: "All",
@@ -75,12 +71,34 @@ const CategoriesData = [
 
 //   );
 // }
+// const Tab = createMaterialTopTabNavigator();
+// function SearchTabs() {
+//   return (
+//     <Tab.Navigator
+//       screenOptions={{
+//         tabBarLabelStyle: { fontSize: 12 },
+//         tabBarItemStyle: {},
 
+//         tabBarStyle: {
+//           backgroundColor: "powderblue",
+//           flexDirection: "row",
+//           justifyContent: "center",
+//           marginHorizontal: 100,
+//         },
+//       }}
+//     >
+//       <Tab.Screen name="Search By Users" component={SearchByUser} />
+//       <Tab.Screen name="Search By Post" component={SearchByPost} />
+//       {/* <Tab.Screen name="Profile" component={} /> */}
+//     </Tab.Navigator>
+//   );
+// }
 const HomeScreen = ({ navigation }) => {
   // const navigation = useNavigation();
   const router = useRouter();
   const [userData, setUserData] = useState(null);
   const [category, setCategory] = useState("All");
+  const [categories, setCategories] = useState([]);
   const [isloading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -99,49 +117,50 @@ const HomeScreen = ({ navigation }) => {
     // getPostData();
     getUserPosts(setUserData, setIsLoading);
   }, []);
-  const getPostData = async () => {
-    try {
-      setIsLoading(true);
-      // Retrieve the JWT token from SecureStore
-      const token = await SecureStore.getItemAsync("jwtToken");
-      if (!token) {
-        Alert.alert("Error", "No token found. Please log in again.");
-        return;
-      }
+  // const getPostData = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     // Retrieve the JWT token from SecureStore
+  //     const token = await SecureStore.getItemAsync("jwtToken");
+  //     if (!token) {
+  //       Alert.alert("Error", "No token found. Please log in again.");
+  //       return;
+  //     }
 
-      // Make the GET request
-      const response = await fetch(
-        "https://kashida-app-dep.onrender.com/api/k1/posts",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-          },
-        }
-      );
+  //     // Make the GET request
+  //     const response = await fetch(
+  //       "https://kashida-app-dep.onrender.com/api/k1/posts",
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+  //         },
+  //       }
+  //     );
 
-      // Check if the response is OK
-      if (!response.ok) {
-        // setIsLoading(true);
-        const errorResponse = await response.json();
-        throw new Error(errorResponse.message || "Failed to fetch user data.");
-      }
+  //     // Check if the response is OK
+  //     if (!response.ok) {
+  //       // setIsLoading(true);
+  //       const errorResponse = await response.json();
+  //       throw new Error(errorResponse.message || "Failed to fetch user data.");
+  //     }
 
-      // Parse the JSON response
-      const userData = await response.json();
-      setUserData(userData?.data.posts);
+  //     // Parse the JSON response
+  //     const userData = await response.json();
+  //     setUserData(userData?.data.posts);
 
-      setIsLoading(false);
-      // Handle the user data (e.g., update state or UI)
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      alert("Error", "Failed to fetch user data. Please try again.");
-    }
-  };
+  //     setIsLoading(false);
+  //     // Handle the user data (e.g., update state or UI)
+  //   } catch (error) {
+  //     console.error("Error fetching user data:", error);
+  //     alert("Error", "Failed to fetch user data. Please try again.");
+  //   }
+  // };
 
   useEffect(() => {
     getUserPosts(setUserData, setIsLoading);
+    getCategories(setCategories);
     // console.log("conmsssssssssss", userData);
   }, []);
 
@@ -152,7 +171,7 @@ const HomeScreen = ({ navigation }) => {
         <ActivityIndicator size="large" />
       ) : (
         <ScrollView
-          className=""
+          className="p-3"
           refreshControl={
             <RefreshControl refreshing={isloading} onRefresh={onRefresh} />
           }
@@ -170,9 +189,17 @@ const HomeScreen = ({ navigation }) => {
                 setModalVisible(!modalVisible);
               }}
             >
-              <View className=" flex-1 bg-red-500">
-                <Text>Hello</Text>
-              </View>
+              <SafeAreaView className=" flex-1 ">
+                <View className="mb-20">
+                  <TouchableOpacity
+                    onPress={() => setModalVisible(!modalVisible)}
+                    className="bg-white w-[41px] h-[41px] items-center justify-center rounded-[16px] mt-[20px] ms-[10px] shadow-2xl absolute z-10"
+                  >
+                    <ArrowLeftIcon color={"black"} />
+                  </TouchableOpacity>
+                </View>
+                <SearchTabs />
+              </SafeAreaView>
             </Modal>
             <View className="flex-row gap-8">
               <View>
@@ -195,11 +222,12 @@ const HomeScreen = ({ navigation }) => {
             showsHorizontalScrollIndicator={false}
           >
             {/* single Category */}
-            {CategoriesData.map((catergory, i) => (
+            {categories?.map((catergory, i) => (
               <Category
-                title={catergory.title}
+                title={catergory.name}
                 key={i}
-                onPress={() => setCategory(catergory.title)}
+                category={category}
+                onPress={() => setCategory(catergory.name)}
               />
             ))}
           </ScrollView>

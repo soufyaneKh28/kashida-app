@@ -70,8 +70,8 @@ const PinScreen = ({ route }) => {
           source={{
             uri: require("../../assets/images/placeholder.jpg") && item,
           }}
-          style={{ width: "100%", height: "100%" }}
-          className=" rounded-b-[30px]  shadow-2xl"
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          className=" rounded-b-[20px]  shadow-2xl object-fill"
         />
       );
   return (
@@ -80,12 +80,17 @@ const PinScreen = ({ route }) => {
         <Carousel
           loop={false}
           width={windowWidth}
-          height={400}
+          height={500}
           snapEnabled={true}
           pagingEnabled={true}
           autoPlayInterval={1000}
           data={pin.photos}
-          style={{ width: "100%" }}
+          style={{
+            width: "100%",
+            backgroundColor: "black",
+            borderBottomRightRadius: 20,
+            borderBottomLeftRadius: 20,
+          }}
           onSnapToItem={(index) => setCurrentIndex(index)}
           renderItem={renderItem({
             rounded: true,
@@ -117,7 +122,7 @@ const PinScreen = ({ route }) => {
               <Pressable className="flex-row  items-center">
                 <HeartIcon color={"#00868C"} size={30} />
                 <Text className="text-[#00868C] ms-1 text-xl font-semibold">
-                  20
+                  1M
                 </Text>
               </Pressable>
 
@@ -126,7 +131,7 @@ const PinScreen = ({ route }) => {
               <Pressable className="flex-row ms-3 items-center">
                 <ChatBubbleOvalLeftIcon color={"#00868C"} size={30} />
                 <Text className="text-[#00868C] ms-1 text-xl font-semibold">
-                  20
+                  20K
                 </Text>
               </Pressable>
 
