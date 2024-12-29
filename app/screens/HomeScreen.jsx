@@ -41,19 +41,22 @@ import { getUserPosts } from "../api/user";
 import { getCategories } from "../api/me";
 
 import SearchTabs from "../navigation/SearchTabs";
+import Notifications from "../components/Notifications";
 
 const HomeScreen = ({ navigation }) => {
-  const router = useRouter();
   const [userData, setUserData] = useState(null);
   const [category, setCategory] = useState("All");
   const [categories, setCategories] = useState([]);
   const [isloading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [notificationsModalVisible, setNotificationsModalVisible] =
+    useState(false);
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   };
 
+  // pull to refresh
   const onRefresh = useCallback(() => {
     setIsLoading(true);
     wait(2000).then(() => setIsLoading(false));
@@ -61,6 +64,7 @@ const HomeScreen = ({ navigation }) => {
     getUserPosts(setUserData, setIsLoading);
   }, []);
 
+  // getting data while initial render
   useEffect(() => {
     getUserPosts(setUserData, setIsLoading);
     getCategories(setCategories);
@@ -115,7 +119,35 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </View>
             </View>
-            <BellIcon color="black" />
+            <Pressable
+              onPress={() =>
+                setNotificationsModalVisible(!notificationsModalVisible)
+              }
+            >
+              <BellIcon color="black" />
+            </Pressable>
+            {/* Notifications MOdal */}
+            <Modal
+              animationType="slide"
+              visible={notificationsModalVisible}
+              onRequestClose={() => {
+                setNotificationsModalVisible(!notificationsModalVisible);
+              }}
+            >
+              <SafeAreaView className=" flex-1 ">
+                <View className="mb-20">
+                  <TouchableOpacity
+                    onPress={() =>
+                      setNotificationsModalVisible(!notificationsModalVisible)
+                    }
+                    className="bg-white w-[41px] h-[41px] items-center justify-center rounded-[16px] mt-[20px] ms-[10px] shadow-2xl absolute z-10"
+                  >
+                    <ArrowLeftIcon color={"black"} />
+                  </TouchableOpacity>
+                </View>
+                <Notifications />
+              </SafeAreaView>
+            </Modal>
           </View>
           {/* Categories slider */}
           <ScrollView

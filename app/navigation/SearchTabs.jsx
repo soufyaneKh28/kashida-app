@@ -7,14 +7,18 @@ export default function SearchTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarLabelStyle: { fontSize: 12 },
-        tabBarItemStyle: {},
-
+        tabBarLabelStyle: { fontSize: 14 },
+        tabBarItemStyle: {
+          fontSize: 29,
+        },
+        tabBarActiveTintColor: "#7FB9E6",
         tabBarStyle: {
-          backgroundColor: "powderblue",
+          backgroundColor: "white",
+          borderBottomEndRadius: 20,
+          borderBottomLeftRadius: 20,
+          overflow: "hidden",
           flexDirection: "row",
           justifyContent: "center",
-          marginHorizontal: 100,
         },
       }}
     >

@@ -6,6 +6,7 @@ const baseurl = "http://10.0.2.2:7000";
 export const getMyFollowers = async (setUserFollow, setIsLoading) => {
   try {
     // Retrieve the JWT token from SecureStore
+    setUserFollow([]);
     setIsLoading(true);
     const token = await SecureStore.getItemAsync("jwtToken");
     if (!token) {

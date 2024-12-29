@@ -16,7 +16,7 @@ import { getMyFollowers, getMyFollowing } from "../api/me";
 const FollowsScreen = ({ navigation, route }) => {
   const { title } = route.params;
   const [isloading, setIsLoading] = useState(false);
-  const [userFollow, setUserFollow] = useState(null);
+  const [userFollow, setUserFollow] = useState([]);
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -25,18 +25,23 @@ const FollowsScreen = ({ navigation, route }) => {
   const onRefresh = useCallback(() => {
     setIsLoading(true);
     wait(2000).then(() => setIsLoading(false));
-    title === "followers"
-      ? getMyFollowers(setUserFollow, setIsLoading)
-      : getMyFollowing(setUserFollow);
-    setIsLoading(false);
-  }, []);
+    if (title === "followers") {
+      getMyFollowers(setUserFollow, setIsLoading);
+    } else {
+      setIsLoading(true);
+      getMyFollowing(setUserFollow);
+      setIsLoading(false);
+    }
+  }, [title]);
 
   useEffect(() => {
-    title === "followers"
-      ? getMyFollowers(setUserFollow, setIsLoading)
-      : setIsLoading(true);
-    getMyFollowing(setUserFollow);
-    setIsLoading(false);
+    if (title === "followers") {
+      getMyFollowers(setUserFollow, setIsLoading);
+    } else {
+      setIsLoading(true);
+      getMyFollowing(setUserFollow);
+      setIsLoading(false);
+    }
   }, [title]);
   console.log("====================================");
   console.log(userFollow);
