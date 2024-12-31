@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 const logoImage = require("../assets/images/adaptive-icon.png");
-
+import "./gesture-handler";
 // import HomeScreen from "./screens/HomeScreen";
 import Login from "./screens/Login";
 import OnBoarding from "./screens/OnBoarding";
@@ -34,6 +34,8 @@ import { HomeIcon, UserIcon, CogIcon } from "react-native-heroicons/solid";
 
 import HomeScreen from "./screens/HomeScreen";
 import SignUp from "./screens/SignUp";
+import Posting from "./screens/Posting";
+import SettingsStack from "./navigation/SettingsStack";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -62,11 +64,23 @@ export default function App() {
   return (
     <Stack.Navigator>
       {isLoggedIn ? (
-        <Stack.Screen
-          name="bottomTabs"
-          component={BottomTabs}
-          options={{ headerShown: false }}
-        />
+        <>
+          <Stack.Screen
+            name="bottomTabs"
+            component={BottomTabs}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CreatePost"
+            component={Posting}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="SettingsStack"
+            component={SettingsStack}
+            options={{ headerShown: false }}
+          />
+        </>
       ) : (
         <Stack.Screen
           name="AuthStack"

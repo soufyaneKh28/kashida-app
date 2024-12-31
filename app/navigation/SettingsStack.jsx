@@ -9,37 +9,17 @@ import { useNavigation } from "@react-navigation/native";
 
 import FollowsScreen from "../screens/FollowsScreen";
 import ProfileOther from "../screens/ProfileOther";
+import Security from "../screens/Security";
 
 const Stack = createNativeStackNavigator();
 
-export default function ProfileStack() {
+export default function SettingsStack() {
   const navigation = useNavigation();
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          tabBarStyle: { display: "none" }, // Hide the tab bar
-        }}
-      />
-      <Stack.Screen
-        name="Pin"
-        component={PinScreen}
-        options={{
-          tabBarStyle: { display: "none" }, // Hide the tab bar
-        }}
-      />
-      <Stack.Screen
-        name="FollowsScreen"
-        component={FollowsScreen}
-        options={{
-          tabBarStyle: { display: "none" }, // Hide the tab bar
-        }}
-      />
-      <Stack.Screen
-        name="ProfileOther"
-        component={ProfileOther}
+        name="Security"
+        component={Security}
         options={{
           tabBarStyle: { display: "none" }, // Hide the tab bar
         }}

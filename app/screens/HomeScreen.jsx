@@ -114,7 +114,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </View>
               <View>
-                <Text className="text-[#AADAFF] text-[16px] font-semibold">
+                <Text className="text-[#AADAFF]  text-[16px] font-semibold">
                   Following
                 </Text>
               </View>

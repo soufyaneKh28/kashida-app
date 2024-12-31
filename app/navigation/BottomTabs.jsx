@@ -1,89 +1,101 @@
-import React from "react";
+import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { HomeIcon, UserIcon, CogIcon } from "react-native-heroicons/outline";
 
 import Spaces from "../screens/Spaces";
 import Posting from "../screens/Posting";
 import Roadmaps from "../screens/Roadmaps";
-
+import { NavigationContainer } from "@react-navigation/native";
 // import { BlurView } from "expo-blur";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import HomeStack from "./HomeStack";
 import ProfileStack from "./ProfileStack";
+import HomeScreen from "../screens/HomeScreen";
 
 const Tab = createBottomTabNavigator();
 
 // bottom tabs
 const BottomTabs = () => {
+  const [ModalVisible, setModalVisible] = useState(true);
   return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarShowLabel: false, // Hides the tab labels
-        headerShown: false,
-        tabBarStyle: {
-          // position: "absolute",
-          // marginBottom: 15,
-          // marginHorizontal: 20,
-          display: "flex",
-          justifyContent: "center",
-          // borderRadius: 16,
-          height: 70,
-          // backgroundColor: "#0E1922",
-        },
+    <>
+      <Tab.Navigator
+        screenOptions={{
+          tabBarShowLabel: false, // Hides the tab labels
+          headerShown: false,
+          tabBarStyle: {
+            // position: "absolute",
+            // marginBottom: 15,
+            // marginHorizontal: 20,
+            display: "flex",
+            justifyContent: "center",
+            // borderRadius: 16,
+            height: 70,
+            // backgroundColor: "#0E1922",
+          },
 
-        tabBarActiveTintColor: "#00C8D1", // Text/icon color for active tab
-        tabBarInactiveTintColor: "black", // Text/icon color for inactive tabs
-      }}
-    >
-      <Tab.Screen
-        name="HomeStack"
-        component={HomeStack}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <HomeIcon color={color} size={size} />
-          ),
+          tabBarActiveTintColor: "#00C8D1", // Text/icon color for active tab
+          tabBarInactiveTintColor: "black", // Text/icon color for inactive tabs
         }}
-      />
-      <Tab.Screen
-        name="Roadmaps"
-        component={Roadmaps}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="map-outline" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Posting"
-        component={Posting}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="add-circle-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Spaces"
-        component={Spaces}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="grid-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="ProfileStack"
-        component={ProfileStack}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <UserIcon color={color} size={size} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+      >
+        <Tab.Screen
+          name="HomeStack"
+          component={HomeStack}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <HomeIcon color={color} size={size} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Roadmaps"
+          component={Roadmaps}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="map-outline" color={color} size={size} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Posting"
+          component={Posting}
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              // Prevent default behavior
+              e.preventDefault();
+              // Navigate to CreatePost screen
+              navigation.navigate("CreatePost");
+            },
+          })}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="add-circle-outline" size={size} color={color} />
+            ),
+          }}
+        />
+
+        <Tab.Screen
+          name="Spaces"
+          component={Spaces}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="grid-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="ProfileStack"
+          component={ProfileStack}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <UserIcon color={color} size={size} />
+            ),
+          }}
+        />
+      </Tab.Navigator>
+    </>
   );
 };
-
 
 export default BottomTabs;

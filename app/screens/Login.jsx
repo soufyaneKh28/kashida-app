@@ -81,19 +81,16 @@ const Login = () => {
     if (email === "" || password === "" || !email.includes("@"))
       return alert("please add valid email and password");
     try {
-      const response = await fetch(
-        "https://kashida-app-dep.onrender.com/api/k1/users/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
-        }
-      );
+      const response = await fetch("http://10.0.2.2:7000/api/k1/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
       // Check if the response is ok (status code 200-299)
       if (!response.ok) {
