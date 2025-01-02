@@ -111,7 +111,7 @@ const Profile = () => {
         </View>
         <View className=" mt-20 items-center">
           <TouchableOpacity
-            className="px-6 py-2 my-1"
+            className="px-6 py-2 my-1 text-start w-full"
             onPress={() => {
               navigation.push("SettingsStack", {
                 screen: "Security",
@@ -123,14 +123,32 @@ const Profile = () => {
           >
             <Text className=" text-lg font-semibold">Security</Text>
           </TouchableOpacity>
-          <TouchableOpacity className="px-6 py-2 my-1" onPress={() => {}}>
-            <Text className=" text-lg font-semibold">Privacy and Policy</Text>
+          <TouchableOpacity
+            className="px-6 py-2 my-1 w-full"
+            onPress={() => {
+              navigation.push("SettingsStack", {
+                screen: "Policy",
+                params: {
+                  /* Optional params */
+                },
+              });
+            }}
+          >
+            <Text className=" text-lg text-start font-semibold">
+              Privacy and Policy
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity className="px-6 py-2 my-1" onPress={() => {}}>
+          <TouchableOpacity
+            className="px-6 py-2 my-1 w-full"
+            onPress={() => {}}
+          >
             <Text className=" text-lg font-semibold">Terms of Use</Text>
           </TouchableOpacity>
-          <TouchableOpacity className="px-6 py-2 my-1" onPress={() => {}}>
-            <Text className=" text-lg font-semibold">Help</Text>
+          <TouchableOpacity
+            className="px-6 py-2 my-1 w-full"
+            onPress={() => {}}
+          >
+            <Text className=" text-lg font-semibold ">Help</Text>
           </TouchableOpacity>
           <View className=" w-[260px] bg-[#ECEEF2] h-[2px] mt-[150px] " />
           <View className="w-full px-6">

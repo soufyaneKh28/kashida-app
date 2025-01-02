@@ -10,6 +10,9 @@ import { useNavigation } from "@react-navigation/native";
 import FollowsScreen from "../screens/FollowsScreen";
 import ProfileOther from "../screens/ProfileOther";
 import Security from "../screens/Security";
+import Policy from "../screens/Policy";
+import Terms from "../screens/Terms";
+import Help from "../screens/Help";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +23,27 @@ export default function SettingsStack() {
       <Stack.Screen
         name="Security"
         component={Security}
+        options={{
+          tabBarStyle: { display: "none" }, // Hide the tab bar
+        }}
+      />
+      <Stack.Screen
+        name="Policy"
+        component={Policy}
+        options={{
+          tabBarStyle: { display: "none" }, // Hide the tab bar
+        }}
+      />
+      <Stack.Screen
+        name="Terms"
+        component={Terms}
+        options={{
+          tabBarStyle: { display: "none" }, // Hide the tab bar
+        }}
+      />
+      <Stack.Screen
+        name="Help"
+        component={Help}
         options={{
           tabBarStyle: { display: "none" }, // Hide the tab bar
         }}
