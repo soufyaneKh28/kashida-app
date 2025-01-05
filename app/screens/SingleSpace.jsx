@@ -8,8 +8,11 @@ import {
   ScrollView,
   FlatList,
   ActivityIndicator,
+  Button,
+  Modal,
+  RefreshControl,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import BackArrow from "../components/BackArrow";
 import { LinearGradient } from "expo-linear-gradient";
 import { CheckBadgeIcon } from "react-native-heroicons/solid";
@@ -20,14 +23,33 @@ import { GetSpacePost } from "../api/Spaces";
 const SingleSpace = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(true);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const showModal = useCallback(() => {
+    setIsModalVisible(true);
+  }, []);
+
+  const hideModal = useCallback(() => {
+    setIsModalVisible(false);
+  }, []);
+
   const { space } = route.params;
-  console.log("====================================");
-  console.log(space);
-  console.log("====================================");
 
   useEffect(() => {
     GetSpacePost(setPosts, setIsLoading, space.name);
   }, [space]);
+
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  // pull to refresh
+  const onRefresh = useCallback(() => {
+    setIsLoading(true);
+    wait(2000).then(() => setIsLoading(false));
+    // getPostData();
+    GetSpacePost(setPosts, setIsLoading, space.name);
+  }, []);
 
   const renderHeader = () => (
     <View clas>
@@ -53,25 +75,24 @@ const SingleSpace = ({ navigation, route }) => {
       <BackArrow navigation={navigation} />
     </View>
   );
+
   return (
     <SafeAreaView className=" flex-1 bg-white">
-      <FlatList
-        ListHeaderComponent={renderHeader}
-        data={posts.reverse()}
-        style={{ width: "100%" }}
-        ListFooterComponent={
-          isLoading && (
-            <View className="flex-1 justify-center items-center">
-              <ActivityIndicator size="large" />
-            </View>
-          )
-        }
-        renderItem={(item) => <Post post={item.item} />}
-        contentContainerStyle={{
-          gap: 10,
-          backgroundColor: "white",
-        }}
-      />
+      <View style={styles.container}>
+        <FlatList
+          ListHeaderComponent={renderHeader}
+          refreshControl={
+            <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+          }
+          data={posts}
+          style={{ width: "100%" }}
+          renderItem={(item) => <Post post={item.item} />}
+          contentContainerStyle={{
+            gap: 10,
+            backgroundColor: "white",
+          }}
+        />
+      </View>
     </SafeAreaView>
   );
 };
@@ -79,6 +100,10 @@ const SingleSpace = ({ navigation, route }) => {
 export default SingleSpace;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
   gradient: {
     height: 240,
     padding: 10,

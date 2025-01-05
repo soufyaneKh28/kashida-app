@@ -9,6 +9,8 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import React, { useState } from "react";
 import { router } from "expo-router";
@@ -124,93 +126,100 @@ const Posting = ({ navigation }) => {
   console.log("Category: ", selected);
   console.log("====================================");
   return (
-    <SafeAreaView className="px-4 py-3  bg-white flex-1 ">
+    <SafeAreaView className="py-3  bg-white flex-1 ">
       {isLoading ? (
         <View className="flex-1 justify-center items-center ">
           <ActivityIndicator size={"large"} />
           <Text className=" font-bold text-xl mt-3">Uploading Your Post </Text>
         </View>
       ) : (
-        <ScrollView className=" pb-[200px]">
-          <BackArrow navigation={navigation} />
-          <View className="mt-5">
-            <Text className=" text-center mt text-xl font-bold">
-              Create Post
-            </Text>
-          </View>
-
-          <View className="mt-10 ">
-            {/* Adding images inputs */}
-            <Text className=" text-lg font-normal ">Add a Media</Text>
-            <ScrollView
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              className=" mt-3"
-            >
-              {selectedImage?.map((image, i) => (
-                <Image
-                  key={i}
-                  source={{ uri: image }}
-                  className="w-[230px] h-[230px] me-2 rounded-[10px]"
-                />
-              ))}
-              <TouchableOpacity
-                onPress={pickImage}
-                className=" bg-[#F3FAFF] me-2 w-[230px] h-[230px] justify-center items-center rounded-[10px]"
-              >
-                <PlusIcon size={32} color={"#D9D9D9"} />
-              </TouchableOpacity>
-            </ScrollView>
-
-            {/*Adding title */}
-            <View className="mt-5 ">
-              <Text className="text-lg font-normal ">Title</Text>
-              <TextInput
-                placeholder="Your Title"
-                className=" bg-[#F3FAFF]  w-full text-lg  rounded-[56px] mt-3  p-[16px]"
-                value={title}
-                placeholderTextColor="gray"
-                autoCapitalize="none"
-                onChangeText={(text) => setTitle(text)}
-                keyboardType="email-address"
-              />
-            </View>
-            {/*Adding title */}
-            <View className="mt-5 ">
-              <Text className="text-lg font-normal ">Caption</Text>
-              <TextInput
-                placeholder="Your Title"
-                className=" bg-[#F3FAFF]  w-full leading-6 text-lg  rounded-[26px] mt-3 h-[100px] text-start  p-[16px]"
-                value={caption}
-                multiline={true}
-                numberOfLines={10}
-                style={{
-                  height: 150,
-                  textAlignVertical: "top",
-                }}
-                placeholderTextColor="gray"
-                autoCapitalize="none"
-                onChangeText={(text) => setCaption(text)}
-                keyboardType="email-address"
-              />
-            </View>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <ScrollView className=" pb-[200px] px-4">
+            <BackArrow navigation={navigation} />
             <View className="mt-5">
-              <Text className="text-lg mb-3 font-normal ">Select a Space</Text>
-              <SelectList
-                setSelected={(val) => setSelected(val)}
-                data={data}
-                save="value"
-              />
+              <Text className=" text-center mt text-xl font-bold">
+                Create Post
+              </Text>
             </View>
-          </View>
 
-          <TouchableOpacity
-            onPress={uploadData}
-            className="bg-[#00868C] py-3 mt-10 mb-10 rounded-[50px] w-full flex-row justify-center"
-          >
-            <Text className="text-center text-white text-lg ">Post</Text>
-          </TouchableOpacity>
-        </ScrollView>
+            <View className="mt-10 ">
+              {/* Adding images inputs */}
+              <Text className=" text-lg font-normal ">Add a Media</Text>
+              <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                className=" mt-3"
+              >
+                {selectedImage?.map((image, i) => (
+                  <Image
+                    key={i}
+                    source={{ uri: image }}
+                    className="w-[230px] h-[230px] me-2 rounded-[10px]"
+                  />
+                ))}
+                <TouchableOpacity
+                  onPress={pickImage}
+                  className=" bg-[#F3FAFF] me-2 w-[230px] h-[230px] justify-center items-center rounded-[10px]"
+                >
+                  <PlusIcon size={32} color={"#D9D9D9"} />
+                </TouchableOpacity>
+              </ScrollView>
+
+              {/*Adding title */}
+              <View className="mt-5 ">
+                <Text className="text-lg font-normal ">Title</Text>
+                <TextInput
+                  placeholder="Your Title"
+                  className=" bg-[#F3FAFF]  w-full text-lg  rounded-[56px] mt-3  p-[16px]"
+                  value={title}
+                  placeholderTextColor="gray"
+                  autoCapitalize="none"
+                  onChangeText={(text) => setTitle(text)}
+                  keyboardType="email-address"
+                />
+              </View>
+              {/*Adding title */}
+              <View className="mt-5 ">
+                <Text className="text-lg font-normal ">Caption</Text>
+                <TextInput
+                  placeholder="Your Title"
+                  className=" bg-[#F3FAFF]  w-full leading-6 text-lg  rounded-[26px] mt-3 h-[100px] text-start  p-[16px]"
+                  value={caption}
+                  multiline={true}
+                  numberOfLines={10}
+                  style={{
+                    height: 150,
+                    textAlignVertical: "top",
+                  }}
+                  placeholderTextColor="gray"
+                  autoCapitalize="none"
+                  onChangeText={(text) => setCaption(text)}
+                  keyboardType="email-address"
+                />
+              </View>
+              <View className="mt-5">
+                <Text className="text-lg mb-3 font-normal ">
+                  Select a Space
+                </Text>
+                <SelectList
+                  setSelected={(val) => setSelected(val)}
+                  data={data}
+                  save="value"
+                />
+              </View>
+            </View>
+
+            <TouchableOpacity
+              onPress={uploadData}
+              className="bg-[#00868C] py-3 mt-10 mb-10 rounded-[50px] w-full flex-row justify-center"
+            >
+              <Text className="text-center text-white text-lg ">Post</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </KeyboardAvoidingView>
       )}
     </SafeAreaView>
   );
