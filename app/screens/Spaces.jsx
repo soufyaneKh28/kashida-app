@@ -7,7 +7,7 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Carousel from "react-native-reanimated-carousel";
 import Animated, {
@@ -17,8 +17,17 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import Parallax from "../components/Parallax";
+import { GetSpaces } from "../api/Spaces";
+import { useNavigation } from "@react-navigation/native";
 
 const Spaces = () => {
+  const [spaces, setSpaces] = useState([]);
+  const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    GetSpaces(setSpaces, setIsLoading);
+  }, []);
+
   return (
     <SafeAreaView className=" bg-white flex-1">
       <ScrollView
@@ -37,12 +46,12 @@ const Spaces = () => {
           Following
         </Text>
 
-        <Parallax />
+        <Parallax spaces={spaces} navigation={navigation} />
         <Text className=" text-xl px-3 text-gray-600 font-bold mt-10">
           Recommended
         </Text>
 
-        <Parallax />
+        <Parallax spaces={spaces} navigation={navigation} />
       </ScrollView>
     </SafeAreaView>
   );

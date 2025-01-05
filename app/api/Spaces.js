@@ -1,11 +1,9 @@
-// api/userApi.js
-
 const baseurl = "http://10.0.2.2:7000";
 
 import { Alert } from "react-native";
 import * as SecureStore from "expo-secure-store";
 
-export const getUserPosts = async (setUserData, setIsLoading) => {
+export const GetSpaces = async (setCategories, setIsLoading) => {
   try {
     // Retrieve the JWT token from SecureStore
     const token = await SecureStore.getItemAsync("jwtToken");
@@ -15,7 +13,7 @@ export const getUserPosts = async (setUserData, setIsLoading) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/posts`, {
+    const response = await fetch(`${baseurl}/api/k1/category`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -32,58 +30,57 @@ export const getUserPosts = async (setUserData, setIsLoading) => {
 
     // Parse the JSON response
     const userData = await response.json();
-    setUserData(userData?.data.posts);
-    console.log("User Poooooooosts:", userData?.data.posts);
+    setCategories(userData?.data.data);
+    console.log("Categories:", userData?.data.data);
     console.log("Success", "User data retrieved successfully!");
     setIsLoading(false);
     // Handle the user data (e.g., update state or UI)
   } catch (error) {
-    console.error("Error fetching getUserPosts:", error);
-    alert("Error", "Failed to fetch getUserPosts. Please try again.");
+    console.error("Error fetching user data:", error);
+    alert("Error", "Failed to fetch user data. Please try again.");
   }
 };
 
-// getting user profile screen data
-export const getUserProfile = async ({ setUserProfile, setIsLoading, id }) => {
+export const GetSpacePost = async (setPosts, setIsLoading, title) => {
   try {
     // Retrieve the JWT token from SecureStore
+    setIsLoading(true);
     const token = await SecureStore.getItemAsync("jwtToken");
+    const space = await title;
     if (!token) {
       Alert.alert("Error", "No token found. Please log in again.");
       return;
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/users/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-      },
-    });
+    const response = await fetch(
+      `${baseurl}/api/k1/posts?categories=${space}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+          "Cache-Control": "no-cache", // Disable caching
+        },
+      }
+    );
 
     // Check if the response is OK
     if (!response.ok) {
       // setIsLoading(true);
       const errorResponse = await response.json();
-      throw new Error(
-        errorResponse.message || "Failed to fetch getUserProfile."
-      );
+      throw new Error(errorResponse.message || "Failed to fetch GetSpacePost.");
     }
 
     // Parse the JSON response
     const userData = await response.json();
-    setUserProfile(userData?.data.data);
-    console.log("getUserProfile:", userData?.data.data);
-    console.log("Success", "User data retrieved successfully!");
+    setPosts(userData.data.posts);
+    console.log("GetSpacePost===========:", userData.data.posts);
+    console.log("Success", "GetSpacePost retrieved successfully!");
     setIsLoading(false);
     // Handle the user data (e.g., update state or UI)
   } catch (error) {
-    console.error("Error fetching getUserProfile:", error);
+    console.error(`"Error fetching GetSpacePost from :`, error);
     alert("Error", "Failed to fetch user data. Please try again.");
   }
 };
-
-
-
-// 

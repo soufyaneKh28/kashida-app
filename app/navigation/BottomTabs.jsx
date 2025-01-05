@@ -12,6 +12,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import HomeStack from "./HomeStack";
 import ProfileStack from "./ProfileStack";
 import HomeScreen from "../screens/HomeScreen";
+import SpacesStack from "./SpacesStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -76,8 +77,8 @@ const BottomTabs = () => {
         />
 
         <Tab.Screen
-          name="Spaces"
-          component={Spaces}
+          name="SpacesStack"
+          component={SpacesStack}
           options={{
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="grid-outline" size={size} color={color} />

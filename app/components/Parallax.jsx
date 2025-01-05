@@ -24,21 +24,69 @@ const ITEM_HEIGHT = 300; // Height of each item
 const SPACER = 75; // Space around items
 
 const data = [
-  { id: "1", color: "#FF0000" },
+  { id: "1" },
+  { id: "2", color: "#00FF00" },
+  { id: "3", color: "#0000FF" },
+  { id: "4", color: "#FFA500" },
+  { id: "5", color: "#800080" },
+  { id: "1" },
+  { id: "2", color: "#00FF00" },
+  { id: "3", color: "#0000FF" },
+  { id: "4", color: "#FFA500" },
+  { id: "5", color: "#800080" },
+  { id: "1" },
+  { id: "2", color: "#00FF00" },
+  { id: "3", color: "#0000FF" },
+  { id: "4", color: "#FFA500" },
+  { id: "5", color: "#800080" },
+  { id: "1" },
   { id: "2", color: "#00FF00" },
   { id: "3", color: "#0000FF" },
   { id: "4", color: "#FFA500" },
   { id: "5", color: "#800080" },
 ];
 
-const Parallax = () => {
+const Parallax = ({ spaces, navigation }) => {
   const scrollX = useSharedValue(0);
 
+  console.log("====================================");
+  console.log(spaces);
+  console.log("====================================");
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       scrollX.value = event.contentOffset.x;
     },
   });
+
+  const getAnimatedStyle = (scrollX, index) => {
+    const animatedStyle = useAnimatedStyle(() => {
+      const inputRange = [
+        (index - 1) * ITEM_WIDTH,
+        index * ITEM_WIDTH,
+        (index + 1) * ITEM_WIDTH,
+      ];
+
+      const scale = interpolate(
+        scrollX.value,
+        inputRange,
+        [0.8, 1, 0.8], // Scale the center item larger
+        Extrapolate.CLAMP
+      );
+
+      const translateX = interpolate(
+        scrollX.value,
+        inputRange,
+        [-20, 0, 20], // Slight offset for surrounding items
+        Extrapolate.CLAMP
+      );
+
+      return {
+        transform: [{ scale }, { translateX }],
+      };
+    });
+
+    return animatedStyle;
+  };
 
   return (
     <View style={styles.container}>
@@ -52,66 +100,44 @@ const Parallax = () => {
         scrollEventThrottle={16}
         contentContainerStyle={{ paddingHorizontal: SPACER }}
       >
-        {data.map((item, index) => {
-          return (
-            <Animated.View
-              key={item.id}
-              style={[getAnimatedStyle(scrollX, index)]}
-            >
-              <TouchableOpacity
-                style={[styles.card]}
-                onPress={() => console.log("pressed")}
+        {spaces
+          ?.filter((space, i) => space.name != "All")
+          .map((space, index) => {
+            return (
+              <Animated.View
+                key={space._id}
+                // style={getAnimatedStyle(scrollX, index)}
               >
-                <ImageBackground
-                  source={require("../../assets/images/diwaniBg.png")}
-                  style={{ width: "100%", height: "100%" }}
+                <TouchableOpacity
+                  style={[styles.card]}
+                  onPress={() =>
+                    navigation.push("SingleSpace", { space: space })
+                  }
                 >
-                  <View className=" w-full h-full justify-end items-center pb-10">
-                    <Image
-                      source={require("../../assets/images/diwani.png")}
-                      width={145}
-                      height={62}
-                    />
-                  </View>
-                </ImageBackground>
-              </TouchableOpacity>
-            </Animated.View>
-          );
-        })}
+                  <ImageBackground
+                    source={require("../../assets/images/diwaniBg.png")}
+                    style={{ width: "100%", height: "100%" }}
+                  >
+                    <View className=" w-full h-full justify-end items-center pb-5">
+                      <Image
+                        source={require("../../assets/images/diwani.png")}
+                        width={145}
+                        height={62}
+                      />
+                      <Text className=" text-white text-lg font-bold mt-1">
+                        {space.name}
+                      </Text>
+                    </View>
+                  </ImageBackground>
+                </TouchableOpacity>
+              </Animated.View>
+            );
+          })}
       </Animated.ScrollView>
     </View>
   );
 };
 
-const getAnimatedStyle = (scrollX, index) => {
-  const animatedStyle = useAnimatedStyle(() => {
-    const inputRange = [
-      (index - 1) * ITEM_WIDTH,
-      index * ITEM_WIDTH,
-      (index + 1) * ITEM_WIDTH,
-    ];
-
-    const scale = interpolate(
-      scrollX.value,
-      inputRange,
-      [0.8, 1, 0.8], // Scale the center item larger
-      Extrapolate.CLAMP
-    );
-
-    const translateX = interpolate(
-      scrollX.value,
-      inputRange,
-      [-20, 0, 20], // Slight offset for surrounding items
-      Extrapolate.CLAMP
-    );
-
-    return {
-      transform: [{ scale }, { translateX }],
-    };
-  });
-
-  return animatedStyle;
-};
 
 const styles = StyleSheet.create({
   container: {
