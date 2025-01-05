@@ -2,17 +2,20 @@ import { View, Text, Pressable } from "react-native";
 import React, { useState } from "react";
 import { HeartIcon as HeartOutline } from "react-native-heroicons/outline";
 import { HeartIcon as HeartFill } from "react-native-heroicons/solid";
+import { likePost, unLikePost } from "../api/post";
 
-const PostLike = ({ likeState = false, likesNum = 0 }) => {
+const PostLike = ({ likeState = false, likesNum = 0, postId }) => {
   const [isLiked, setIsLiked] = useState(likeState);
   const [likeNum, setlikeNum] = useState(likesNum);
 
   function handleLike() {
     if (!isLiked) {
+      likePost(postId);
       setIsLiked(true);
       setlikeNum(likeNum + 1);
       console.log("pressed true");
     } else {
+      unLikePost(postId);
       setIsLiked(false);
       setlikeNum(likeNum - 1);
       console.log("pressed fslde");

@@ -100,7 +100,11 @@ const Post = ({ post }) => {
         <View className=" my-3 flex-row items-center">
           {/* Like */}
 
-          <PostLike likeState={post?.hasLiked} likesNum={post?.likes} />
+          <PostLike
+            likeState={post?.hasLiked}
+            likesNum={post?.likes}
+            postId={post?._id}
+          />
 
           {/* Comment */}
 
