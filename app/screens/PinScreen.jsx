@@ -29,6 +29,7 @@ import { EnvelopeIcon } from "react-native-heroicons/solid";
 import { getUserPosts } from "../api/user";
 import Pin from "../components/Pin";
 import { StyleSheet } from "react-native";
+import PostLike from "../components/PostLike";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -116,29 +117,28 @@ const PinScreen = ({ route }) => {
         <View className="px-3">
           <View className=" flex-row justify-between items-center">
             {/* Actions */}
-            <View className=" my-3 flex-row">
+            <View className=" mb-5 flex-row">
               {/* Like */}
 
-              <Pressable className="flex-row  items-center">
-                <HeartIcon color={"#00868C"} size={30} />
-                <Text className="text-[#00868C] ms-1 text-xl font-semibold">
-                  1M
-                </Text>
-              </Pressable>
+              <PostLike
+                likeState={pin?.hasLiked}
+                likesNum={pin?.likes}
+                postId={pin?._id}
+              />
 
               {/* Comment */}
 
-              <Pressable className="flex-row ms-3 items-center">
+              {/* <Pressable className="flex-row ms-3 items-center">
                 <ChatBubbleOvalLeftIcon color={"#00868C"} size={30} />
                 <Text className="text-[#00868C] ms-1 text-xl font-semibold">
                   20K
                 </Text>
-              </Pressable>
+              </Pressable> */}
 
               {/* Send */}
               <View className=" flex-row ms-3  items-center">
                 <Pressable>
-                  <PaperAirplaneIcon color={"#00868C"} size={30} />
+                  <PaperAirplaneIcon color={"#00868C"} size={24} />
                 </Pressable>
               </View>
             </View>

@@ -19,6 +19,10 @@ const Roadmaps = () => {
           />
         </View>
         <RoadMapCollapse />
+        <Image
+          source={require("../../assets/images/road.png")}
+          className=" w-full h-[65px] mt-20"
+        />
       </ScrollView>
     </SafeAreaView>
   );

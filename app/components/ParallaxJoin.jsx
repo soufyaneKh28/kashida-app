@@ -121,7 +121,7 @@ const ParallaxJoin = ({ spaces, navigation }) => {
                       height={62}
                     />
                     <Text className=" text-white text-lg font-bold mt-1">
-                      {space}
+                      {space.name}
                     </Text>
                   </View>
                 </ImageBackground>

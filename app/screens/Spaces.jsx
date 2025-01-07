@@ -35,7 +35,7 @@ const Spaces = () => {
         const userSpaces = await getMe(setMe, setIsLoading);
         setFollowingSpaces(userSpaces.data.data.joinedSpaces);
         console.log("====================================");
-        console.log("follwwing me", me.joinedSpaces);
+        // console.log("follwwing me", me.joinedSpaces);
         console.log("follwwing followingSpaces", followingSpaces);
         console.log("follwwing userSpaces", userSpaces.data.data.joinedSpaces);
 
@@ -87,7 +87,11 @@ const Spaces = () => {
             Recommended
           </Text>
 
-          <Parallax spaces={spaces} navigation={navigation} />
+          <Parallax
+            spaces={spaces}
+            followingSpaces={followingSpaces}
+            navigation={navigation}
+          />
         </ScrollView>
       )}
     </SafeAreaView>

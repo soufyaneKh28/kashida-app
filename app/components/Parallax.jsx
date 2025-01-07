@@ -46,12 +46,14 @@ const data = [
   { id: "5", color: "#800080" },
 ];
 
-const Parallax = ({ spaces, navigation }) => {
+const Parallax = ({ spaces, navigation, followingSpaces }) => {
   const scrollX = useSharedValue(0);
 
-  // console.log("====================================");
-  // console.log(spaces);
-  // console.log("====================================");
+  let follwing = followingSpaces.map((v) => v.name);
+  console.log("====================================");
+  console.log("follwoing from parallazxxxxx", followingSpaces);
+  console.log("follwoing from parallazxxxxx", follwing);
+  console.log("====================================");
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       scrollX.value = event.contentOffset.x;
@@ -101,7 +103,9 @@ const Parallax = ({ spaces, navigation }) => {
         contentContainerStyle={{ paddingHorizontal: SPACER }}
       >
         {spaces
-          ?.filter((space, i) => space.name != "All")
+          ?.filter(
+            (space, i) => space.name != "All" && !follwing?.includes(space.name)
+          )
           .map((space, index) => {
             return (
               <Animated.View

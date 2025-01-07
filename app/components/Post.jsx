@@ -19,7 +19,7 @@ import {
 } from "react-native-heroicons/outline";
 import PostLike from "./PostLike";
 const windowWidth = Dimensions.get("window").width;
-const Post = ({ post }) => {
+const Post = ({ post, showModal }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const [postData, setPin] = useState(post);
@@ -110,7 +110,7 @@ const Post = ({ post }) => {
 
           <Pressable
             className="flex-row ms-[10px] items-center"
-            onPress={() => console.log("Comments")}
+            onPress={() => showModal(true)}
           >
             <ChatBubbleOvalLeftIcon color={"#00868C"} size={24} />
             <Text className="text-[#00868C] ms-1 text-xl font-semibold">
