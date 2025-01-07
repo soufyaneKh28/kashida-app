@@ -24,9 +24,9 @@ const Post = ({ post }) => {
 
   const [postData, setPin] = useState(post);
 
-  console.log("====================================");
-  console.log(post);
-  console.log("====================================");
+  // console.log("====================================");
+  // console.log(post);
+  // console.log("====================================");
   const renderItem =
     ({ rounded }) =>
     ({ item }) =>

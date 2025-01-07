@@ -46,7 +46,7 @@ const data = [
   { id: "5", color: "#800080" },
 ];
 
-const Parallax = ({ spaces, navigation }) => {
+const ParallaxJoin = ({ spaces, navigation }) => {
   const scrollX = useSharedValue(0);
 
   // console.log("====================================");
@@ -100,44 +100,39 @@ const Parallax = ({ spaces, navigation }) => {
         scrollEventThrottle={16}
         contentContainerStyle={{ paddingHorizontal: SPACER }}
       >
-        {spaces
-          ?.filter((space, i) => space.name != "All")
-          .map((space, index) => {
-            return (
-              <Animated.View
-                key={space._id}
-                // style={getAnimatedStyle(scrollX, index)}
+        {spaces?.map((space, index) => {
+          return (
+            <Animated.View
+              key={index}
+              // style={getAnimatedStyle(scrollX, index)}
+            >
+              <TouchableOpacity
+                style={[styles.card]}
+                onPress={() => navigation.push("SingleSpace", { space: space })}
               >
-                <TouchableOpacity
-                  style={[styles.card]}
-                  onPress={() =>
-                    navigation.push("SingleSpace", { space: space })
-                  }
+                <ImageBackground
+                  source={require("../../assets/images/diwaniBg.png")}
+                  style={{ width: "100%", height: "100%" }}
                 >
-                  <ImageBackground
-                    source={require("../../assets/images/diwaniBg.png")}
-                    style={{ width: "100%", height: "100%" }}
-                  >
-                    <View className=" w-full h-full justify-end items-center pb-5">
-                      <Image
-                        source={require("../../assets/images/diwani.png")}
-                        width={145}
-                        height={62}
-                      />
-                      <Text className=" text-white text-lg font-bold mt-1">
-                        {space.name}
-                      </Text>
-                    </View>
-                  </ImageBackground>
-                </TouchableOpacity>
-              </Animated.View>
-            );
-          })}
+                  <View className=" w-full h-full justify-end items-center pb-5">
+                    <Image
+                      source={require("../../assets/images/diwani.png")}
+                      width={145}
+                      height={62}
+                    />
+                    <Text className=" text-white text-lg font-bold mt-1">
+                      {space}
+                    </Text>
+                  </View>
+                </ImageBackground>
+              </TouchableOpacity>
+            </Animated.View>
+          );
+        })}
       </Animated.ScrollView>
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -168,4 +163,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Parallax;
+export default ParallaxJoin;

@@ -118,6 +118,7 @@ export const getMe = async (setMe, setIsLoading) => {
     // Parse the JSON response
     const me = await response.json();
     setMe(me?.data.data);
+    return me;
     console.log("User MEeee:", me?.data.data);
     console.log("Success", "User data retrieved successfully!");
     setIsLoading(false);

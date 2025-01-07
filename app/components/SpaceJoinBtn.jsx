@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { CheckBadgeIcon, PlusIcon } from "react-native-heroicons/solid";
 
-const SpaceJoinBtn = () => {
+const SpaceJoinBtn = ({ JoinStatus }) => {
   const [join, setJoin] = useState(false);
   return join ? (
     <TouchableOpacity

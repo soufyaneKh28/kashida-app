@@ -119,12 +119,7 @@ const Posting = ({ navigation }) => {
     }
   };
 
-  console.log("====================================");
-  console.log("title: ", title);
-  console.log("caption: ", caption);
-  console.log("Image: ", selectedImage);
-  console.log("Category: ", selected);
-  console.log("====================================");
+
   return (
     <SafeAreaView className="py-3  bg-white flex-1 ">
       {isLoading ? (
