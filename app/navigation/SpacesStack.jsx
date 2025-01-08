@@ -21,6 +21,7 @@ const Stack = createNativeStackNavigator();
 export default function SpacesStack() {
   const navigation = useNavigation();
   return (
+    // <NavigationContainer>
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="Spaces"
@@ -37,5 +38,6 @@ export default function SpacesStack() {
         }}
       />
     </Stack.Navigator>
+    // </NavigationContainer>
   );
 }

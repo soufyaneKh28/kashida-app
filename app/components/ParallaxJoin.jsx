@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
@@ -46,9 +47,9 @@ const data = [
   { id: "5", color: "#800080" },
 ];
 
-const ParallaxJoin = ({ spaces, navigation }) => {
+const ParallaxJoin = ({ spaces }) => {
   const scrollX = useSharedValue(0);
-
+  const navigation = useNavigation();
   // console.log("====================================");
   // console.log(spaces);
   // console.log("====================================");
@@ -108,7 +109,12 @@ const ParallaxJoin = ({ spaces, navigation }) => {
             >
               <TouchableOpacity
                 style={[styles.card]}
-                onPress={() => navigation.push("SingleSpace", { space: space })}
+                onPress={() =>
+                  navigation.push("SingleSpace", {
+                    space: space,
+                    joinStatus: true,
+                  })
+                }
               >
                 <ImageBackground
                   source={require("../../assets/images/diwaniBg.png")}

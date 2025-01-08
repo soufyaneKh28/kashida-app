@@ -81,12 +81,9 @@ export const GetSpacePost = async (setPosts, setIsLoading, title) => {
   }
 };
 
-const joinSpace = async (space) => {
-  const url = `${baseurl}api/k1/users/joinSpace`; // Replace BASE_URL with your actual base URL
-  const bodyData = {
-    categoryName: "Naskh",
-  };
-
+export const joinSpace = async (space) => {
+  const url = `${baseurl}/api/k1/users/joinSpace`; // Replace BASE_URL with your actual base URL
+  const token = await SecureStore.getItemAsync("jwtToken");
   try {
     const response = await axios.post(
       url,
@@ -117,4 +114,76 @@ const joinSpace = async (space) => {
     }
   }
 };
+// export const UnjoinSpace = async (space) => {
+//   const url = `${baseurl}/api/k1/users/unjoinSpace`; // Replace BASE_URL with your actual base URL
+//   const token = await SecureStore.getItemAsync("jwtToken");
+//   try {
+//     const response = await axios.delete(
+//       url,
+//       { categoryName: space },
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+//         },
+//       }
+//     );
 
+//     console.log("Success:", response.data);
+//   } catch (error) {
+//     if (error.response) {
+//       // Server responded with a status code outside the 2xx range
+//       console.error(
+//         "Server Error:",
+//         error.response.status,
+//         error.response.data
+//       );
+//     } else if (error.request) {
+//       // Request was made but no response was received
+//       console.error("No Response:", error.request);
+//     } else {
+//       // Something else caused the error
+//       console.error("Error:", error.message);
+//     }
+//   }
+// };
+
+export const UnjoinSpace = async (space) => {
+  try {
+    // Retrieve the JWT token from SecureStore
+
+    const token = await SecureStore.getItemAsync("jwtToken");
+    if (!token) {
+      Alert.alert("Error", "No token found. Please log in again.");
+      return;
+    }
+
+    // Make the GET request
+    const response = await fetch(`${baseurl}/api/k1/users/unjoinSpace`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+      body: JSON.stringify({ categoryName: space }), // Convert JavaScript object to JSON string
+    });
+
+    // Check if the response is OK
+    if (!response.ok) {
+      // setIsLoading(true);
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.message || "Failed to fetch user data.");
+    }
+
+    // Parse the JSON response
+    const userData = await response.json();
+
+    console.log("Categories:", userData?.data);
+    console.log("Success", "User data retrieved successfully!");
+
+    // Handle the user data (e.g., update state or UI)
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    alert("Error", "Failed to fetch user data. Please try again.");
+  }
+};

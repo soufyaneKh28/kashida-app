@@ -36,10 +36,10 @@ import HomeScreen from "./screens/HomeScreen";
 import SignUp from "./screens/SignUp";
 import Posting from "./screens/Posting";
 import SettingsStack from "./navigation/SettingsStack";
-
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
-
+const Stack = createStackNavigator();
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
   // const isLoggedIn = !!SecureStore.getItemAsync("jwtToken");
@@ -62,6 +62,7 @@ export default function App() {
     return <ActivityIndicator size="large" />; // Replace with your loading screen component
   }
   return (
+    // <NavigationContainer>
     <Stack.Navigator>
       {isLoggedIn ? (
         <>

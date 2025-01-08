@@ -7,8 +7,9 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import Carousel from "react-native-reanimated-carousel";
 import Animated, {
@@ -29,25 +30,38 @@ const Spaces = () => {
   const [followingSpaces, setFollowingSpaces] = useState([]);
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
+
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  // pull to refresh
+  const onRefresh = useCallback(() => {
+    setIsLoading(true);
+    wait(2000).then(() => setIsLoading(false));
+    // getPostData();
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const userSpaces = await getMe(setMe, setIsLoading);
+      setFollowingSpaces(userSpaces.data.data.joinedSpaces);
+      console.log("====================================");
+      // console.log("follwwing me", me.joinedSpaces);
+      console.log("follwwing followingSpaces", followingSpaces);
+      console.log("follwwing userSpaces", userSpaces.data.data.joinedSpaces);
+
+      console.log("====================================");
+      GetSpaces(setSpaces, setIsLoading);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userSpaces = await getMe(setMe, setIsLoading);
-        setFollowingSpaces(userSpaces.data.data.joinedSpaces);
-        console.log("====================================");
-        // console.log("follwwing me", me.joinedSpaces);
-        console.log("follwwing followingSpaces", followingSpaces);
-        console.log("follwwing userSpaces", userSpaces.data.data.joinedSpaces);
-
-        console.log("====================================");
-        GetSpaces(setSpaces, setIsLoading);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -60,6 +74,9 @@ const Spaces = () => {
       ) : (
         <ScrollView
           className="pb-[500px]"
+          refreshControl={
+            <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+          }
           contentContainerStyle={{ paddingBottom: 100 }}
         >
           <Image

@@ -4,113 +4,34 @@ import {
   SafeAreaView,
   Image,
   StyleSheet,
-  TouchableOpacity,
-  ScrollView,
   FlatList,
-  ActivityIndicator,
-  Button,
-  Modal,
   RefreshControl,
-  KeyboardAvoidingView,
-  Platform,
-  TextInput,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import BackArrow from "../components/BackArrow";
 import { LinearGradient } from "expo-linear-gradient";
-import { CheckBadgeIcon } from "react-native-heroicons/solid";
+
 import SpaceJoinBtn from "../components/SpaceJoinBtn";
 import Post from "../components/Post";
 import { GetSpacePost } from "../api/Spaces";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { HeartIcon as HeartOutline } from "react-native-heroicons/outline";
 
-import Comment from "../components/Comment";
-const comments = [
-  {
-    id: "1",
-    username: "user1",
-    avatar: "https://via.placeholder.com/40",
-    time: "2h",
-    text: "This is a comment",
-    replies: [
-      {
-        id: "1-1",
-        username: "user2",
-        avatar: "https://via.placeholder.com/40",
-        time: "1h",
-        text: "This is a reply",
-      },
-    ],
-  },
-  {
-    id: "2",
-    username: "user3",
-    avatar: "https://via.placeholder.com/40",
-    time: "1h",
-    text: "Another comment",
-    replies: [],
-  },
-  {
-    id: "3",
-    username: "user1",
-    avatar: "https://via.placeholder.com/40",
-    time: "2h",
-    text: "This is a comment",
-    replies: [
-      {
-        id: "1-1",
-        username: "user2",
-        avatar: "https://via.placeholder.com/40",
-        time: "1h",
-        text: "This is a reply",
-      },
-    ],
-  },
-  {
-    id: "4",
-    username: "user3",
-    avatar: "https://via.placeholder.com/40",
-    time: "1h",
-    text: "Another comment",
-    replies: [],
-  },
-  {
-    id: "5",
-    username: "user1",
-    avatar: "https://via.placeholder.com/40",
-    time: "2h",
-    text: "This is a comment",
-    replies: [
-      {
-        id: "1-1",
-        username: "user2",
-        avatar: "https://via.placeholder.com/40",
-        time: "1h",
-        text: "This is a reply",
-      },
-    ],
-  },
-  {
-    id: "6",
-    username: "user3",
-    avatar: "https://via.placeholder.com/40",
-    time: "1h",
-    text: "Another comment",
-    replies: [],
-  },
-];
+import CommentsModal from "../components/CommentsModal";
+import { useNavigation } from "@react-navigation/native";
 
-const SingleSpace = ({ navigation, route }) => {
+const SingleSpace = ({ route }) => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
-
-  const { space } = route.params;
+  const navigation = useNavigation();
+  const { space, joinStatus } = route.params;
 
   useEffect(() => {
     GetSpacePost(setPosts, setIsLoading, space.name);
+    console.log("====================================");
+    console.log("space joinStatus");
+    console.log(joinStatus);
+    console.log("====================================");
   }, [space]);
 
   const wait = (timeout) => {
@@ -125,9 +46,10 @@ const SingleSpace = ({ navigation, route }) => {
     GetSpacePost(setPosts, setIsLoading, space.name);
   }, []);
 
-  // rendering Comments inside the FlatList
-  const renderComment = ({ item }) => <Comment comment={item} />;
-  // Render heeader ontop of the Flat List
+  function handleCommentRequest(value) {
+    setSelectedPost(value);
+    setIsModalVisible(true);
+  }
   const renderHeader = () => (
     <View>
       <LinearGradient
@@ -146,57 +68,16 @@ const SingleSpace = ({ navigation, route }) => {
             />
             <Text className=" text-white">{space.name}</Text>
           </View>
-          <SpaceJoinBtn />
+          <SpaceJoinBtn
+            spaceName={space.name}
+            JoinStatus={joinStatus}
+            navigation={navigation}
+          />
         </View>
       </LinearGradient>
       <BackArrow navigation={navigation} />
     </View>
   );
-
-  function CommentsModal() {
-    return (
-      <View className=" ">
-        <Modal
-          animationType="slide"
-          backdropColor="black"
-          transparent={true}
-          onRequestClose={() => setIsModalVisible(false)}
-          visible={isModalVisible}
-          style={{}}
-        >
-          <View style={{ flex: 1, backgroundColor: "rgba(11, 11, 11, 0.51)" }}>
-            <View style={styles.contentContainer}>
-              <Text style={styles.title}>Comments</Text>
-              <FlatList
-                data={comments}
-                renderItem={renderComment}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={styles.commentsList}
-              />
-              <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
-                style={styles.inputContainer}
-              >
-                <Image
-                  source={{ uri: "https://via.placeholder.com/32" }}
-                  style={styles.inputAvatar}
-                />
-                <TextInput
-                  placeholder="Add a comment..."
-                  style={styles.input}
-                  multiline
-                />
-                <TouchableOpacity style={styles.sendBtn}>
-                  <FontAwesome name="send" size={20} color="#F3FAFF" />
-                </TouchableOpacity>
-              </KeyboardAvoidingView>
-            </View>
-          </View>
-        </Modal>
-      </View>
-    );
-  }
 
   return (
     <SafeAreaView className=" flex-1 bg-white">
@@ -208,15 +89,22 @@ const SingleSpace = ({ navigation, route }) => {
         }
         data={posts}
         renderItem={(item) => (
-          <Post post={item.item} showModal={setIsModalVisible} />
+          <Post post={item.item} showModal={handleCommentRequest} />
         )}
         contentContainerStyle={{
+          width: "100%",
           gap: 10,
           backgroundColor: "white",
         }}
       />
       {/* Comments Modal */}
-      <CommentsModal />
+      {isModalVisible && (
+        <CommentsModal
+          isModalVisible={isModalVisible}
+          setIsModalVisible={setIsModalVisible}
+          selectedPost={selectedPost}
+        />
+      )}
     </SafeAreaView>
   );
 };

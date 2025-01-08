@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import React, { useCallback, useState } from "react";
 import Carousel from "react-native-reanimated-carousel";
-import moment from "moment";
+import { formatRelativeTime } from "../api/timeUtils";
 
 import {
   ChatBubbleOvalLeftIcon,
@@ -58,7 +58,7 @@ const Post = ({ post, showModal }) => {
             </View>
           </View>
           <Text className="text-secondary font-semibold">
-            {moment(post?.createdAt).fromNow()}
+            {formatRelativeTime(post?.createdAt)}
           </Text>
         </View>
 
@@ -110,7 +110,7 @@ const Post = ({ post, showModal }) => {
 
           <Pressable
             className="flex-row ms-[10px] items-center"
-            onPress={() => showModal(true)}
+            onPress={() => showModal(post._id)}
           >
             <ChatBubbleOvalLeftIcon color={"#00868C"} size={24} />
             <Text className="text-[#00868C] ms-1 text-xl font-semibold">

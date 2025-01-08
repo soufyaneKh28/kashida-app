@@ -115,7 +115,10 @@ const Parallax = ({ spaces, navigation, followingSpaces }) => {
                 <TouchableOpacity
                   style={[styles.card]}
                   onPress={() =>
-                    navigation.push("SingleSpace", { space: space })
+                    navigation.push("SingleSpace", {
+                      space: space,
+                      joinStatus: false,
+                    })
                   }
                 >
                   <ImageBackground

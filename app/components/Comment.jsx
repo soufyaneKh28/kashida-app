@@ -1,42 +1,115 @@
 import { useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { HeartIcon as HeartOutline } from "react-native-heroicons/outline";
+import { HeartIcon as HeartFill } from "react-native-heroicons/solid";
+import { DateTime } from "luxon";
+import { formatRelativeTime } from "../api/timeUtils";
+import { baseurl } from "../api/user";
+import { getCommentReplies } from "../api/Comments";
+import { LikeComment } from "../api/Comments";
 const Comment = ({ comment, level = 0 }) => {
   const [showReplies, setShowReplies] = useState(false);
+  const [replies, setReplies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLiked, setIsLiked] = useState(comment.hasLiked);
 
+  // const [likeNum, setlikeNum] = useState(likesNum);
+  function handleLike() {
+    if (!isLiked) {
+      // likePost(postId);
+      LikeComment(comment._id);
+      setIsLiked(true);
+      // setlikeNum(likeNum + 1);
+      console.log("pressed true");
+    } else {
+      // unLikePost(postId);
+      setIsLiked(false);
+      // setlikeNum(likeNum - 1);
+      console.log("pressed fslde");
+    }
+  }
+
+  async function test() {
+    if (showReplies) {
+      setShowReplies(false);
+    } else if (replies && replies.length > 0) {
+      setShowReplies(true);
+    } else {
+      setIsLoading(true);
+      const data = await getCommentReplies(setReplies, comment._id);
+      // setReplies(data)
+      setReplies(data.replies);
+      setIsLoading(false);
+      setShowReplies(true);
+      // console.log("====================================");
+      // console.log("replies grom comment com", data.replies);
+      // console.log("replies from state com", replies);
+      // console.log("====================================");
+    }
+  }
   return (
-    <View style={[styles.commentContainer, { marginLeft: level * 20 }]}>
-      <Image source={{ uri: comment.avatar }} style={styles.avatar} />
+    <View style={styles.commentContainer}>
+      <Image source={{ uri: comment.user.photo[0] }} style={styles.avatar} />
       <View style={styles.commentContent}>
         <View style={styles.commentHeader}>
-          <Text style={styles.username}>{comment.username}</Text>
-          <Text style={styles.time}>{comment.time}</Text>
+          <Text style={styles.username}>{comment.user.username}</Text>
+          <Text style={styles.time}>
+            {formatRelativeTime(comment.createdAt)}
+          </Text>
         </View>
-        <Text style={styles.commentText}>{comment.text}</Text>
+        <Text style={styles.commentText}>{comment.comment}</Text>
         <View style={styles.commentActions}>
           <TouchableOpacity>
             <Text style={styles.actionButton}>Reply</Text>
           </TouchableOpacity>
-          {comment.replies && comment.replies.length > 0 && (
-            <TouchableOpacity onPress={() => setShowReplies(!showReplies)}>
-              <Text style={styles.actionButton}>
-                {showReplies
-                  ? "Hide Replies"
-                  : `View Replies (${comment.replies.length})`}
-              </Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity onPress={test}>
+            <Text style={styles.actionButton}>
+              {showReplies ? "Hide Replies" : `View ${comment.reply} Replies`}
+            </Text>
+          </TouchableOpacity>
         </View>
-        {showReplies && comment.replies && (
+        {isLoading && <ActivityIndicator size="small" color="#0000ff" />}
+        {/* {error && <Text style={styles.errorText}>{error}</Text>} */}
+        {showReplies && (
           <View style={styles.repliesContainer}>
-            {comment.replies.map((reply) => (
-              <Comment key={reply.id} comment={reply} level={level + 1} />
+            {replies.map((reply) => (
+              <View key={reply._id} style={styles.replyContainer}>
+                <Image
+                  source={{ uri: reply.user.photo[0] }}
+                  style={styles.replyAvatar}
+                />
+                <View style={styles.replyContent}>
+                  <View style={styles.replyHeader}>
+                    <Text style={styles.replyUsername}>
+                      {reply.user.username}
+                    </Text>
+                    <Text style={styles.replyTime}>
+                      {formatRelativeTime(reply.createdAt)}
+                    </Text>
+                  </View>
+                  <Text style={styles.replyText}>{reply.reply}</Text>
+                </View>
+                <TouchableOpacity style={styles.likeButton}>
+                  <HeartOutline color="black" size={18} />
+                </TouchableOpacity>
+              </View>
             ))}
           </View>
         )}
       </View>
-      <TouchableOpacity style={styles.likeButton}>
-        <HeartOutline color="black" size={20} />
+      <TouchableOpacity onPress={handleLike} style={styles.likeButton}>
+        {isLiked ? (
+          <HeartFill color="#00868C" size={18} />
+        ) : (
+          <HeartOutline color="#00868C" size={18} />
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -116,13 +189,43 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   repliesContainer: {
-    marginTop: 10,
+    marginTop: 20,
+    marginLeft: 20,
+  },
+  replyContainer: {
+    flexDirection: "row",
+    marginBottom: 10,
+    alignItems: "start",
+  },
+  replyAvatar: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginRight: 10,
+  },
+  replyContent: {
+    flex: 1,
+  },
+  replyHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 3,
+  },
+  replyUsername: {
+    fontWeight: "bold",
+    marginRight: 10,
+    fontSize: 12,
+  },
+  replyTime: {
+    color: "#888",
+    fontSize: 10,
+  },
+  replyText: {
+    fontSize: 12,
   },
   inputContainer: {
     flexDirection: "row",
     padding: 10,
-    alignItems: "center",
-    paddingVertical: 20,
     borderTopWidth: 1,
     borderTopColor: "#eee",
   },
@@ -138,12 +241,11 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderRadius: 20,
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingVertical: 8,
   },
-  sendBtn: {
-    backgroundColor: "#00868C",
-    padding: 8,
-    marginStart: 10,
-    borderRadius: 50,
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 5,
   },
 });
