@@ -20,18 +20,25 @@ import axios from "axios";
 
 import { Alert } from "react-native";
 import * as SecureStore from "expo-secure-store";
+import { getMe } from "../api/me";
 
 const CommentsModal = ({ selectedPost, isModalVisible, setIsModalVisible }) => {
   const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [me, setMe] = useState();
   const [newComment, setNewComment] = useState("");
+  const [replyingTo, setReplyingTo] = useState(null);
   useEffect(() => {
+    getMe(setMe, setIsLoading);
     getUserComments(setComments, setIsLoading, selectedPost);
     console.log("====================================");
-    console.log("Commments", comments);
+    console.log("user info", me);
+
     console.log("====================================");
   }, [selectedPost, isModalVisible]);
-  const renderComment = ({ item }) => <Comment comment={item} />;
+  const renderComment = ({ item }) => (
+    <Comment comment={item} userId={me._id} onReply={handleReply} />
+  );
 
   function CloseModal() {
     setIsModalVisible(false);
@@ -57,8 +64,26 @@ const CommentsModal = ({ selectedPost, isModalVisible, setIsModalVisible }) => {
   //     "__v": 0,
   //     "hasLiked": false
   // },
-  const handleSubmit = async () => {
+
+  const handleReply = (comment) => {
+    setReplyingTo(comment);
+    // console.log("replying to", replyingTo);
+    setNewComment(`@${comment.user.username} `);
+  };
+
+  function handleSubmit() {
+    if (replyingTo) {
+      handleSubmitReply();
+    } else {
+      handleSubmitComment();
+    }
+  }
+
+  const handleSubmitComment = async () => {
     // Create form data
+
+    if (newComment.length === 0)
+      return Alert.alert("there is no comment to add please write something");
     const formData = new FormData();
     formData.append("comment", newComment);
 
@@ -77,31 +102,82 @@ const CommentsModal = ({ selectedPost, isModalVisible, setIsModalVisible }) => {
 
       console.log("Response:", response.data);
       Alert.alert("Success", "Comment submitted successfully");
-      setComments([
-        ...comments,
-        {
-          _id: "2",
-          photo: [],
-          comment: newComment,
-          user: {
-            _id: "6733cc60cd36dbdde4faf94e",
-            username: "admin",
-            photo: [
-              "https://res.cloudinary.com/deqhvrlww/image/upload/v1736243832/l2rjkrxpsjrj5uly5ao6.jpg",
-            ],
-          },
-          post: "677ab8402b7ba85eccb63a2b",
+      // setComments([
+      //   ...comments,
+      //   {
+      //     _id: "2",
+      //     photo: [],
+      //     comment: newComment,
+      //     user: {
+      //       _id: "6733cc60cd36dbdde4faf94e",
+      //       username: "admin",
+      //       photo: [me.photo[0]],
+      //     },
+      //     post: "677ab8402b7ba85eccb63a2b",
 
-          likes: 0,
-          reply: 0,
-          createdAt: "just now",
-          __v: 0,
-          hasLiked: false,
-        },
-      ]);
+      //     likes: 0,
+      //     reply: 0,
+      //     createdAt: 0,
+      //     __v: 0,
+      //     hasLiked: false,
+      //   },
+      // ]);
       setNewComment(""); // Clear the input after successful submission
     } catch (error) {
       console.error("Error:", error);
+      Alert.alert("Error", "Failed to submit comment");
+    }
+  };
+
+  const handleSubmitReply = async () => {
+    // Validate input
+    if (newComment.length === 0)
+      return Alert.alert("There is no comment to add. Please write something");
+
+    try {
+      const token = await SecureStore.getItemAsync("jwtToken");
+
+      const response = await axios.post(
+        `${baseurl}/api/k1/comments/${replyingTo._id}/replies/`,
+        { reply: newComment }, // Send raw JSON data in the request body
+        {
+          headers: {
+            "Content-Type": "application/json", // Set Content-Type to JSON
+            Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+          },
+        }
+      );
+
+      console.log("Response:", response.data);
+      Alert.alert("Success", "Comment submitted successfully");
+
+      // Optional: Update comments (uncomment and adjust as needed)
+      // setComments([
+      //   ...comments,
+      //   {
+      //     _id: "2",
+      //     photo: [],
+      //     comment: newComment,
+      //     user: {
+      //       _id: "6733cc60cd36dbdde4faf94e",
+      //       username: "admin",
+      //       photo: [
+      //         "https://res.cloudinary.com/deqhvrlww/image/upload/v1736243832/l2rjkrxpsjrj5uly5ao6.jpg",
+      //       ],
+      //     },
+      //     post: "677ab8402b7ba85eccb63a2b",
+      //     likes: 0,
+      //     reply: 0,
+      //     createdAt: "just now",
+      //     __v: 0,
+      //     hasLiked: false,
+      //   },
+      // ]);
+
+      setReplyingTo(null);
+      setNewComment(""); // Clear the input after successful submission
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
       Alert.alert("Error", "Failed to submit comment");
     }
   };
@@ -145,14 +221,20 @@ const CommentsModal = ({ selectedPost, isModalVisible, setIsModalVisible }) => {
               style={styles.inputContainer}
             >
               <Image
-                source={{ uri: "https://via.placeholder.com/32" }}
+                source={{
+                  uri:
+                    me?.photo[0] ||
+                    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+                }}
                 style={styles.inputAvatar}
               />
               <TextInput
-                placeholder="Add a comment..."
                 style={styles.input}
                 value={newComment}
                 onChangeText={setNewComment}
+                placeholder={
+                  replyingTo ? "Write a reply..." : "Add a comment..."
+                }
                 multiline
               />
               <TouchableOpacity style={styles.sendBtn} onPress={handleSubmit}>

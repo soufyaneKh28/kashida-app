@@ -197,7 +197,9 @@ const Profile = () => {
           />
           <View className="items-center mt-6">
             <Image
-              source={{ uri: "https://picsum.photos/id/22/200" }}
+              source={{
+                uri: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+              }}
               width={142}
               height={142}
               className="rounded-full"

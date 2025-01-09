@@ -1,42 +1,59 @@
 import { useState } from "react";
 import {
   ActivityIndicator,
+  Dimensions,
   Image,
+  Modal,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { HeartIcon as HeartOutline } from "react-native-heroicons/outline";
 import { HeartIcon as HeartFill } from "react-native-heroicons/solid";
+import { HeartIcon as HeartOutline } from "react-native-heroicons/outline";
 import { DateTime } from "luxon";
 import { formatRelativeTime } from "../api/timeUtils";
 import { baseurl } from "../api/user";
-import { getCommentReplies } from "../api/Comments";
+import {
+  deleteComment,
+  getCommentReplies,
+  unlikeComment,
+} from "../api/Comments";
 import { LikeComment } from "../api/Comments";
-const Comment = ({ comment, level = 0 }) => {
+import Reply from "./Reply";
+
+const { width, height } = Dimensions.get("window");
+const Comment = ({ comment, userId, onReply }) => {
   const [showReplies, setShowReplies] = useState(false);
   const [replies, setReplies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLiked, setIsLiked] = useState(comment.hasLiked);
-
+  const [likeNum, setlikeNum] = useState(comment.likes);
+  const [likeNumReplies, setLikeNumReplies] = useState(0);
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
   // const [likeNum, setlikeNum] = useState(likesNum);
   function handleLike() {
     if (!isLiked) {
       // likePost(postId);
-      LikeComment(comment._id);
+
       setIsLiked(true);
-      // setlikeNum(likeNum + 1);
+
+      LikeComment(comment._id);
+
+      setlikeNum(likeNum + 1);
       console.log("pressed true");
     } else {
       // unLikePost(postId);
+      unlikeComment(comment._id);
       setIsLiked(false);
-      // setlikeNum(likeNum - 1);
+      setlikeNum(likeNum - 1);
       console.log("pressed fslde");
     }
   }
-
-  async function test() {
+  // Showiing Replies
+  async function handleShowReplies() {
     if (showReplies) {
       setShowReplies(false);
     } else if (replies && replies.length > 0) {
@@ -54,64 +71,118 @@ const Comment = ({ comment, level = 0 }) => {
       // console.log("====================================");
     }
   }
+
+  const handleReply = async (comment) => {
+    setReplyingTo(comment);
+    console.log("replying to", comment);
+    onReply(comment);
+  };
+
+  const handleLongPress = () => {
+    setModalVisible(true);
+  };
+
+  const handleDelete = () => {
+    deleteComment(comment._id);
+
+    setModalVisible(false);
+  };
+
+  const handleReport = () => {
+    onReport(comment._id);
+    setModalVisible(false);
+  };
   return (
-    <View style={styles.commentContainer}>
-      <Image source={{ uri: comment.user.photo[0] }} style={styles.avatar} />
-      <View style={styles.commentContent}>
-        <View style={styles.commentHeader}>
-          <Text style={styles.username}>{comment.user.username}</Text>
-          <Text style={styles.time}>
-            {formatRelativeTime(comment.createdAt)}
-          </Text>
-        </View>
-        <Text style={styles.commentText}>{comment.comment}</Text>
-        <View style={styles.commentActions}>
-          <TouchableOpacity>
-            <Text style={styles.actionButton}>Reply</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={test}>
-            <Text style={styles.actionButton}>
-              {showReplies ? "Hide Replies" : `View ${comment.reply} Replies`}
+    <>
+      <Pressable onLongPress={handleLongPress} style={styles.commentContainer}>
+        <Image source={{ uri: comment.user.photo[0] }} style={styles.avatar} />
+        <View style={styles.commentContent}>
+          <View style={styles.commentHeader}>
+            <Text style={styles.username}>{comment.user.username}</Text>
+            <Text style={styles.time}>
+              {formatRelativeTime(comment.createdAt)}
             </Text>
-          </TouchableOpacity>
-        </View>
-        {isLoading && <ActivityIndicator size="small" color="#0000ff" />}
-        {/* {error && <Text style={styles.errorText}>{error}</Text>} */}
-        {showReplies && (
-          <View style={styles.repliesContainer}>
-            {replies.map((reply) => (
-              <View key={reply._id} style={styles.replyContainer}>
-                <Image
-                  source={{ uri: reply.user.photo[0] }}
-                  style={styles.replyAvatar}
-                />
-                <View style={styles.replyContent}>
-                  <View style={styles.replyHeader}>
-                    <Text style={styles.replyUsername}>
-                      {reply.user.username}
-                    </Text>
-                    <Text style={styles.replyTime}>
-                      {formatRelativeTime(reply.createdAt)}
-                    </Text>
-                  </View>
-                  <Text style={styles.replyText}>{reply.reply}</Text>
-                </View>
-                <TouchableOpacity style={styles.likeButton}>
-                  <HeartOutline color="black" size={18} />
-                </TouchableOpacity>
-              </View>
-            ))}
           </View>
-        )}
-      </View>
-      <TouchableOpacity onPress={handleLike} style={styles.likeButton}>
-        {isLiked ? (
-          <HeartFill color="#00868C" size={18} />
-        ) : (
-          <HeartOutline color="#00868C" size={18} />
-        )}
-      </TouchableOpacity>
-    </View>
+          <Text style={styles.commentText}>{comment.comment}</Text>
+          <View style={styles.commentActions}>
+            <TouchableOpacity onPress={() => handleReply(comment)}>
+              <Text style={styles.actionButton}>Reply</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleShowReplies}>
+              {(comment.reply > 0 || replies.length > 0) && (
+                <Text style={styles.actionButton}>
+                  {showReplies
+                    ? "Hide Replies"
+                    : `View ${comment.reply} Replies`}
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+          {isLoading && <ActivityIndicator size="small" color="#0000ff" />}
+          {showReplies && (
+            <View style={styles.repliesContainer}>
+              {replies.map((reply) => (
+                <Reply reply={reply} key={reply._id} userId={userId} />
+              ))}
+            </View>
+          )}
+        </View>
+        <View style={styles.likeButtonContainer}>
+          <TouchableOpacity onPress={handleLike} style={styles.likeButton}>
+            {isLiked ? (
+              <HeartFill color="#00868C" size={18} />
+            ) : (
+              <HeartOutline color="#00868C" size={18} />
+            )}
+          </TouchableOpacity>
+          <Text>{likeNum}</Text>
+        </View>
+      </Pressable>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        style={{ justifyContent: "center" }}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View
+          style={{
+            width: "100%",
+            height: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(11, 11, 11, 0.51)",
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalTitle}>Comment Options</Text>
+              {comment.user._id === userId && (
+                <TouchableOpacity
+                  style={[styles.button, styles.deleteButton]}
+                  onPress={handleDelete}
+                >
+                  <Text style={styles.textStyle}>Delete Comment</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                style={[styles.button, styles.reportButton]}
+                onPress={handleReport}
+              >
+                <Text style={styles.textStyle}>Report Comment</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.cancelButton]}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.textStyle}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 };
 
@@ -247,5 +318,53 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 12,
     marginTop: 5,
+  },
+  likeButtonContainer: {
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  modalView: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: width * 0.8,
+    maxHeight: height * 0.7,
+  },
+  modalTitle: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginVertical: 5,
+    width: "100%",
+  },
+  deleteButton: {
+    backgroundColor: "#FF0000",
+  },
+  reportButton: {
+    backgroundColor: "#FFA500",
+  },
+  cancelButton: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });

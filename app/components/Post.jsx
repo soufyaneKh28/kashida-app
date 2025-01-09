@@ -18,14 +18,14 @@ import {
   PaperAirplaneIcon,
 } from "react-native-heroicons/outline";
 import PostLike from "./PostLike";
-const windowWidth = Dimensions.get("window").width;
 const Post = ({ post, showModal }) => {
+  const windowWidth = Dimensions.get("window").width;
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const [postData, setPin] = useState(post);
 
   // console.log("====================================");
-  // console.log(post);
+  // console.log("poooooooooost", post);
   // console.log("====================================");
   const renderItem =
     ({ rounded }) =>
@@ -49,28 +49,34 @@ const Post = ({ post, showModal }) => {
         <View className=" flex-row justify-between items-center w-full">
           <View className=" flex-row items-center">
             <Image
-              source={require("../../assets/images/profile-placeholder.jpg")}
-              style={{ width: 45, height: 45 }}
+              source={{
+                uri:
+                  postData?.user.photo[0] ||
+                  "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+              }}
+              style={{ width: 45, height: 45, borderRadius: 50 }}
             />
-            <View>
-              <Text className=" font-bold">{post?.user.username}</Text>
+            <View className="ms-2">
+              <Text className=" font-bold">{postData?.user.username}</Text>
               <Text className=" text-secondary text-[12px]">@joe</Text>
             </View>
           </View>
           <Text className="text-secondary font-semibold">
-            {formatRelativeTime(post?.createdAt)}
+            {formatRelativeTime(postData?.createdAt)}
           </Text>
         </View>
 
         {/* Post Content */}
         {/* Post Title */}
-        <Text className="mt-3 font-bold text-lg leading-6">{post.title}</Text>
+        <Text className="mt-3 font-bold text-lg leading-6">
+          {postData.title}
+        </Text>
         {/* Post Description */}
         <Text
           className="mt-2 font-normal text-gray-700  text-base "
           style={{ lineHeight: 19 }}
         >
-          {post?.description}
+          {postData?.description}
         </Text>
 
         {/* Images */}

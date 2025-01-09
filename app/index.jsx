@@ -40,10 +40,18 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from "react-native-reanimated";
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
   // const isLoggedIn = !!SecureStore.getItemAsync("jwtToken");
-
+  // This is the default configuration
+  configureReanimatedLogger({
+    level: ReanimatedLogLevel.warn,
+    strict: false, // Reanimated runs in strict mode by default
+  });
   useEffect(() => {
     // Check if a token is stored in SecureStore
     const checkToken = async () => {
