@@ -32,13 +32,14 @@ export const GetSpaces = async (setCategories, setIsLoading) => {
     // Parse the JSON response
     const userData = await response.json();
     setCategories(userData?.data.data);
+    return userData;
     // console.log("Categories:", userData?.data.data);
-    console.log("Success", "User data retrieved successfully!");
-    setIsLoading(false);
+    console.log("Success", "GetSpaces retrieved successfully!");
+    // setIsLoading(false);
     // Handle the user data (e.g., update state or UI)
   } catch (error) {
-    console.error("Error fetching user data:", error);
-    alert("Error", "Failed to fetch user data. Please try again.");
+    console.error("Error fetching GetSpaces:", error);
+    alert("Error", "Failed to fetch GetSpaces. Please try again.");
   }
 };
 
@@ -70,7 +71,7 @@ export const GetSpacePost = async (setPosts, setIsLoading, title) => {
 
     // Check if the response is valid
     setPosts(response.data.data.posts.reverse());
-    console.log("GetSpacePost===========:", response.data.data.posts);
+    // console.log("GetSpacePost===========:", response.data.data.posts);
     console.log("Success", "GetSpacePost retrieved successfully!");
 
     setIsLoading(false); // Set loading to false once done

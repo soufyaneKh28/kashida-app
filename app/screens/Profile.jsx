@@ -26,21 +26,39 @@ import { Animated, useAnimatedValue } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { getMe, getMyPosts } from "../api/me";
 import { Drawer } from "react-native-drawer-layout";
+import EditProfileModal from "../components/EditProfileModal";
 
 const Profile = () => {
   const router = useRouter();
   const navigation = useNavigation();
   const [open, setOpen] = useState(false);
-
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [userData, setUserData] = useState({
+    // Initial user data
+    name: "John Doe",
+    username: "johndoe",
+    phone: "1234567890",
+    birthday: "01/01/1990",
+    bio: "Hello, I am John Doe.",
+    photo:
+      "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+  });
   const [isLikes, setIsLikes] = useState(false);
   const [isPosts, setIsPosts] = useState(true);
   const [myPosts, setMyPosts] = useState(null);
-  const [me, setMe] = useState({});
+  const [me, setMe] = useState();
   const [myId, setMyId] = useState("");
   const [isloading, setIsLoading] = useState(false);
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync("jwtToken"); // Clear the token from SecureStore
     router.replace("navigation/AuthStack");
+  };
+
+  const handleSaveProfile = (updatedData) => {
+    // Handle the save action here
+    console.log("Updated profile data:", updatedData);
+    setUserData(updatedData);
+    setIsEditModalVisible(false);
   };
 
   async function handleId() {
@@ -72,10 +90,11 @@ const Profile = () => {
     // setMyId(decoded.id);
     setMyId(decoded.id);
     getMyPosts(setMyPosts, setIsLoading, decoded.id);
-    getMe(setMe, setIsLoading);
+    const myData = await getMe(setMe, setIsLoading);
+    setMe(myData.data.data);
     console.log("====================================");
-    console.log("decoded", decoded);
-    console.log("my iddddddddd", myId);
+    console.log("meee", me);
+    // console.log("my iddddddddd", myId);
 
     console.log("====================================");
   }
@@ -178,6 +197,7 @@ const Profile = () => {
       overlayStyle={{
         zIndex: 100,
       }}
+      navigation={navigation}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
       renderDrawerContent={() => {
@@ -196,14 +216,26 @@ const Profile = () => {
             className=" absolute top-[50px] z-0 left-[-100px]"
           />
           <View className="items-center mt-6">
-            <Image
-              source={{
-                uri: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
-              }}
-              width={142}
-              height={142}
-              className="rounded-full"
-            />
+            {me?.photo[0] && me?.photo[0].includes("/res.cloudinary.com") ? (
+              <Image
+                source={{
+                  uri: me.photo[0],
+                }}
+                width={142}
+                height={142}
+                className="rounded-full"
+              />
+            ) : (
+              <Image
+                source={{
+                  uri: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+                }}
+                width={142}
+                height={142}
+                className="rounded-full"
+              />
+            )}
+
             <Text className="text-2xl font-bold mt-3 text-dark">
               {me?.name}
             </Text>
@@ -224,7 +256,10 @@ const Profile = () => {
           {/* Actions */}
           <View className="flex-row justify-center mt-4 gap-2">
             {/* edit profile */}
-            <TouchableOpacity className="bg-secondary w-[170px] h-[41px] gap-3 items-center flex-row justify-center rounded-[5px]">
+            <TouchableOpacity
+              onPress={() => setIsEditModalVisible(true)}
+              className="bg-secondary w-[170px] h-[41px] gap-3 items-center flex-row justify-center rounded-[5px]"
+            >
               <PencilIcon color="white" size={22} />
               <Text className="text-white text-lg">Edit Profile</Text>
             </TouchableOpacity>
@@ -386,6 +421,14 @@ const Profile = () => {
           <Button title="drawer" onPress={() => setOpen(true)} />
           <Button title="log out" onPress={handleLogout} />
         </ScrollView>
+        <EditProfileModal
+          visible={isEditModalVisible}
+          userData={me}
+          onClose={() => setIsEditModalVisible(false)}
+          initialData={userData}
+          navigation={navigation}
+          onSave={handleSaveProfile}
+        />
       </SafeAreaView>
     </Drawer>
   );

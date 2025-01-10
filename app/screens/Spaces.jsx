@@ -26,7 +26,7 @@ import ParallaxJoin from "../components/ParallaxJoin";
 
 const Spaces = () => {
   const [spaces, setSpaces] = useState([]);
-  const [me, setMe] = useState([]);
+  const [me, setMe] = useState();
   const [followingSpaces, setFollowingSpaces] = useState([]);
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
@@ -45,15 +45,69 @@ const Spaces = () => {
 
   const fetchData = async () => {
     try {
-      const userSpaces = await getMe(setMe, setIsLoading);
-      setFollowingSpaces(userSpaces.data.data.joinedSpaces);
+      const allSpacesResponse = await GetSpaces(setSpaces, setIsLoading);
+      const userSpacesResponse = await getMe(setMe, setIsLoading);
+      const userSpaces = userSpacesResponse?.data?.data;
+      const allSpaces = allSpacesResponse?.data.data;
+      if (!userSpaces) {
+        console.error("No user spaces data received");
+        return;
+      }
+
+      // setMe(userSpaces.data.data);
+      // console.log("====================================");
+      // await getMe(setMe, setIsLoading);
       console.log("====================================");
-      // console.log("follwwing me", me.joinedSpaces);
-      console.log("follwwing followingSpaces", followingSpaces);
-      console.log("follwwing userSpaces", userSpaces.data.data.joinedSpaces);
+      // setMe(() => userSpaces?.data.data);
+      console.log("meeeeeeee1", me);
+      console.log("====================================");
+      console.log("meee2", userSpaces);
+      console.log("spaces", allSpaces);
+      const filteredSpaces = allSpaces.filter((space) =>
+        userSpaces.joinedSpaces.some(
+          (joinedSpace) => joinedSpace.name === space.name
+        )
+      );
+      setFollowingSpaces(filteredSpaces);
+      console.log("Filtered spaces:", filteredSpaces);
+
+      // Update followingSpaces state
+      // console.log("userSpaces");
+      // console.log(userSpaces.data.data?.name);
+      // console.log("====================================");
+      // for(let i = 0 ; i< spaces.length -0 ;i++){
+      //   if (["Naskh","Thuluth"].)
+      // }
+      // userSpaces
+      //   ? spaces.forEach((space) => {
+      //       if ([...userSpaces.data.data?.name].includes(space.name)) {
+      //         return console.log(space.name);
+      //       }
+      //     })
+      //   : null;
+      // let filteredSpaces = [];
+      // userSpaces
+      //   ? spaces.filter((space) =>
+      //       userSpaces.data.data.joinedSpaces.some(
+      //         (joinedSpace) => joinedSpace.name === space.name
+      //       )
+      //     )
+      //   : null;
+      console.log("====================================");
+      // console.log("filteredSpaces");
+      // console.log(filteredSpaces);
+      // console.log("meeeeeeee");
+      // console.log(me);
+      console.log("====================================");
+      // setFollowingSpaces(filteredSpaces);
+      // console.log("====================================");
+      // // console.log("follwwing me", me.joinedSpaces);
+      // console.log("follwwing followingSpaces", followingSpaces);
+      // console.log("follwwing userSpaces", userSpaces.data.data.joinedSpaces);
 
       console.log("====================================");
-      GetSpaces(setSpaces, setIsLoading);
+
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -64,7 +118,7 @@ const Spaces = () => {
   useEffect(() => {
     fetchData();
   }, []);
-
+ 
   return (
     <SafeAreaView className=" bg-white flex-1">
       {isLoading ? (

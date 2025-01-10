@@ -21,7 +21,7 @@ import Animated, {
 const { width: windowWidth } = Dimensions.get("window");
 const ITEM_WIDTH = windowWidth * 0.65; // Width of each item
 const ITEM_HEIGHT = 300; // Height of each item
-const SPACER = 75; // Space around items
+const SPACER = 70; // Space around items
 
 const data = [
   { id: "1" },
@@ -122,14 +122,15 @@ const Parallax = ({ spaces, navigation, followingSpaces }) => {
                   }
                 >
                   <ImageBackground
-                    source={require("../../assets/images/diwaniBg.png")}
+                    source={{ uri: space.unfollowedImg[0] }}
                     style={{ width: "100%", height: "100%" }}
                   >
                     <View className=" w-full h-full justify-end items-center pb-5">
                       <Image
-                        source={require("../../assets/images/diwani.png")}
+                        source={{ uri: space.logo[0] }}
                         width={145}
                         height={62}
+                        resizeMode="contain"
                       />
                       <Text className=" text-white text-lg font-bold mt-1">
                         {space.name}
@@ -145,7 +146,6 @@ const Parallax = ({ spaces, navigation, followingSpaces }) => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     width: "100%",
@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
     height: ITEM_HEIGHT,
     backgroundColor: "#FFF",
     borderRadius: 16,
+    marginEnd: 10,
     overflow: "hidden",
     justifyContent: "center",
     alignItems: "center",

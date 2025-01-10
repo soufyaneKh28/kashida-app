@@ -27,7 +27,7 @@ export const getUserPosts = async (setUserData, setIsLoading) => {
 
     // Set the user data and stop the loading
     setUserData(response.data?.data.posts);
-    console.log("User Posts:", response.data?.data.posts);
+    // console.log("User Posts:", response.data?.data.posts);
     console.log("Success", "User data retrieved successfully!");
     setIsLoading(false);
   } catch (error) {

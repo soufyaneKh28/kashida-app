@@ -95,7 +95,14 @@ const Comment = ({ comment, userId, onReply }) => {
   return (
     <>
       <Pressable onLongPress={handleLongPress} style={styles.commentContainer}>
-        <Image source={{ uri: comment.user.photo[0] }} style={styles.avatar} />
+        <Image
+          source={{
+            uri: comment.user.photo[0]
+              ? comment.user.photo[0]
+              : "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+          }}
+          style={styles.avatar}
+        />
         <View style={styles.commentContent}>
           <View style={styles.commentHeader}>
             <Text style={styles.username}>{comment.user.username}</Text>

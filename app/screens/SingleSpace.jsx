@@ -6,6 +6,9 @@ import {
   StyleSheet,
   FlatList,
   RefreshControl,
+  Modal,
+  TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import BackArrow from "../components/BackArrow";
@@ -17,21 +20,30 @@ import { GetSpacePost } from "../api/Spaces";
 
 import CommentsModal from "../components/CommentsModal";
 import { useNavigation } from "@react-navigation/native";
-
+import { getMe } from "../api/me";
+import { deletePost } from "../api/post";
+const { width, height } = Dimensions.get("window");
 const SingleSpace = ({ route }) => {
   const [posts, setPosts] = useState([]);
+  const [me, setMe] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedPost, setSelectedPost] = useState();
+  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
   const { space, joinStatus } = route.params;
 
   useEffect(() => {
-    GetSpacePost(setPosts, setIsLoading, space.name);
-    console.log("====================================");
-    console.log("space joinStatus");
-    console.log(joinStatus);
-    console.log("====================================");
+    async function data() {
+      GetSpacePost(setPosts, setIsLoading, space.name);
+      const myData = await getMe(setMe, setIsLoading);
+      console.log("====================================");
+      console.log("meeeeeeeeeeeeeeee");
+      // console.log(myData.data.data);
+      setMe(myData.data.data);
+      console.log("====================================");
+    }
+    data();
   }, [space]);
 
   const wait = (timeout) => {
@@ -41,6 +53,7 @@ const SingleSpace = ({ route }) => {
   // pull to refresh
   const onRefresh = useCallback(() => {
     setIsLoading(true);
+    getMe(setMe, setIsLoading);
     wait(2000).then(() => setIsLoading(false));
     // getPostData();
     GetSpacePost(setPosts, setIsLoading, space.name);
@@ -50,6 +63,32 @@ const SingleSpace = ({ route }) => {
     setSelectedPost(value);
     setIsModalVisible(true);
   }
+
+  function handleDetailsRequest(value) {
+    setSelectedPost(value);
+    console.log("====================================");
+    console.log("presseds");
+    console.log("====================================");
+    setModalVisible(true);
+  }
+  const handleDelete = (selectedPost) => {
+    console.log("====================================");
+    console.log("slected post", selectedPost._id);
+    console.log("====================================");
+    deletePost(selectedPost._id);
+    setModalVisible(false);
+    setSelectedPost(null);
+  };
+
+  const handleReport = () => {
+    onReport(comment._id);
+    setModalVisible(false);
+  };
+  const handleCancel = () => {
+    setModalVisible(false);
+    setSelectedPost(null);
+  };
+
   const renderHeader = () => (
     <View>
       <LinearGradient
@@ -62,11 +101,14 @@ const SingleSpace = ({ route }) => {
         <View className=" flex-row justify-between items-center ">
           <View>
             <Image
-              source={require("../../assets/images/diwani.png")}
+              source={{ uri: space.logo[0] }}
+              resizeMode="contain"
               width={145}
-              height={62}
+              height={65}
             />
-            <Text className=" text-white">{space.name}</Text>
+            <Text className=" text-white text-center font-bold">
+              {space.name}
+            </Text>
           </View>
           <SpaceJoinBtn
             spaceName={space.name}
@@ -89,7 +131,12 @@ const SingleSpace = ({ route }) => {
         }
         data={posts}
         renderItem={(item) => (
-          <Post post={item.item} showModal={handleCommentRequest} />
+          <Post
+            post={item.item}
+            userId={me._id}
+            handleDetailsRequest={handleDetailsRequest}
+            showModal={handleCommentRequest}
+          />
         )}
         contentContainerStyle={{
           width: "100%",
@@ -105,6 +152,51 @@ const SingleSpace = ({ route }) => {
           selectedPost={selectedPost}
         />
       )}
+      <View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          style={{ justifyContent: "center" }}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View
+            style={{
+              width: "100%",
+              height: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(11, 11, 11, 0.51)",
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalTitle}>Post Options</Text>
+                {selectedPost?.user?._id === me?._id && (
+                  <TouchableOpacity
+                    style={[styles.button, styles.deleteButton]}
+                    onPress={() => handleDelete(selectedPost)}
+                  >
+                    <Text style={styles.textStyle}>Delete Post</Text>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity
+                  style={[styles.button, styles.reportButton]}
+                  onPress={handleReport}
+                >
+                  <Text style={styles.textStyle}>Report Post</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.cancelButton]}
+                  onPress={handleCancel}
+                >
+                  <Text style={styles.textStyle}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </View>
     </SafeAreaView>
   );
 };
@@ -213,5 +305,49 @@ const styles = StyleSheet.create({
     padding: 8,
     marginStart: 10,
     borderRadius: 50,
+  },
+  modalView: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: width * 0.8,
+    maxHeight: height * 0.7,
+  },
+  modalTitle: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginVertical: 5,
+    width: "100%",
+  },
+  deleteButton: {
+    backgroundColor: "#FF0000",
+  },
+  reportButton: {
+    backgroundColor: "#FFA500",
+  },
+  cancelButton: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });

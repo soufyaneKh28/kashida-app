@@ -8,6 +8,10 @@ import {
   TextInput,
   ScrollView,
   Dimensions,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 // import Animated from "react-native-reanimated";
@@ -26,11 +30,14 @@ import {
 } from "react-native-heroicons/outline";
 import { useNavigation } from "@react-navigation/native";
 import { EnvelopeIcon } from "react-native-heroicons/solid";
-import { getUserPosts } from "../api/user";
+import { baseurl, getUserPosts } from "../api/user";
 import Pin from "../components/Pin";
 import { StyleSheet } from "react-native";
 import PostLike from "../components/PostLike";
-
+import * as SecureStore from "expo-secure-store";
+// import { KeyboardAvoidingView } from "react-native-web";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import axios from "axios";
 const windowWidth = Dimensions.get("window").width;
 
 const defaultDataWith6Colors = [
@@ -46,8 +53,9 @@ const PinScreen = ({ route }) => {
   const { title, uri, pin } = route.params;
   const navigation = useNavigation();
   const [currentIndex, setCurrentIndex] = useState(0);
-
+  const [newComment, setNewComment] = useState("");
   const [comment, setComment] = useState();
+
   const [userData, setUserData] = useState();
   const [loading, setIsLoading] = useState();
   console.log("====================================");
@@ -56,6 +64,7 @@ const PinScreen = ({ route }) => {
 
   useEffect(() => {
     getUserPosts(setUserData, setIsLoading);
+
   }, []);
   console.log("====================================");
   console.log("photos", pin.photos);
@@ -75,6 +84,59 @@ const PinScreen = ({ route }) => {
           className=" rounded-b-[20px]  shadow-2xl object-fill"
         />
       );
+
+
+
+      const handleSubmitComment = async () => {
+        // Create form data
+    console.log("pressed")
+        if (newComment.length === 0)
+          return Alert.alert("there is no comment to add please write something");
+        const formData = new FormData();
+        formData.append("comment", newComment);
+    
+        try {
+          const token = await SecureStore.getItemAsync("jwtToken");
+          const response = await axios.post(
+            `${baseurl}/api/k1/posts/${pin._id}/comments/`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+              },
+            }
+          );
+    
+          console.log("Response:", response.data);
+          Alert.alert("Success", "Comment submitted successfully");
+          // setComments([
+          //   ...comments,
+          //   {
+          //     _id: "2",
+          //     photo: [],
+          //     comment: newComment,
+          //     user: {
+          //       _id: "6733cc60cd36dbdde4faf94e",
+          //       username: "admin",
+          //       photo: [me.photo[0]],
+          //     },
+          //     post: "677ab8402b7ba85eccb63a2b",
+    
+          //     likes: 0,
+          //     reply: 0,
+          //     createdAt: 0,
+          //     __v: 0,
+          //     hasLiked: false,
+          //   },
+          // ]);
+          setNewComment(""); // Clear the input after successful submission
+        } catch (error) {
+          console.error("Error:", error);
+          Alert.alert("Error", "Failed to submit comment");
+        }
+      };
+    
   return (
     <SafeAreaView className=" bg-white flex-1">
       <ScrollView>
@@ -156,7 +218,7 @@ const PinScreen = ({ route }) => {
           >
             <View className="flex-row items-center">
               <Image
-                source={{ uri: "https://picsum.photos/id/22/200" }}
+                source={{  uri:pin?.user.photo[0] ? pin?.user.photo[0]: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" }}
                 width={35}
                 height={35}
                 className="rounded-full"
@@ -175,24 +237,27 @@ const PinScreen = ({ route }) => {
           </View>
 
           {/* Adding Comment */}
-          <View className="mt-5 relative">
-            <ArrowUpCircleIcon
-              color="#00868C"
-              size={30}
-              style={{ position: "absolute", zIndex: 3, top: 10, right: 12 }}
-            />
-            <TextInput
-              placeholder="Add a Comment..."
-              className="  w-full border border-[#00868C] rounded-[26px]  p-3 ps-4"
-              value={comment}
-              autoCapitalize="none"
-              onChangeText={(text) => setComment(text)}
-              keyboardType="email-address"
-              placeholderTextColor="#00868C"
-            />
-          </View>
+  
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+            style={styles.inputContainer}
+          >
 
-          <View></View>
+            <TextInput
+              style={styles.input}
+              value={newComment}
+              onChangeText={setNewComment}
+              placeholder={"Add a comment..."}
+              multiline
+              />
+            <TouchableOpacity style={styles.sendBtn} onPress={handleSubmitComment} >
+              <FontAwesome name="send" size={20} color="#F3FAFF" />
+            </TouchableOpacity>
+          </KeyboardAvoidingView>
+            
+
+    
 
           <View className="w-full mt-6 mb-3 bg-[#ECEEF2] h-[2px]" />
 
@@ -259,5 +324,92 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
   },
+  inputContainer: {
+    flexDirection: "row",
+    
+    alignItems: "center",
+    marginTop:10
+    // borderTopWidth: 1,
+    // borderTopColor: "#eee",
+  },
+  input: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 20,
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+      },
+      sendBtn: {
+        backgroundColor: "#00868C",
+        padding: 8,
+        marginStart: 10,
+        borderRadius: 50,
+      },
 });
 export default PinScreen;
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#fff",
+//   },
+//   gradient: {
+//     height: 240,
+//     padding: 10,
+//     paddingBottom: 20,
+//     borderBottomRightRadius: 20,
+//     borderBottomLeftRadius: 20,
+//     justifyContent: "flex-end",
+//   },
+//   contentContainer: {
+//     height: "90%",
+//     width: "100%",
+//     position: "absolute",
+//     bottom: 0,
+//     borderTopLeftRadius: 20,
+//     borderTopRightRadius: 20,
+//     overflow: "hidden",
+//     backgroundColor: "#F3FAFF",
+//   },
+//   title: {
+//     fontSize: 18,
+//     fontWeight: "bold",
+//     textAlign: "center",
+//     marginVertical: 15,
+//   },
+//   commentsList: {
+//     padding: 10,
+//   },
+
+ 
+//   inputAvatar: {
+//     width: 32,
+//     height: 32,
+//     borderRadius: 16,
+//     marginRight: 10,
+//   },
+//   input: {
+//     flex: 1,
+//     borderWidth: 1,
+//     borderColor: "#ddd",
+//     borderRadius: 20,
+//     paddingHorizontal: 15,
+//     paddingVertical: 10,
+//   },
+//   sendBtn: {
+//     backgroundColor: "#00868C",
+//     padding: 8,
+//     marginStart: 10,
+//     borderRadius: 50,
+//   },
+//   noCommentsContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   noCommentText: {
+//     textAlign: "center",
+//     fontWeight: "800",
+//   },
+// });

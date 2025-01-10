@@ -121,10 +121,10 @@ export const getMe = async (setMe, setIsLoading) => {
     return me;
     console.log("User MEeee:", me?.data.data);
     console.log("Success", "User data retrieved successfully!");
-    setIsLoading(false);
+    // setIsLoading(false);
     // Handle the user data (e.g., update state or UI)
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    console.error("Error fetching getMe:", error);
     alert("Error", "Failed to fetch user data. Please try again.");
   }
 };
@@ -163,7 +163,7 @@ export const getMyPosts = async (setUserData, setIsLoading, id) => {
     // Parse the JSON response
     const userData = await response.json();
     setUserData(userData?.data.posts);
-    console.log("User Data:", userData?.data.posts);
+    // console.log("User Data:", userData?.data.posts);
     console.log("Success", "User data retrieved successfully!");
     setIsLoading(false);
     // Handle the user data (e.g., update state or UI)

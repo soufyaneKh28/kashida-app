@@ -20,82 +20,80 @@ const Tab = createBottomTabNavigator();
 const BottomTabs = () => {
   const [ModalVisible, setModalVisible] = useState(true);
   return (
-    <>
-      <Tab.Navigator
-        screenOptions={{
-          tabBarShowLabel: false, // Hides the tab labels
-          headerShown: false,
-          tabBarStyle: {
-            // position: "absolute",
-            // marginBottom: 15,
-            // marginHorizontal: 20,
-            display: "flex",
-            justifyContent: "center",
-            // borderRadius: 16,
-            height: 70,
-            // backgroundColor: "#0E1922",
-          },
+    <Tab.Navigator
+      screenOptions={{
+        tabBarShowLabel: false, // Hides the tab labels
+        headerShown: false,
+        tabBarStyle: {
+          // position: "absolute",
+          // marginBottom: 15,
+          // marginHorizontal: 20,
+          display: "flex",
+          justifyContent: "center",
+          // borderRadius: 16,
+          height: 70,
+          // backgroundColor: "#0E1922",
+        },
 
-          tabBarActiveTintColor: "#00C8D1", // Text/icon color for active tab
-          tabBarInactiveTintColor: "black", // Text/icon color for inactive tabs
+        tabBarActiveTintColor: "#00C8D1", // Text/icon color for active tab
+        tabBarInactiveTintColor: "black", // Text/icon color for inactive tabs
+      }}
+    >
+      <Tab.Screen
+        name="HomeStack"
+        component={HomeStack}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <HomeIcon color={color} size={size} />
+          ),
         }}
-      >
-        <Tab.Screen
-          name="HomeStack"
-          component={HomeStack}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <HomeIcon color={color} size={size} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Roadmaps"
-          component={Roadmaps}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="map-outline" color={color} size={size} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Posting"
-          component={Posting}
-          listeners={({ navigation }) => ({
-            tabPress: (e) => {
-              // Prevent default behavior
-              e.preventDefault();
-              // Navigate to CreatePost screen
-              navigation.navigate("CreatePost");
-            },
-          })}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="add-circle-outline" size={size} color={color} />
-            ),
-          }}
-        />
+      />
+      <Tab.Screen
+        name="Roadmaps"
+        component={Roadmaps}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="map-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Posting"
+        component={Posting}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            // Prevent default behavior
+            e.preventDefault();
+            // Navigate to CreatePost screen
+            navigation.navigate("CreatePost");
+          },
+        })}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="add-circle-outline" size={size} color={color} />
+          ),
+        }}
+      />
 
-        <Tab.Screen
-          name="SpacesStack"
-          component={SpacesStack}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="grid-outline" size={size} color={color} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="ProfileStack"
-          component={ProfileStack}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <UserIcon color={color} size={size} />
-            ),
-          }}
-        />
-      </Tab.Navigator>
-    </>
+      <Tab.Screen
+        name="SpacesStack"
+        component={SpacesStack}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="grid-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="ProfileStack"
+        component={ProfileStack}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <UserIcon color={color} size={size} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 
