@@ -144,6 +144,21 @@ const SingleSpace = ({ route }) => {
           backgroundColor: "white",
         }}
       />
+      {!isLoading && posts.length === 0 && (
+        <View
+          style={{
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ fontWeight: "600" }}>
+            There is no Posts in this Space
+          </Text>
+          <Image
+            source={require("../../assets/images/Empty.png")}
+            style={{ width: "80%", height: 300 }}
+          />
+        </View>
+      )}
       {/* Comments Modal */}
       {isModalVisible && (
         <CommentsModal

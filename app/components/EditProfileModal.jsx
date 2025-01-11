@@ -2,43 +2,122 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  Modal,
   TextInput,
   TouchableOpacity,
   Image,
   ScrollView,
-  SafeAreaView,
   StyleSheet,
+  Platform,
+  Alert,
+  Pressable,
 } from "react-native";
-import DatePicker from "react-native-date-picker";
+import Modal from "react-native-modal";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import * as ImagePicker from "expo-image-picker";
+import { baseurl, updateUserProfile } from "../api/user";
+import * as SecureStore from "expo-secure-store";
+import { DateTime } from "luxon";
+import { PencilIcon } from "react-native-heroicons/outline";
 
 export default function EditProfileModal({
-  visible,
+  isVisible,
   onClose,
   initialData,
   onSave,
+  navigation,
 }) {
   const [formData, setFormData] = useState({
-    name: initialData?.name || "",
-    username: initialData?.username || "",
-    phone: initialData?.phone || "",
+    ...initialData,
     birthday: initialData?.birthday
-      ? new Date(2003, 1, 1)
-      : new Date(1993, 1, 1),
-    bio: initialData?.bio || "",
+      ? new Date(initialData.birthday)
+      : new Date(1990, 0, 1),
   });
+  const [selectedImage, setSelectedImage] = useState();
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSave = () => {
-    onSave({
-      ...formData,
-      birthday: formData.birthday.toISOString().split("T")[0], // Format as YYYY-MM-DD
-    });
-    onClose();
+  const validateInputs = () => {
+    if (!formData.name.trim()) {
+      Alert.alert("Validation Error", "Name cannot be empty");
+      return false;
+    }
+    if (!formData.username.trim()) {
+      Alert.alert("Validation Error", "Username cannot be empty");
+      return false;
+    }
+    return true;
   };
 
-  const handleDateChange = (date) => {
-    setFormData((prev) => ({ ...prev, birthday: date }));
+  const handleSave = async () => {
+    if (!validateInputs()) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const formData2 = new FormData();
+
+      if (selectedImage) {
+        const filename = selectedImage.split("/").pop();
+        const match = /\.(\w+)$/.exec(filename || "");
+        const type = match ? `image/${match[1]}` : "image";
+
+        formData2.append("photo", {
+          uri: selectedImage,
+          name: filename,
+          type,
+        });
+      }
+      let formatted = DateTime.fromISO(formData.birthday).toFormat(
+        "yyyy-MM-dd"
+      );
+      formData2.append("name", formData.name);
+      formData2.append("username", formData.username);
+      formData2.append("phoneNumber", formData.phoneNumber);
+      formData2.append(
+        "birthday",
+        formData.birthday?.toISOString().split("T")[0]
+      );
+      console.log("====================================");
+      console.log("formData.birthday");
+      console.log(formData.birthday);
+      console.log("formData.birthday-splited");
+      console.log(formData.birthday?.toISOString().split("T")[0]);
+      console.log("formattedDate");
+      console.log("====================================");
+      formData2.append("bio", formData.bio);
+
+      console.log(formData2);
+      const token = await SecureStore.getItemAsync("jwtToken");
+      const response = await fetch(`${baseurl}/api/k1/users/updateMe`, {
+        method: "PATCH",
+        body: formData2,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setIsLoading(false);
+      onClose();
+      Alert.alert("Success", "Data uploaded successfully!");
+      console.log(data);
+    } catch (error) {
+      Alert.alert("Upload Failed", error.message);
+      console.error(error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || formData.birthday;
+    setShowDatePicker(Platform.OS === "ios");
+    setFormData((prev) => ({ ...prev, birthday: currentDate }));
   };
 
   const formatDate = (date) => {
@@ -49,15 +128,53 @@ export default function EditProfileModal({
     });
   };
 
+  const handleImagePick = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      Alert.alert(
+        "Permission Required",
+        "You need to allow access to your photos to change your profile picture."
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    setSelectedImage(result.assets[0].uri);
+    console.log("====================================");
+    console.log("selectedImage?.assets.uri");
+    console.log(result.assets[0].uri);
+    if (!result.canceled) {
+      setFormData((prev) => ({ ...prev, photo: [result.assets[0].uri] }));
+    }
+  };
+
+  console.log("====================================");
+  console.log(formData);
+  console.log("====================================");
+
   return (
     <Modal
-      animationType="slide"
-      transparent={false}
-      visible={visible}
-      onRequestClose={onClose}
+      isVisible={isVisible}
+      onBackdropPress={onClose}
+      onBackButtonPress={onClose}
+      style={styles.modal}
     >
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <ScrollView>
+          <TouchableOpacity
+            onPress={onClose}
+            style={{ position: "absolute", top: 10, left: 10 }}
+          >
+            <Text style={{ fontSize: 16 }}>Cancel</Text>
+          </TouchableOpacity>
           <View style={styles.header}>
             <View style={styles.headerLine} />
             <Text style={styles.headerText}>Edit Profile</Text>
@@ -68,16 +185,16 @@ export default function EditProfileModal({
               <Image
                 source={{
                   uri:
-                    initialData?.photo ||
+                    formData?.photo?.[0] ||
                     "/placeholder.svg?height=128&width=128",
                 }}
                 style={styles.profileImage}
               />
-              <TouchableOpacity style={styles.editImageButton}>
-                <Image
-                  source={{ uri: "/placeholder.svg?height=20&width=20" }}
-                  style={styles.editIcon}
-                />
+              <TouchableOpacity
+                style={styles.editImageButton}
+                onPress={handleImagePick}
+              >
+                <PencilIcon color="white" />
               </TouchableOpacity>
             </View>
           </View>
@@ -100,7 +217,7 @@ export default function EditProfileModal({
               <Text style={styles.label}>Username</Text>
               <TextInput
                 style={styles.input}
-                value={formData.username}
+                value={formData?.username}
                 onChangeText={(text) =>
                   setFormData((prev) => ({ ...prev, username: text }))
                 }
@@ -113,9 +230,9 @@ export default function EditProfileModal({
               <Text style={styles.label}>Phone number</Text>
               <TextInput
                 style={styles.input}
-                value={formData.phone}
+                value={formData?.phoneNumber}
                 onChangeText={(text) =>
-                  setFormData((prev) => ({ ...prev, phone: text }))
+                  setFormData((prev) => ({ ...prev, phoneNumber: text }))
                 }
                 placeholder="Enter phone number"
                 placeholderTextColor="#999999"
@@ -151,39 +268,42 @@ export default function EditProfileModal({
               />
             </View>
 
-            <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-              <Text style={styles.saveButtonText}>Save Changes</Text>
+            <TouchableOpacity
+              onPress={handleSave}
+              style={[
+                styles.saveButton,
+                isLoading && styles.saveButtonDisabled,
+              ]}
+              disabled={isLoading}
+            >
+              <Text style={styles.saveButtonText}>
+                {isLoading ? "Saving..." : "Save Changes"}
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
 
-        <Modal visible={showDatePicker} transparent={true} animationType="fade">
-          <View style={styles.datePickerModal}>
-            <View style={styles.datePickerContainer}>
-              <DatePicker
-                date={formData.birthday}
-                onDateChange={handleDateChange}
-                mode="date"
-                maximumDate={new Date()}
-                minimumDate={new Date(1900, 0, 1)}
-                androidVariant="iosClone"
-                textColor="#0e1922"
-              />
-              <TouchableOpacity
-                style={styles.closeDatePickerButton}
-                onPress={() => setShowDatePicker(false)}
-              >
-                <Text style={styles.closeDatePickerButtonText}>Confirm</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      </SafeAreaView>
+        {showDatePicker && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={formData.birthday}
+            mode="date"
+            is24Hour={true}
+            display="default"
+            onChange={handleDateChange}
+            maximumDate={new Date()}
+            minimumDate={new Date(1900, 0, 1)}
+          />
+        )}
+      </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  modal: {
+    margin: 0,
+  },
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
@@ -266,34 +386,14 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 24,
   },
+  saveButtonDisabled: {
+    backgroundColor: "#cccccc",
+  },
   saveButtonText: {
     color: "#ffffff",
     textAlign: "center",
     fontSize: 18,
     fontWeight: "600",
   },
-  datePickerModal: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  datePickerContainer: {
-    backgroundColor: "#ffffff",
-    borderRadius: 8,
-    padding: 16,
-    width: "90%",
-  },
-  closeDatePickerButton: {
-    backgroundColor: "#00868c",
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginTop: 16,
-  },
-  closeDatePickerButtonText: {
-    color: "#ffffff",
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "600",
-  },
 });
+

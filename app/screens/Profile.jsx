@@ -159,13 +159,27 @@ const Profile = () => {
           </TouchableOpacity>
           <TouchableOpacity
             className="px-6 py-2 my-1 w-full"
-            onPress={() => {}}
+            onPress={() => {
+              navigation.push("SettingsStack", {
+                screen: "Terms",
+                params: {
+                  /* Optional params */
+                },
+              });
+            }}
           >
             <Text className=" text-lg font-semibold">Terms of Use</Text>
           </TouchableOpacity>
           <TouchableOpacity
             className="px-6 py-2 my-1 w-full"
-            onPress={() => {}}
+            onPress={() => {
+              navigation.push("SettingsStack", {
+                screen: "Help",
+                params: {
+                  /* Optional params */
+                },
+              });
+            }}
           >
             <Text className=" text-lg font-semibold ">Help</Text>
           </TouchableOpacity>
@@ -421,14 +435,14 @@ const Profile = () => {
           <Button title="drawer" onPress={() => setOpen(true)} />
           <Button title="log out" onPress={handleLogout} />
         </ScrollView>
-        <EditProfileModal
-          visible={isEditModalVisible}
-          userData={me}
-          onClose={() => setIsEditModalVisible(false)}
-          initialData={userData}
-          navigation={navigation}
-          onSave={handleSaveProfile}
-        />
+        {isEditModalVisible && (
+          <EditProfileModal
+            isVisible={isEditModalVisible}
+            onClose={() => setIsEditModalVisible(false)}
+            initialData={me}
+            onSave={handleSaveProfile}
+          />
+        )}
       </SafeAreaView>
     </Drawer>
   );

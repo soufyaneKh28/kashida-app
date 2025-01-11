@@ -25,7 +25,7 @@ import { ArrowLeftIcon } from "react-native-heroicons/outline";
 import FollowBtn from "../components/FollowBtn";
 import { getMyFollowing } from "../api/me";
 const ProfileOther = ({ route, navigation }) => {
-  const { id } = route.params;
+  const { id, followState } = route.params;
   const router = useRouter();
   console.log("====================================");
   console.log("user id", id);
@@ -176,7 +176,7 @@ const ProfileOther = ({ route, navigation }) => {
           {}
           <FollowBtn
             userId={id}
-            followState={handleFolllowState}
+            followState={followState}
             navigation={navigation}
           />
 

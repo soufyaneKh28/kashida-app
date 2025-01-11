@@ -10,6 +10,7 @@ const FollowComponent = ({ followState, navigation, user }) => {
           navigation.push("ProfileOther", {
             user: user,
             id: user.following._id || user.follower._id,
+            followState: followState,
           })
         }
       >

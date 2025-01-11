@@ -71,3 +71,52 @@ export const getUserProfile = async ({ setUserProfile, setIsLoading, id }) => {
 };
 
 // 
+
+
+
+export const updateUserProfile = async (userId, updatedData) => {
+  try {
+    const token = await SecureStore.getItemAsync("jwtToken");
+    if (!token) {
+      Alert.alert("Error", "No token found. Please log in again.");
+      setIsLoading(false); // Stop loading
+      return;
+    }
+    const formData = new FormData();
+
+    // Append all updated fields to formData
+    Object.keys(updatedData).forEach((key) => {
+      if (key === "photo" && updatedData[key][0]) {
+        // Assuming photo is an array with a single item that is the URI
+        const uri = updatedData[key][0];
+        const filename = uri.split("/").pop();
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : "image";
+        formData.append("photo", { uri, name: filename, type });
+      } else if (key === "birthday") {
+        formData.append(key, updatedData[key].toISOString());
+      } else {
+        formData.append(key, updatedData[key]);
+      }
+    });
+
+    const response = await fetch(`${baseurl}/users/updateMe`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`, // Assume we have a function to get the auth token
+        "Content-Type": "multipart/form-data",
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update profile");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    throw error;
+  }
+};
