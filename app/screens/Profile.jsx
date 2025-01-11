@@ -27,7 +27,8 @@ import { useNavigation } from "@react-navigation/native";
 import { getMe, getMyPosts } from "../api/me";
 import { Drawer } from "react-native-drawer-layout";
 import EditProfileModal from "../components/EditProfileModal";
-
+import { useContext } from "react";
+import { AuthContext } from "../AuthContext";
 const Profile = () => {
   const router = useRouter();
   const navigation = useNavigation();
@@ -35,6 +36,7 @@ const Profile = () => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [userData, setUserData] = useState({
     // Initial user data
+
     name: "John Doe",
     username: "johndoe",
     phone: "1234567890",
@@ -49,9 +51,11 @@ const Profile = () => {
   const [me, setMe] = useState();
   const [myId, setMyId] = useState("");
   const [isloading, setIsLoading] = useState(false);
+
+  const { setIsLoggedIn } = useContext(AuthContext);
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync("jwtToken"); // Clear the token from SecureStore
-    router.replace("navigation/AuthStack");
+    setIsLoggedIn(false);
   };
 
   const handleSaveProfile = (updatedData) => {
@@ -61,17 +65,17 @@ const Profile = () => {
     setIsEditModalVisible(false);
   };
 
-  async function handleId() {
-    let token = await SecureStore.getItemAsync("jwtToken");
+  // async function handleId() {
+  //   let token = await SecureStore.getItemAsync("jwtToken");
 
-    const decoded = jwtDecode(token);
-    // setMyId(decoded.id);
-    setMyId(decoded?.id);
-    console.log("====================================");
+  //   const decoded = jwtDecode(token);
+  //   // setMyId(decoded.id);
+  //   setMyId(decoded?.id);
+  //   console.log("====================================");
 
-    console.log("token decoded", decoded.id);
-    console.log("====================================");
-  }
+  //   console.log("token decoded", decoded.id);
+  //   console.log("====================================");
+  // }
   function handleIsLike() {
     setIsPosts(false);
 
@@ -87,15 +91,23 @@ const Profile = () => {
     let token = await SecureStore.getItemAsync("jwtToken");
 
     const decoded = jwtDecode(token);
-    // setMyId(decoded.id);
     setMyId(decoded.id);
-    getMyPosts(setMyPosts, setIsLoading, decoded.id);
+    console.log("my iddddddddd", myId);
+    // setMyId(decoded.id);
     const myData = await getMe(setMe, setIsLoading);
-    setMe(myData.data.data);
+    const userPosts = await getMyPosts(
+      setMyPosts,
+      setIsLoading,
+      myData.data._id
+    );
     console.log("====================================");
-    console.log("meee", me);
-    // console.log("my iddddddddd", myId);
-
+    console.log("userPoooosts", userPosts);
+    console.log("====================================");
+    setMe(myData.data);
+    setMyPosts(userPosts);
+    console.log("====================================");
+    console.log("meee", myData.data);
+    setIsLoading(false);
     console.log("====================================");
   }
 
@@ -105,12 +117,13 @@ const Profile = () => {
 
   const onRefresh = useCallback(() => {
     setIsLoading(true);
-    wait(2000).then(() => setIsLoading(false));
     GettingAllData();
+    wait(2000).then(() => setIsLoading(false));
   }, []);
 
   useEffect(() => {
     // Access the ID
+    setIsLoading(true);
     GettingAllData();
   }, []);
 

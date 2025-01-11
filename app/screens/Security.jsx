@@ -11,7 +11,10 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import BackArrow from "../components/BackArrow";
-
+import axios from "axios";
+import { baseurl } from "../api/user";
+import * as SecureStore from "expo-secure-store";
+import { Alert } from "react-native";
 export default function Security({ navigation }) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -26,10 +29,84 @@ export default function Security({ navigation }) {
     if (newPassword !== confirmPassword) {
       alert("Passwords do not match");
       return;
+    } else {
+      console.log("====================================");
+      console.log("pressed");
+      console.log("====================================");
+      updatePassword();
     }
     // Handle password update
   };
 
+  const updatePassword = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("jwtToken");
+      if (!token) {
+        Alert.alert("Error", "No token found. Please log in again.");
+        return;
+      }
+      const response = await axios.patch(
+        `${baseurl}/api/k1/users/updateMyPassword`,
+        {
+          passwordCurrent: currentPassword,
+          password: newPassword,
+          passwordConfirm: confirmPassword,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Replace with your token
+          },
+        }
+      );
+
+      console.log("Response:", response);
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.log("Error updating password:", error.response.data.message);
+      Alert.alert(`${error.response.data.message}`);
+    }
+  };
+  // const updatePassword = async () => {
+  //   try {
+  //     const token = await SecureStore.getItemAsync("jwtToken");
+  //     if (!token) {
+  //       Alert.alert("Error", "No token found. Please log in again.");
+  //       return;
+  //     }
+
+  //     const response = await fetch(
+  //       `http://10.0.2.2:7000/api/k1/users/updateMyPassword`,
+  //       {
+  //         method: "PATCH",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+  //         },
+  //         body: JSON.stringify({
+  //           passwordCurrent: currentPassword,
+  //           password: newPassword,
+  //           passwordConfirm: confirmPassword,
+  //         }),
+  //       }
+  //     );
+
+  //     const data = await response.json();
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+  //     console.log("Password updated successfully:", data);
+  //   } catch (error) {
+  //     console.error("Error updating password:", error);
+  //     console.log("Error updating password:", response);
+  //   }
+  // };
+
+  console.log("===================================");
+  console.log(currentPassword);
+  console.log(newPassword);
+  console.log(confirmPassword);
+  console.log("====================================");
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>

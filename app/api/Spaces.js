@@ -44,41 +44,84 @@ export const GetSpaces = async (setCategories, setIsLoading) => {
 };
 
 export const GetSpacePost = async (setPosts, setIsLoading, title) => {
+  // try {
+  //   setIsLoading(true);
+
+  //   // Retrieve the JWT token from SecureStore
+  //   const token = await SecureStore.getItemAsync("jwtToken");
+  //   const space = await title;
+
+  //   if (!token) {
+  //     Alert.alert("Error", "No token found. Please log in again.");
+  //     setIsLoading(false); // Set loading to false before returning
+  //     return;
+  //   }
+
+  //   // Make the GET request using axios
+  //   const response = await axios.get(`${baseurl}/api/k1/posts`, {
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+  //       "Cache-Control": "no-cache", // Disable caching
+  //     },
+  //     params: {
+  //       categories: title, // Send space as query parameter
+  //     },
+  //   });
+
+  //   // Check if the response is valid
+  //   console.log("GetSpacePost===========:", response.data.data.posts);
+  //   setPosts(response.data.posts?.reverse());
+  //   console.log("Success", "GetSpacePost retrieved successfully!");
+  //   setIsLoading(false); // Set loading to false once done
+  //   return response;
+  // } catch (error) {
+  //   console.error("Error fetching GetSpacePost from:", error);
+  //   setIsLoading(false); // Set loading to false in case of error
+  //   Alert.alert("Error", "Failed to fetch GetSpacePost  Please try again.");
+  // }
   try {
-    setIsLoading(true);
-
     // Retrieve the JWT token from SecureStore
+    setIsLoading(true);
     const token = await SecureStore.getItemAsync("jwtToken");
-    const space = await title;
-
     if (!token) {
       Alert.alert("Error", "No token found. Please log in again.");
-      setIsLoading(false); // Set loading to false before returning
       return;
     }
 
-    // Make the GET request using axios
-    const response = await axios.get(`${baseurl}/api/k1/posts`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-        "Cache-Control": "no-cache", // Disable caching
-      },
-      params: {
-        categories: space, // Send space as query parameter
-      },
-    });
+    // Make the GET request
+    const response = await fetch(
+      `${baseurl}/api/k1/posts?categories=${title}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+        },
+      }
+    );
 
-    // Check if the response is valid
-    setPosts(response.data.data.posts.reverse());
-    // console.log("GetSpacePost===========:", response.data.data.posts);
+    // Check if the response is OK
+    if (!response.ok) {
+      // setIsLoading(true);
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.message || "Failed to fetch user data.");
+    }
+
+    // Parse the JSON response
+    const userData = await response.json();
+    console.log("GetSpacePost===========:", userData.data.posts);
+    setPosts(userData.data.posts.reverse());
     console.log("Success", "GetSpacePost retrieved successfully!");
-
     setIsLoading(false); // Set loading to false once done
+    return response;
+    // console.log("Categories:", userData?.data.data);
+    console.log("Success", "GetSpaces retrieved successfully!");
+    // setIsLoading(false);
+    // Handle the user data (e.g., update state or UI)
   } catch (error) {
-    console.error("Error fetching GetSpacePost from:", error);
-    setIsLoading(false); // Set loading to false in case of error
-    Alert.alert("Error", "Failed to fetch user data. Please try again.");
+    console.error("Error fetching GetSpaces:", error);
+    alert("Error", "Failed to fetch GetSpaces. Please try again.");
   }
 };
 

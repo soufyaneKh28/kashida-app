@@ -28,10 +28,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import OutlineButton from "../components/OutlineButton";
 import { ScrollView } from "react-native";
 import * as SecureStore from "expo-secure-store";
-// import {
-//   createUserWithEmailAndPassword,
-//   signInWithEmailAndPassword,
-// } from "firebase/auth";
+import { useContext } from "react";
+import { AuthContext } from "../AuthContext";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -40,7 +38,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
+  const { setIsLoggedIn } = useContext(AuthContext);
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
@@ -115,7 +113,9 @@ const Login = () => {
         await SecureStore.setItemAsync("jwtToken", responseBody.token);
         alert("Login successful!");
         // Optionally navigate to home or another screen
-        router.replace("navigation/BottomTabs");
+        // router.replace("navigation/BottomTabs");
+        setIsLoggedIn(true);
+        // navigation.replace("bottomTabs");
         const token = await SecureStore.getItemAsync("jwtToken");
         console.log("token from secure Store", token);
       } else {

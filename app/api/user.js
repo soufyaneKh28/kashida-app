@@ -59,8 +59,8 @@ export const getUserProfile = async ({ setUserProfile, setIsLoading, id }) => {
     });
 
     // Set the user profile data and stop the loading
-    setUserProfile(response.data?.data.data);
-    console.log("User Profile:", response.data?.data.data);
+    setUserProfile(response.data?.data);
+    console.log("User Profile:", response.data?.data);
     console.log("Success", "User data retrieved successfully!");
     setIsLoading(false);
   } catch (error) {

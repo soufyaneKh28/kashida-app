@@ -11,7 +11,10 @@ import BackArrow from "../components/BackArrow";
 
 const Policy = ({ navigation }) => {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      contentContainerStyle={{ paddingBottom: 40 }}
+      style={styles.container}
+    >
       <View style={styles.header}>
         <BackArrow navigation={navigation} />
         <Text style={styles.headerTitle}>Terms of Use</Text>

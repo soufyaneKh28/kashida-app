@@ -37,7 +37,10 @@ const Help = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      contentContainerStyle={{ paddingBottom: 80 }}
+      style={styles.container}
+    >
       <View style={styles.header}>
         <BackArrow navigation={navigation} />
         <Text style={styles.headerTitle}>Help & Support</Text>

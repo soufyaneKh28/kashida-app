@@ -39,8 +39,8 @@ const SingleSpace = ({ route }) => {
       const myData = await getMe(setMe, setIsLoading);
       console.log("====================================");
       console.log("meeeeeeeeeeeeeeee");
-      // console.log(myData.data.data);
-      setMe(myData.data.data);
+      console.log(myData);
+      setMe(myData.data);
       console.log("====================================");
     }
     data();
@@ -51,9 +51,13 @@ const SingleSpace = ({ route }) => {
   };
 
   // pull to refresh
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback(async () => {
     setIsLoading(true);
-    getMe(setMe, setIsLoading);
+    const myData = await getMe(setMe, setIsLoading);
+    console.log("====================================");
+    console.log("meeeeeeeeeeeeeeee");
+    console.log(myData);
+    setMe(myData.data);
     wait(2000).then(() => setIsLoading(false));
     // getPostData();
     GetSpacePost(setPosts, setIsLoading, space.name);

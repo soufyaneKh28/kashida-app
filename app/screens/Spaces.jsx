@@ -47,7 +47,7 @@ const Spaces = () => {
     try {
       const allSpacesResponse = await GetSpaces(setSpaces, setIsLoading);
       const userSpacesResponse = await getMe(setMe, setIsLoading);
-      const userSpaces = userSpacesResponse?.data?.data;
+      const userSpaces = userSpacesResponse?.data;
       const allSpaces = allSpacesResponse?.data.data;
       if (!userSpaces) {
         console.error("No user spaces data received");

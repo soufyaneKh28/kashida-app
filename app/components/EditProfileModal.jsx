@@ -68,9 +68,7 @@ export default function EditProfileModal({
           type,
         });
       }
-      let formatted = DateTime.fromISO(formData.birthday).toFormat(
-        "yyyy-MM-dd"
-      );
+
       formData2.append("name", formData.name);
       formData2.append("username", formData.username);
       formData2.append("phoneNumber", formData.phoneNumber);
@@ -156,9 +154,9 @@ export default function EditProfileModal({
     }
   };
 
-  console.log("====================================");
-  console.log(formData);
-  console.log("====================================");
+  // console.log("====================================");
+  // console.log(formData);
+  // console.log("====================================");
 
   return (
     <Modal
