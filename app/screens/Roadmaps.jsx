@@ -1,9 +1,11 @@
 import { View, Text, SafeAreaView, ScrollView, Image } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Collapse from "../components/Collapse";
 import RoadMapCollapse from "../components/RoadMapCollapse";
+import DownloadModal from "../components/DownloadModal";
 
 const Roadmaps = () => {
+
   return (
     <SafeAreaView className=" bg-white flex-1">
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>

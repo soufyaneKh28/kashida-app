@@ -209,8 +209,9 @@ const ProfileOther = ({ route, navigation }) => {
             <Pressable
               className=" items-center"
               onPress={() =>
-                navigation.push("FollowsScreen", {
+                navigation.push("OtherProfileFollowsScreen", {
                   title: "followers",
+                  id: id,
                 })
               }
             >
@@ -231,8 +232,9 @@ const ProfileOther = ({ route, navigation }) => {
             <Pressable
               className=" items-center"
               onPress={() =>
-                navigation.push("FollowsScreen", {
+                navigation.push("OtherProfileFollowsScreen", {
                   title: "Following",
+                  id: id,
                 })
               }
             >

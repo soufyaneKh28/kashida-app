@@ -130,7 +130,7 @@ const Profile = () => {
         </View>
         <View className=" mt-20 items-center">
           <TouchableOpacity
-            className="px-6 py-2 my-1 text-start w-full"
+            className="px-6 py-2 my-1 text-start w-full flex-row items-center gap-3 "
             onPress={() => {
               navigation.push("SettingsStack", {
                 screen: "Security",
@@ -140,10 +140,15 @@ const Profile = () => {
               });
             }}
           >
+            <Image
+              source={require("../../assets/images/securityIcon.png")}
+              style={{ width: 34, height: 34 }}
+            />
             <Text className=" text-lg font-semibold">Security</Text>
           </TouchableOpacity>
+          <View className=" w-[260px] bg-[#ECEEF2] h-[1px]  " />
           <TouchableOpacity
-            className="px-6 py-2 my-1 w-full"
+            className="px-6 py-2 my-1 w-full flex-row items-center gap-3 "
             onPress={() => {
               navigation.push("SettingsStack", {
                 screen: "Policy",
@@ -153,12 +158,18 @@ const Profile = () => {
               });
             }}
           >
+            <Image
+              source={require("../../assets/images/privacyIcon.png")}
+              style={{ width: 34, height: 34 }}
+            />
             <Text className=" text-lg text-start font-semibold">
               Privacy and Policy
             </Text>
           </TouchableOpacity>
+
+          <View className=" w-[260px] bg-[#ECEEF2] h-[1px]  " />
           <TouchableOpacity
-            className="px-6 py-2 my-1 w-full"
+            className="px-6 py-2 my-1 w-full flex-row items-center gap-3 "
             onPress={() => {
               navigation.push("SettingsStack", {
                 screen: "Terms",
@@ -168,10 +179,15 @@ const Profile = () => {
               });
             }}
           >
+            <Image
+              source={require("../../assets/images/termsIcon.png")}
+              style={{ width: 34, height: 34 }}
+            />
             <Text className=" text-lg font-semibold">Terms of Use</Text>
           </TouchableOpacity>
+          <View className=" w-[260px] bg-[#ECEEF2] h-[1px]  " />
           <TouchableOpacity
-            className="px-6 py-2 my-1 w-full"
+            className="px-6 py-2 my-1 w-full flex-row items-center gap-3   "
             onPress={() => {
               navigation.push("SettingsStack", {
                 screen: "Help",
@@ -181,17 +197,23 @@ const Profile = () => {
               });
             }}
           >
+            <Image
+              source={require("../../assets/images/helpIcon.png")}
+              style={{ width: 34, height: 34 }}
+            />
             <Text className=" text-lg font-semibold ">Help</Text>
           </TouchableOpacity>
           <View className=" w-[260px] bg-[#ECEEF2] h-[2px] mt-[150px] " />
           <View className="w-full px-6">
             <TouchableOpacity
               onPress={handleLogout}
-              className=" bg-[#FF9898] w-[260px] py-3 rounded-[5px] mt-5 "
+              className=" bg-[#FF9898] px-2 mt-3 py-2 my-1 w-full flex-row items-center gap-3  rounded-xl "
             >
-              <Text className="text-center text-[#D20000] text-lg font-bold">
-                Log out
-              </Text>
+              <Image
+                source={require("../../assets/images/logoutIcon.png")}
+                style={{ width: 34, height: 34 }}
+              />
+              <Text className=" text-[#D20000] text-lg font-bold">Log out</Text>
             </TouchableOpacity>
           </View>
         </View>

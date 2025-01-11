@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import FollowsScreen from "../screens/FollowsScreen";
 import ProfileOther from "../screens/ProfileOther";
+import OtherProfileFollowsScreen from "../screens/OtherProfileFollowsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -40,6 +41,13 @@ export default function ProfileStack() {
       <Stack.Screen
         name="ProfileOther"
         component={ProfileOther}
+        options={{
+          tabBarStyle: { display: "none" }, // Hide the tab bar
+        }}
+      />
+      <Stack.Screen
+        name="OtherProfileFollowsScreen"
+        component={OtherProfileFollowsScreen}
         options={{
           tabBarStyle: { display: "none" }, // Hide the tab bar
         }}
