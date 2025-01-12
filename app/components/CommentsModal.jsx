@@ -9,6 +9,8 @@ import {
   TextInput,
   StyleSheet,
   ActivityIndicator,
+  SafeAreaView,
+  Pressable,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Comment from "./Comment";
@@ -21,8 +23,15 @@ import axios from "axios";
 import { Alert } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { getMe } from "../api/me";
+import BackArrow from "./BackArrow";
+import { ChevronLeftIcon } from "react-native-heroicons/solid";
 
-const CommentsModal = ({ selectedPost, isModalVisible, setIsModalVisible }) => {
+const CommentsModal = ({
+  selectedPost,
+  isModalVisible,
+  setIsModalVisible,
+  navigation,
+}) => {
   const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [me, setMe] = useState();
@@ -183,68 +192,95 @@ const CommentsModal = ({ selectedPost, isModalVisible, setIsModalVisible }) => {
   };
   console.log(newComment);
   return (
-    <View className=" ">
+    <SafeAreaView>
       <Modal
         animationType="slide"
-        backdropColor="black"
+        presentationStyle="pageSheet"
         transparent={true}
         onRequestClose={CloseModal}
         visible={isModalVisible}
-        style={{}}
+        style={{
+          backgroundColor: "rgba(11, 11, 11, 0.51)",
+        }}
       >
-        <View style={{ flex: 1, backgroundColor: "rgba(11, 11, 11, 0.51)" }}>
-          <View style={styles.contentContainer}>
-            <Text style={styles.title}>Comments</Text>
-            <Text className="bg-red-200 w-full text-black ">
-              {selectedPost}
-            </Text>
-            {isLoading ? (
-              <View className=" flex-1 justify-center items-center">
-                <ActivityIndicator size={"large"} />
-              </View>
-            ) : comments && comments.length > 0 ? (
-              <FlatList
-                data={comments}
-                renderItem={renderComment}
-                keyExtractor={(item) => item._id}
-                contentContainerStyle={styles.commentsList}
-              />
-            ) : (
-              <View style={styles.noCommentsContainer}>
-                <Text style={styles.noCommentText}>There is no Comments</Text>
-              </View>
-            )}
-
-            <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-              keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
-              style={styles.inputContainer}
+        <SafeAreaView
+          style={[
+            styles.contentContainer,
+            {
+              backgroundColor: "white",
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              marginTop: "auto", // This pushes the content to the bottom
+              maxHeight: "90%", // Don't take full height
+            },
+          ]}
+        >
+          {/* Visual indicator for swipe */}
+          <View
+            style={{
+              width: 40,
+              height: 4,
+              backgroundColor: "#ccc",
+              borderRadius: 2,
+              alignSelf: "center",
+              marginVertical: 10,
+            }}
+          />
+          <View style={{ position: "relative" }}>
+            <TouchableOpacity
+              style={{ position: "absolute", top: 10, left: 15, padding: 5 }}
+              onPress={CloseModal}
             >
-              <Image
-                source={{
-                  uri:
-                    me?.photo[0] ||
-                    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
-                }}
-                style={styles.inputAvatar}
-              />
-              <TextInput
-                style={styles.input}
-                value={newComment}
-                onChangeText={setNewComment}
-                placeholder={
-                  replyingTo ? "Write a reply..." : "Add a comment..."
-                }
-                multiline
-              />
-              <TouchableOpacity style={styles.sendBtn} onPress={handleSubmit}>
-                <FontAwesome name="send" size={20} color="#F3FAFF" />
-              </TouchableOpacity>
-            </KeyboardAvoidingView>
+              <ChevronLeftIcon size={30} color={"black"} />
+            </TouchableOpacity>
+            <Text style={styles.title}>Comments</Text>
           </View>
-        </View>
+          {/* <Text className="bg-red-200 w-full text-black">{selectedPost}</Text> */}
+
+          {isLoading ? (
+            <View className="flex-1 justify-center items-center">
+              <ActivityIndicator size={"large"} />
+            </View>
+          ) : comments && comments.length > 0 ? (
+            <FlatList
+              data={comments}
+              renderItem={renderComment}
+              keyExtractor={(item) => item._id}
+              contentContainerStyle={styles.commentsList}
+            />
+          ) : (
+            <View style={styles.noCommentsContainer}>
+              <Text style={styles.noCommentText}>There is no Comments</Text>
+            </View>
+          )}
+
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+            style={styles.inputContainer}
+          >
+            <Image
+              source={{
+                uri:
+                  me?.photo[0] ||
+                  "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+              }}
+              style={styles.inputAvatar}
+            />
+            <TextInput
+              style={styles.input}
+              value={newComment}
+              onChangeText={setNewComment}
+              placeholder={replyingTo ? "Write a reply..." : "Add a comment..."}
+              multiline
+            />
+            <TouchableOpacity style={styles.sendBtn} onPress={handleSubmit}>
+              <FontAwesome name="send" size={20} color="#F3FAFF" />
+            </TouchableOpacity>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -264,14 +300,13 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   contentContainer: {
-    height: "90%",
-    width: "100%",
-    position: "absolute",
-    bottom: 0,
+    flex: 1,
+    backgroundColor: "white",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    overflow: "hidden",
-    backgroundColor: "#F3FAFF",
+    marginTop: "auto", // This makes it stick to the bottom
+    maxHeight: "90%", // Don't take full height
+    paddingHorizontal: 16,
   },
   title: {
     fontSize: 18,
@@ -286,6 +321,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     padding: 10,
+    paddingBottom: 100,
     alignItems: "center",
     paddingVertical: 20,
     borderTopWidth: 1,

@@ -17,7 +17,11 @@ const FollowsScreen = ({ navigation, route }) => {
   const { title } = route.params;
   const [isloading, setIsLoading] = useState(false);
   const [userFollow, setUserFollow] = useState([]);
+  const [screenTitle, setScreenTitle] = useState(title);
 
+  console.log("====================================");
+  console.log(screenTitle);
+  console.log("====================================");
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   };
@@ -25,7 +29,7 @@ const FollowsScreen = ({ navigation, route }) => {
   const onRefresh = useCallback(() => {
     setIsLoading(true);
     wait(2000).then(() => setIsLoading(false));
-    if (title === "followers") {
+    if (title === "follower") {
       getMyFollowers(setUserFollow, setIsLoading);
     } else {
       setIsLoading(true);
@@ -35,7 +39,7 @@ const FollowsScreen = ({ navigation, route }) => {
   }, [title]);
 
   useEffect(() => {
-    if (title === "followers") {
+    if (title === "follower") {
       getMyFollowers(setUserFollow, setIsLoading);
     } else {
       setIsLoading(true);
@@ -75,6 +79,7 @@ const FollowsScreen = ({ navigation, route }) => {
                 user={user}
                 followState={user?.isFollowing}
                 navigation={navigation}
+                title={screenTitle}
               />
             ))}
           </>

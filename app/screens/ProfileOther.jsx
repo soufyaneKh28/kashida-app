@@ -233,7 +233,7 @@ const ProfileOther = ({ route, navigation }) => {
               className=" items-center"
               onPress={() =>
                 navigation.push("OtherProfileFollowsScreen", {
-                  title: "Following",
+                  title: "following",
                   id: id,
                 })
               }

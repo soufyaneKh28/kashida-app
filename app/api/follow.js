@@ -1,3 +1,5 @@
+import { baseurl } from "./user";
+
 // getting User followers
 export const getMyFollowing = async ({ setUserFollow, setIsLoading }) => {
   try {
@@ -11,7 +13,7 @@ export const getMyFollowing = async ({ setUserFollow, setIsLoading }) => {
 
     // Make the GET request
     const response = await fetch(
-      `http://10.0.2.2:7000/api/k1/follow/myFollowings`,
+      `${baseurl}/api/k1/follow/myFollowings`,
       {
         method: "GET",
         headers: {

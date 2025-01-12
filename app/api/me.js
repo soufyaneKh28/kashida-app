@@ -2,7 +2,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 
-const baseurl = "http://10.0.2.2:7000";
+const baseurl = "https://kashida-app-dep.onrender.com";
 // getting User followers
 export const getMyFollowers = async (setUserFollow, setIsLoading) => {
   try {
@@ -17,7 +17,7 @@ export const getMyFollowers = async (setUserFollow, setIsLoading) => {
 
     // Make the GET request
     const response = await fetch(
-      `http://10.0.2.2:7000/api/k1/follow/myFollowers`,
+      `${baseurl}/api/k1/follow/myFollowers`,
       {
         method: "GET",
         headers: {
@@ -59,7 +59,7 @@ export const getMyFollowing = async (setUserFollow) => {
 
     // Make the GET request
     const response = await fetch(
-      `http://10.0.2.2:7000/api/k1/follow/myFollowings`,
+      `${baseurl}/api/k1/follow/myFollowings`,
       {
         method: "GET",
         headers: {

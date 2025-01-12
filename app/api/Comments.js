@@ -1,7 +1,8 @@
-const baseurl = "http://10.0.2.2:7000";
+// const baseurl = "http://10.0.2.2:7000";
 import axios from "axios";
 import { Alert } from "react-native";
 import * as SecureStore from "expo-secure-store";
+import { baseurl } from "./user";
 
 export const getUserComments = async (setCommentsData, setIsLoading, id) => {
   try {
@@ -339,4 +340,3 @@ export const deleteReply = async (id) => {
     alert("Error", "Failed to fetch deleteComment. Please try again.");
   }
 };
-

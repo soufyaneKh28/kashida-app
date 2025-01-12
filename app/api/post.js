@@ -1,7 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 
-const baseurl = "http://10.0.2.2:7000";
+const baseurl = "https://kashida-app-dep.onrender.com";
 
 export const likePost = async (id) => {
   try {

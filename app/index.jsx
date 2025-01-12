@@ -9,7 +9,7 @@ import "./gesture-handler";
 
 import AuthStack from "./navigation/AuthStack";
 import BottomTabs from "./navigation/BottomTabs";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { HomeIcon, UserIcon, CogIcon } from "react-native-heroicons/solid";
@@ -28,6 +28,7 @@ import {
 } from "react-native-reanimated";
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState();
+  const [isLoading, setIsLoading] = useState(true);
   // const isLoggedIn = !!SecureStore.getItemAsync("jwtToken");
   // This is the default configuration
   configureReanimatedLogger({
@@ -43,6 +44,7 @@ export default function App() {
       } else {
         setIsLoggedIn(false); // No token, user is not logged in
       }
+      setIsLoading(false);
     };
 
     checkToken(); // Check token when app starts
@@ -54,33 +56,42 @@ export default function App() {
   return (
     // <NavigationContainer>
     <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
-      <Stack.Navigator>
-        {isLoggedIn ? (
-          <>
+      {isLoading && (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" />
+        </View>
+      )}
+      {!isLoading && (
+        <Stack.Navigator>
+          {isLoggedIn ? (
+            <>
+              <Stack.Screen
+                name="bottomTabs"
+                component={BottomTabs}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="CreatePost"
+                component={Posting}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="SettingsStack"
+                component={SettingsStack}
+                options={{ headerShown: false }}
+              />
+            </>
+          ) : (
             <Stack.Screen
-              name="bottomTabs"
-              component={BottomTabs}
+              name="AuthStack"
+              component={AuthStack}
               options={{ headerShown: false }}
             />
-            <Stack.Screen
-              name="CreatePost"
-              component={Posting}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="SettingsStack"
-              component={SettingsStack}
-              options={{ headerShown: false }}
-            />
-          </>
-        ) : (
-          <Stack.Screen
-            name="AuthStack"
-            component={AuthStack}
-            options={{ headerShown: false }}
-          />
-        )}
-      </Stack.Navigator>
+          )}
+        </Stack.Navigator>
+      )}
     </AuthContext.Provider>
     // </NavigationContainer>
   );

@@ -346,7 +346,7 @@ const Profile = () => {
                 className=" items-center"
                 onPress={() =>
                   navigation.push("FollowsScreen", {
-                    title: "followers",
+                    title: "follower",
                   })
                 }
               >
@@ -370,7 +370,7 @@ const Profile = () => {
                 className=" items-center"
                 onPress={() =>
                   navigation.push("FollowsScreen", {
-                    title: "Following",
+                    title: "following",
                   })
                 }
               >

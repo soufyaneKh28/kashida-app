@@ -20,6 +20,7 @@ import { PlusIcon } from "react-native-heroicons/solid";
 import { SelectList } from "react-native-dropdown-select-list";
 import * as ImagePicker from "expo-image-picker";
 import * as SecureStore from "expo-secure-store";
+import { baseurl } from "../api/user";
 const Posting = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [caption, setCaption] = useState("");
@@ -93,7 +94,7 @@ const Posting = ({ navigation }) => {
       console.log(formData);
       setIsLoading(true);
       const token = await SecureStore.getItemAsync("jwtToken");
-      const response = await fetch("http://10.0.2.2:7000/api/k1/posts", {
+      const response = await fetch(`${baseurl}/api/k1/posts"`, {
         method: "POST",
         body: formData,
         headers: {
@@ -118,7 +119,6 @@ const Posting = ({ navigation }) => {
       setIsLoading(false);
     }
   };
-
 
   return (
     <SafeAreaView className="py-3  bg-white flex-1 ">

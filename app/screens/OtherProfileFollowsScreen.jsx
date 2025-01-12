@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { ArrowLeftIcon } from "react-native-heroicons/outline";
 import FollowComponent from "../components/FollowComponent";
 import { getMyFollowers, getMyFollowing } from "../api/me";
-import { getUserFollowers } from "../api/user";
+import { getUserFollowers, getUserFollowing } from "../api/user";
 
 const OtherProfileFollowsScreen = ({ navigation, route }) => {
   const { title, id } = route.params;
@@ -23,15 +23,19 @@ const OtherProfileFollowsScreen = ({ navigation, route }) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   };
 
+  console.log("====================================");
+  console.log(title);
+  console.log("====================================");
   const onRefresh = useCallback(() => {
     setIsLoading(true);
     wait(2000).then(() => setIsLoading(false));
     if (title === "followers") {
       getUserFollowers(setUserFollow, setIsLoading, id);
     } else {
-      // setIsLoading(true);
+      setIsLoading(true);
       // getMyFollowing(setUserFollow);
-      // setIsLoading(false);
+      getUserFollowing(setUserFollow, setIsLoading, id);
+      setIsLoading(false);
     }
   }, [title]);
 
@@ -47,7 +51,7 @@ const OtherProfileFollowsScreen = ({ navigation, route }) => {
       console.log("====================================");
     } else {
       setIsLoading(true);
-      getMyFollowing(setUserFollow);
+      getUserFollowing(setUserFollow, setIsLoading, id);
       setIsLoading(false);
     }
   }

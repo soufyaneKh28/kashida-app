@@ -30,6 +30,7 @@ import { ScrollView } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
+import { baseurl } from "../api/user";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -42,44 +43,12 @@ const Login = () => {
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
-  // const auth = FIREBASE_AUTH;
-
-  // const signIn = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await signInWithEmailAndPassword(auth, email, password);
-  //     console.log(response);
-  //     // alert("check your email");
-  //   } catch (eror) {
-  //     console.log(eror);
-  //     alert("Sign in failed: " + eror.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  // const signUp = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await createUserWithEmailAndPassword(
-  //       auth,
-  //       email,
-  //       password
-  //     );
-  //     console.log(response);
-  //     alert("check your email");
-  //   } catch (eror) {
-  //     console.log(eror);
-  //     alert("Sign in failed: " + eror.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleLogin = async () => {
     if (email === "" || password === "" || !email.includes("@"))
       return alert("please add valid email and password");
     try {
-      const response = await fetch("http://10.0.2.2:7000/api/k1/users/login", {
+      const response = await fetch(`${baseurl}/api/k1/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

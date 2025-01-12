@@ -10,6 +10,7 @@ import {
   Platform,
   Alert,
   Pressable,
+  SafeAreaView,
 } from "react-native";
 import Modal from "react-native-modal";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -57,61 +58,79 @@ export default function EditProfileModal({
     try {
       const formData2 = new FormData();
 
+      // Handle image upload properly
       if (selectedImage) {
         const filename = selectedImage.split("/").pop();
         const match = /\.(\w+)$/.exec(filename || "");
-        const type = match ? `image/${match[1]}` : "image";
+        const type = match ? `image/${match[1]}` : "image/jpeg"; // Default to jpeg if no extension
 
         formData2.append("photo", {
-          uri: selectedImage,
-          name: filename,
+          uri:
+            Platform.OS === "android"
+              ? selectedImage
+              : selectedImage.replace("file://", ""),
+          name: filename || "photo.jpg",
           type,
         });
       }
 
-      formData2.append("name", formData.name);
-      formData2.append("username", formData.username);
-      formData2.append("phoneNumber", formData.phoneNumber);
-      formData2.append(
-        "birthday",
-        formData.birthday?.toISOString().split("T")[0]
-      );
-      console.log("====================================");
-      console.log("formData.birthday");
-      console.log(formData.birthday);
-      console.log("formData.birthday-splited");
-      console.log(formData.birthday?.toISOString().split("T")[0]);
-      console.log("formattedDate");
-      console.log("====================================");
-      formData2.append("bio", formData.bio);
+      // Append other fields only if they have values
+      if (formData.name) formData2.append("name", formData.name);
+      if (formData.username) formData2.append("username", formData.username);
+      if (formData.phoneNumber)
+        formData2.append("phoneNumber", formData.phoneNumber);
 
-      console.log(formData2);
+      // Handle date properly
+      if (formData.birthday) {
+        const formattedDate = formData.birthday.toISOString().split("T")[0];
+        formData2.append("birthday", formattedDate);
+      }
+
+      if (formData.bio) formData2.append("bio", formData.bio);
+
       const token = await SecureStore.getItemAsync("jwtToken");
+
+      // Log the request for debugging
+      // console.log("Request URL:", `${baseurl}/api/k1/users/updateMe`);
+      // console.log("Token:", token);
+      // console.log("FormData:", JSON.stringify([...formData2.entries()]));
+
       const response = await fetch(`${baseurl}/api/k1/users/updateMe`, {
         method: "PATCH",
         body: formData2,
         headers: {
+          Accept: "application/json",
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
 
+      // Log response status and headers
+      // console.log("Response status:", response.status);
+      // console.log("Response headers:", response.headers);
+
+      // Try to get detailed error message from server
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => null);
+        throw new Error(
+          errorData?.message || `HTTP error! status: ${response.status}`
+        );
       }
 
       const data = await response.json();
       setIsLoading(false);
       onClose();
-      Alert.alert("Success", "Data uploaded successfully!");
-      console.log(data);
+      Alert.alert("Success", "Profile updated successfully!");
+      console.log("Success data:", data);
     } catch (error) {
-      Alert.alert("Upload Failed", error.message);
-      console.error(error);
+      console.error("Detailed error:", error);
+      Alert.alert(
+        "Update Failed",
+        "There was an error updating your profile. Please try again."
+      );
       setIsLoading(false);
     }
   };
-
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || formData.birthday;
     setShowDatePicker(Platform.OS === "ios");
@@ -165,7 +184,7 @@ export default function EditProfileModal({
       onBackButtonPress={onClose}
       style={styles.modal}
     >
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ScrollView>
           <TouchableOpacity
             onPress={onClose}
@@ -293,7 +312,7 @@ export default function EditProfileModal({
             minimumDate={new Date(1900, 0, 1)}
           />
         )}
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 }

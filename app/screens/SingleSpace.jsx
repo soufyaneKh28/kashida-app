@@ -169,6 +169,7 @@ const SingleSpace = ({ route }) => {
           isModalVisible={isModalVisible}
           setIsModalVisible={setIsModalVisible}
           selectedPost={selectedPost}
+          navigation={navigation}
         />
       )}
       <View>
