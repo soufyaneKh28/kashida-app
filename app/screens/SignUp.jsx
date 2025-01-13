@@ -10,7 +10,7 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 // import { FIREBASE_AUTH } from "../../FirebaseConfig";
 import {
   LockClosedIcon,
@@ -32,6 +32,7 @@ import CustomButton from "../components/CustomButton";
 import { ScrollView } from "react-native";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store"; // Import expo-secure-store
+import { AuthContext } from "../AuthContext";
 const SignUp = () => {
   const navigation = useNavigation();
   const router = useRouter();
@@ -41,7 +42,7 @@ const SignUp = () => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
+  const { setIsLoggedIn } = useContext(AuthContext);
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
@@ -79,7 +80,7 @@ const SignUp = () => {
         // Store JWT token securely using SecureStore
         await SecureStore.setItemAsync("jwtToken", responseBody.token);
         alert("User successfully signed up!");
-        router.replace("navigation/BottomTabs");
+        setIsLoggedIn(true);
       } else {
         alert("Token not found in response.");
       }

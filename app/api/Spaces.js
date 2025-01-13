@@ -1,4 +1,4 @@
-const baseurl = "https://kashida-app-dep.onrender.com";
+const baseurl = "http://10.0.2.2:7000";
 import axios from "axios";
 import { Alert } from "react-native";
 import * as SecureStore from "expo-secure-store";

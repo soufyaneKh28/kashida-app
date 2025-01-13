@@ -21,7 +21,7 @@ import {
   XMarkIcon,
 } from "react-native-heroicons/solid";
 import Pin from "../components/Pin";
-import { getUserPosts } from "../api/user"; // Import the API call
+import { getlikedposts, getUserPosts } from "../api/user"; // Import the API call
 import { Animated, useAnimatedValue } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { getMe, getMyPosts } from "../api/me";
@@ -48,6 +48,7 @@ const Profile = () => {
   const [isLikes, setIsLikes] = useState(false);
   const [isPosts, setIsPosts] = useState(true);
   const [myPosts, setMyPosts] = useState(null);
+  const [myLikedPosts, setMyLikedPosts] = useState(null);
   const [me, setMe] = useState();
   const [myId, setMyId] = useState("");
   const [isloading, setIsLoading] = useState(false);
@@ -65,17 +66,6 @@ const Profile = () => {
     setIsEditModalVisible(false);
   };
 
-  // async function handleId() {
-  //   let token = await SecureStore.getItemAsync("jwtToken");
-
-  //   const decoded = jwtDecode(token);
-  //   // setMyId(decoded.id);
-  //   setMyId(decoded?.id);
-  //   console.log("====================================");
-
-  //   console.log("token decoded", decoded.id);
-  //   console.log("====================================");
-  // }
   function handleIsLike() {
     setIsPosts(false);
 
@@ -88,6 +78,7 @@ const Profile = () => {
   }
 
   async function GettingAllData() {
+    setIsLoading(true);
     let token = await SecureStore.getItemAsync("jwtToken");
 
     const decoded = jwtDecode(token);
@@ -100,13 +91,15 @@ const Profile = () => {
       setIsLoading,
       myData.data._id
     );
-    console.log("====================================");
-    console.log("userPoooosts", userPosts);
-    console.log("====================================");
+    const likedPosts = await getlikedposts(myData.data._id);
+    // console.log("====================================");
+    // console.log("userPoooosts", userPosts);
+    // console.log("====================================");
     setMe(myData.data);
     setMyPosts(userPosts);
+    setMyLikedPosts(likedPosts);
     console.log("====================================");
-    console.log("meee", myData.data);
+    console.log("setMyLikedPostssetMyLikedPosts", myLikedPosts);
     setIsLoading(false);
     console.log("====================================");
   }
@@ -461,9 +454,45 @@ const Profile = () => {
 
             {/* Likes View */}
             {isLikes ? (
-              <View>
-                <Text>Likes</Text>
-              </View>
+              isloading ? (
+                <ActivityIndicator size="large" />
+              ) : (
+                <View className="flex-row justify-between">
+                  {/* first Col */}
+                  <View className=" w-[50%] px-1   ">
+                    {myLikedPosts
+                      ?.filter(
+                        (post, i) => i % 2 === 1 && post.photos?.length != 0
+                      )
+                      .map((pin, i) => (
+                        <Pin
+                          title={pin.title}
+                          uri={pin.photos[0]}
+                          key={i}
+                          pin={pin}
+                          isEven={false}
+                        />
+                      ))}
+                  </View>
+                  {/* second col */}
+                  <View className=" w-[50%]  px-1   ">
+                    {myLikedPosts
+                      ?.filter(
+                        (post, i) => i % 2 === 0 && post.photos?.length != 0
+                      )
+
+                      .map((pin, i) => (
+                        <Pin
+                          title={pin.title}
+                          uri={pin.photos[0]}
+                          key={i}
+                          pin={pin}
+                          isEven={true}
+                        />
+                      ))}
+                  </View>
+                </View>
+              )
             ) : null}
           </View>
 

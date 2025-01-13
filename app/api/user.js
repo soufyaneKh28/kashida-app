@@ -1,6 +1,6 @@
 // api/userApi.js
 import axios from "axios";
-export const baseurl = "https://kashida-app-dep.onrender.com";
+export const baseurl = "http://10.0.2.2:7000";
 
 import { Alert } from "react-native";
 import * as SecureStore from "expo-secure-store";
@@ -38,7 +38,7 @@ export const getUserPosts = async (setUserData, setIsLoading) => {
 };
 
 // Fetch user profile data
-export const getUserProfile = async ({ setUserProfile, setIsLoading, id }) => {
+export const getUserProfile = async (setUserProfile, setIsLoading, id) => {
   try {
     setIsLoading(true);
 
@@ -124,7 +124,7 @@ export const updateUserProfile = async (userId, updatedData) => {
 export const getUserFollowers = async (setUserFollow, setIsLoading, id) => {
   try {
     // Retrieve the JWT token from SecureStore
-    setUserFollow([]);
+    // setUserFollow([]);
     setIsLoading(true);
     const token = await SecureStore.getItemAsync("jwtToken");
     if (!token) {
@@ -154,6 +154,7 @@ export const getUserFollowers = async (setUserFollow, setIsLoading, id) => {
     console.log("User Data:", userData?.data.followersWithStatus);
     console.log("Success", "getUserFollowers retrieved successfully!");
     setIsLoading(false);
+    return userData?.data.followersWithStatus;
     // Handle the user data (e.g., update state or UI)
   } catch (error) {
     console.error("Error fetching getUserFollowers:", error);
@@ -163,7 +164,8 @@ export const getUserFollowers = async (setUserFollow, setIsLoading, id) => {
 export const getUserFollowings = async (setUserFollow, setIsLoading, id) => {
   try {
     // Retrieve the JWT token from SecureStore
-    setUserFollow([]);
+    console.log("it  starteeeeeeeed");
+    // setUserFollow([]);
     setIsLoading(true);
     const token = await SecureStore.getItemAsync("jwtToken");
     if (!token) {
@@ -189,13 +191,88 @@ export const getUserFollowings = async (setUserFollow, setIsLoading, id) => {
 
     // Parse the JSON response
     const userData = await response.json();
-    setUserFollow(userData?.data.followersWithStatus);
-    console.log("User Data:", userData?.data.followersWithStatus);
+    setUserFollow(userData?.data.followingsWithStatus);
+    console.log("getUserFollowers Data:", userData?.data.followingsWithStatus);
     console.log("Success", "getUserFollowers retrieved successfully!");
     setIsLoading(false);
+    return userData?.data.followingsWithStatus;
     // Handle the user data (e.g., update state or UI)
   } catch (error) {
     console.error("Error fetching getUserFollowers:", error);
     Alert("Error", "Failed to fetch getUserFollowers. Please try again.");
   }
 };
+export const getlikedposts = async (id) => {
+  try {
+    const token = await SecureStore.getItemAsync("jwtToken");
+    if (!token) {
+      Alert.alert("Error", "No token found. Please log in again.");
+      return;
+    }
+
+    // Make the GET request
+    const response = await fetch(`${baseurl}/api/k1/likedPosts/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    });
+
+    // Check if the response is OK
+    if (!response.ok) {
+      // setIsLoading(true);
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.message || "Failed to fetch user data.");
+    }
+
+    // Parse the JSON response
+    const userData = await response.json();
+
+    // console.log("getlikedposts Data:", userData?.data.likedPosts);
+    console.log("Success", "getlikedposts retrieved successfully!");
+
+    return userData?.data.likedPosts;
+    // Handle the user data (e.g., update state or UI)
+  } catch (error) {
+    console.error("Error fetching getlikedposts:", error);
+    Alert("Error", "Failed to fetch getlikedposts. Please try again.");
+  }
+};
+
+export const getPostsByUser = async (id) => {
+  try {
+    // Retrieve the JWT token from SecureStore
+    const token = await SecureStore.getItemAsync("jwtToken");
+    if (!token) {
+      Alert.alert("Error", "No token found. Please log in again.");
+
+      return;
+    }
+
+    // Make the GET request using Axios
+    const response = await axios.get(`${baseurl}/api/k1/posts`, {
+      params: { user: id }, // Query parameter
+      headers: {
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    });
+
+    // Handle response data
+
+    console.log(" getPostsByUser:", response.data.data.posts);
+    console.log("Success", "getPostsByUser retrieved successfully!");
+    return response.data.data.posts;
+  } catch (error) {
+    console.error("Error fetching getPostsByUser:", error);
+    Alert.alert(
+      "Error",
+      error.response?.data?.message ||
+        "Failed to fetch getPostsByUser. Please try again."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+

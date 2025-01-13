@@ -48,6 +48,7 @@ const Login = () => {
     if (email === "" || password === "" || !email.includes("@"))
       return alert("please add valid email and password");
     try {
+      setLoading(true);
       const response = await fetch(`${baseurl}/api/k1/users/login`, {
         method: "POST",
         headers: {
@@ -165,21 +166,21 @@ const Login = () => {
             >
               <TouchableOpacity
                 className=" py-3"
-                onPress={() => console.log("forget password")}
+                onPress={() => navigation.push("ForgotPassword1")}
               >
                 <Text className="font-bold">Forgot Password?</Text>
               </TouchableOpacity>
             </View>
             <View className=" mt-5">
-              {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
-              ) : (
-                <>
-                  <CustomButton onPress={handleLogin}>Sign in</CustomButton>
-                </>
-              )}
+              <CustomButton onPress={handleLogin}>
+                {loading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  "Sign in"
+                )}
+              </CustomButton>
             </View>
-            <View className="flex flex-row items-center justify-center mt-5 ">
+            {/* <View className="flex flex-row items-center justify-center mt-5 ">
               <View className="w-full ms-3 bg-[#ECEEF2] h-[2px]" />
               <Text className="mx-4">OR</Text>
               <View className="w-[100%] bg-[#ECEEF2] h-[2px]" />
@@ -200,7 +201,7 @@ const Login = () => {
                   Sign In With Google
                 </Text>
               </OutlineButton>
-            </View>
+            </View> */}
             <View className="flex-row justify-center mt-8">
               <Text className="text-[#565656] text-[14px] font-medium">
                 Don't Have an Account?

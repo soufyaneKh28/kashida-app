@@ -12,11 +12,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeftIcon, EnvelopeIcon } from "react-native-heroicons/outline";
 import { baseurl } from "../api/user";
-
+import BackArrow from "../components/BackArrow";
 export default function ForgotPassword1({ navigation }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // console.log('====================================');
+  console.log(email);
+  // console.log('====================================');
   const handleSendCode = async () => {
     if (!email || !email.includes("@")) {
       Alert.alert("Error", "Please enter a valid email address");
@@ -30,13 +33,15 @@ export default function ForgotPassword1({ navigation }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: email }),
       });
 
       const data = await response.json();
-
+      console.log("====================================");
+      console.log(data);
+      console.log("====================================");
       if (response.ok) {
-        navigation.navigate("ForgotPassword2", { email });
+        navigation.navigate("ForgotPassword2", { email: email });
       } else {
         Alert.alert(
           "Error",
@@ -52,17 +57,12 @@ export default function ForgotPassword1({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <BackArrow navigation={navigation} />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.content}
       >
         {/* Header */}
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        >
-          <ArrowLeftIcon size={24} color="#0E1922" />
-        </TouchableOpacity>
 
         <View style={styles.headerContainer}>
           <Text style={styles.title}>You Forgot Your Password?</Text>
@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 16,
+    paddingTop: 80,
   },
   backButton: {
     padding: 8,

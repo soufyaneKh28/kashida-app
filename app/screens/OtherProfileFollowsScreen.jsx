@@ -12,10 +12,10 @@ import React, { useCallback, useEffect, useState } from "react";
 import { ArrowLeftIcon } from "react-native-heroicons/outline";
 import FollowComponent from "../components/FollowComponent";
 import { getMyFollowers, getMyFollowing } from "../api/me";
-import { getUserFollowers, getUserFollowing } from "../api/user";
+import { getUserFollowers, getUserFollowings } from "../api/user";
 
 const OtherProfileFollowsScreen = ({ navigation, route }) => {
-  const { title, id } = route.params;
+  const { title, id, mainUserId } = route.params;
   const [isloading, setIsLoading] = useState(false);
   const [userFollow, setUserFollow] = useState([]);
 
@@ -26,32 +26,38 @@ const OtherProfileFollowsScreen = ({ navigation, route }) => {
   console.log("====================================");
   console.log(title);
   console.log("====================================");
+  // let userFollowData = [];
+
   const onRefresh = useCallback(() => {
     setIsLoading(true);
     wait(2000).then(() => setIsLoading(false));
-    if (title === "followers") {
-      getUserFollowers(setUserFollow, setIsLoading, id);
-    } else {
-      setIsLoading(true);
-      // getMyFollowing(setUserFollow);
-      getUserFollowing(setUserFollow, setIsLoading, id);
-      setIsLoading(false);
-    }
+    getAllData();
   }, [title]);
 
   async function getAllData() {
     if (title === "followers") {
-      const userFollowData = await getUserFollowers(
+      let userFollowData = await getUserFollowers(
         setUserFollow,
         setIsLoading,
         id
       );
+      setUserFollow(userFollowData);
       console.log("====================================");
-      console.log(userFollowData);
+      console.log("userFollowData:", userFollowData);
+      console.log("userFollow2:", userFollow);
       console.log("====================================");
-    } else {
-      setIsLoading(true);
-      getUserFollowing(setUserFollow, setIsLoading, id);
+    }
+    if (title === "following") {
+      let userFollowData = await getUserFollowings(
+        setUserFollow,
+        setIsLoading,
+        id
+      );
+      setUserFollow(userFollowData);
+      console.log("====================================");
+      console.log("userFollowData:", userFollowData);
+      console.log("userFollow2:", userFollow);
+      console.log("====================================");
       setIsLoading(false);
     }
   }
@@ -59,9 +65,9 @@ const OtherProfileFollowsScreen = ({ navigation, route }) => {
   useEffect(() => {
     getAllData();
   }, [title]);
-  console.log("====================================");
-  console.log(userFollow);
-  console.log("====================================");
+  // console.log("====================================");
+  // console.log(userFollow);
+  // console.log("====================================");
   return (
     <SafeAreaView className="bg-white flex-1">
       <TouchableOpacity
@@ -85,14 +91,18 @@ const OtherProfileFollowsScreen = ({ navigation, route }) => {
           <ActivityIndicator size="large" />
         ) : (
           <>
-            {userFollow?.map((user) => (
-              <FollowComponent
-                key={user._id}
-                user={user}
-                followState={user?.isFollowing}
-                navigation={navigation}
-              />
-            ))}
+            {userFollow != undefined
+              ? userFollow?.map((user) => (
+                  <FollowComponent
+                    key={user._id}
+                    mainUserId={mainUserId}
+                    user={user}
+                    title={title}
+                    followState={user?.isFollowing}
+                    navigation={navigation}
+                  />
+                ))
+              : null}
           </>
         )}
       </ScrollView>

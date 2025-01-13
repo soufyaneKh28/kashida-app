@@ -2,9 +2,16 @@ import { View, Text, Image, Pressable } from "react-native";
 import React from "react";
 import FollowBtn from "./FollowBtn";
 
-const FollowComponent = ({ followState, navigation, user, title }) => {
+const FollowComponent = ({
+  followState,
+  navigation,
+  user,
+  title,
+  mainUserId = "aa",
+}) => {
   console.log("====================================");
   console.log(title);
+  console.log(user);
   console.log("====================================");
 
   if (title === "following")
@@ -48,7 +55,10 @@ const FollowComponent = ({ followState, navigation, user, title }) => {
           </View>
         </Pressable>
         {/* Buttn */}
-        <FollowBtn followState={followState} userId={user.following._id} />
+        {mainUserId != user.following._id ? (
+          <FollowBtn followState={followState} userId={user.following._id} />
+        ) : null}
+        {/* <FollowBtn followState={followState} userId={user.following._id} /> */}
       </View>
     );
   else {
@@ -92,7 +102,10 @@ const FollowComponent = ({ followState, navigation, user, title }) => {
           </View>
         </Pressable>
         {/* Buttn */}
-        <FollowBtn followState={followState} userId={user.follower._id} />
+        {mainUserId != user.follower._id ? (
+          <FollowBtn followState={followState} userId={user.follower._id} />
+        ) : null}
+        {/* <FollowBtn followState={followState} userId={user.follower._id} /> */}
       </View>
     );
   }

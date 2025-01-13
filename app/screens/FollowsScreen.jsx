@@ -14,13 +14,13 @@ import FollowComponent from "../components/FollowComponent";
 import { getMyFollowers, getMyFollowing } from "../api/me";
 
 const FollowsScreen = ({ navigation, route }) => {
-  const { title } = route.params;
+  const { title, mainUserId } = route.params;
   const [isloading, setIsLoading] = useState(false);
   const [userFollow, setUserFollow] = useState([]);
   const [screenTitle, setScreenTitle] = useState(title);
 
   console.log("====================================");
-  console.log(screenTitle);
+  console.log(mainUserId);
   console.log("====================================");
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -80,6 +80,7 @@ const FollowsScreen = ({ navigation, route }) => {
                 followState={user?.isFollowing}
                 navigation={navigation}
                 title={screenTitle}
+                mainUserId={mainUserId}
               />
             ))}
           </>
