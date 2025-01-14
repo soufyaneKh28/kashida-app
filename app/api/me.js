@@ -2,7 +2,8 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 
-const baseurl = "http://10.0.2.2:7000";
+import { API_URL } from "@env";
+// const API_URL = "http://10.0.2.2:7000";
 // getting User followers
 export const getMyFollowers = async (setUserFollow, setIsLoading) => {
   try {
@@ -16,16 +17,13 @@ export const getMyFollowers = async (setUserFollow, setIsLoading) => {
     }
 
     // Make the GET request
-    const response = await fetch(
-      `${baseurl}/api/k1/follow/myFollowers`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-        },
-      }
-    );
+    const response = await fetch(`${API_URL}/api/k1/follow/myFollowers`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    });
 
     // Check if the response is OK
     if (!response.ok) {
@@ -58,16 +56,13 @@ export const getMyFollowing = async (setUserFollow) => {
     }
 
     // Make the GET request
-    const response = await fetch(
-      `${baseurl}/api/k1/follow/myFollowings`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-        },
-      }
-    );
+    const response = await fetch(`${API_URL}/api/k1/follow/myFollowings`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    });
 
     // Check if the response is OK
     if (!response.ok) {
@@ -101,7 +96,7 @@ export const getMe = async (setMe, setIsLoading) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/users/me`, {
+    const response = await fetch(`${API_URL}/api/k1/users/me`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -143,7 +138,7 @@ export const getMe = async (setMe, setIsLoading) => {
 //     }
 
 //     // Make the GET request
-//     const response = await fetch(`${baseurl}/api/k1/posts?user=${id}`, {
+//     const response = await fetch(`${API_URL}/api/k1/posts?user=${id}`, {
 //       method: "GET",
 //       headers: {
 //         "Content-Type": "application/json",
@@ -185,7 +180,7 @@ export const getMyPosts = async (setUserData, setIsLoading, id) => {
     }
 
     // Make the GET request using Axios
-    const response = await axios.get(`${baseurl}/api/k1/posts`, {
+    const response = await axios.get(`${API_URL}/api/k1/posts`, {
       params: { user: id }, // Query parameter
       headers: {
         Authorization: `Bearer ${token}`, // Add the token to the Authorization header
@@ -221,7 +216,7 @@ export const getCategories = async (setCategories) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/category`, {
+    const response = await fetch(`${API_URL}/api/k1/category`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

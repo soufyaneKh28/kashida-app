@@ -1,5 +1,5 @@
-import { baseurl } from "./user";
-
+// import { API_URL } from "./user";
+import { API_URL } from "@env";
 // getting User followers
 export const getMyFollowing = async ({ setUserFollow, setIsLoading }) => {
   try {
@@ -12,16 +12,13 @@ export const getMyFollowing = async ({ setUserFollow, setIsLoading }) => {
     }
 
     // Make the GET request
-    const response = await fetch(
-      `${baseurl}/api/k1/follow/myFollowings`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-        },
-      }
-    );
+    const response = await fetch(`${API_URL}/api/k1/follow/myFollowings`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    });
 
     // Check if the response is OK
     if (!response.ok) {

@@ -25,7 +25,7 @@ import * as SecureStore from "expo-secure-store";
 import { getMe } from "../api/me";
 import BackArrow from "./BackArrow";
 import { ChevronLeftIcon } from "react-native-heroicons/solid";
-
+import { API_URL } from "@env";
 const CommentsModal = ({
   selectedPost,
   isModalVisible,
@@ -99,7 +99,7 @@ const CommentsModal = ({
     try {
       const token = await SecureStore.getItemAsync("jwtToken");
       const response = await axios.post(
-        `${baseurl}/api/k1/posts/${selectedPost}/comments/`,
+        `${API_URL}/api/k1/posts/${selectedPost}/comments/`,
         formData,
         {
           headers: {
@@ -147,7 +147,7 @@ const CommentsModal = ({
       const token = await SecureStore.getItemAsync("jwtToken");
 
       const response = await axios.post(
-        `${baseurl}/api/k1/comments/${replyingTo._id}/replies/`,
+        `${API_URL}/api/k1/comments/${replyingTo._id}/replies/`,
         { reply: newComment }, // Send raw JSON data in the request body
         {
           headers: {

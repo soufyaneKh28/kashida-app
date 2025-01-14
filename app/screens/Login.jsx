@@ -31,7 +31,7 @@ import * as SecureStore from "expo-secure-store";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { baseurl } from "../api/user";
-
+import { API_URL } from "@env";
 const Login = () => {
   const navigation = useNavigation();
   const router = useRouter();
@@ -49,7 +49,7 @@ const Login = () => {
       return alert("please add valid email and password");
     try {
       setLoading(true);
-      const response = await fetch(`${baseurl}/api/k1/users/login`, {
+      const response = await fetch(`${API_URL}/api/k1/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeftIcon } from "react-native-heroicons/outline";
 import { baseurl } from "../api/user";
+import { API_URL } from "@env";
 
 export default function ForgotPassword2({ navigation, route }) {
   const [code, setCode] = useState("");
@@ -31,7 +32,7 @@ export default function ForgotPassword2({ navigation, route }) {
 
     setLoading(true);
     try {
-      const response = await fetch(`${baseurl}/api/k1/users/forgotPassword`, {
+      const response = await fetch(`${API_URL}/api/k1/users/forgotPassword`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

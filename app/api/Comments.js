@@ -1,9 +1,9 @@
-// const baseurl = "http://10.0.2.2:7000";
+// const API_URL = "http://10.0.2.2:7000";
 import axios from "axios";
 import { Alert } from "react-native";
 import * as SecureStore from "expo-secure-store";
-import { baseurl } from "./user";
-
+// import { API_URL } from "./user";
+import { API_URL } from "@env";
 export const getUserComments = async (setCommentsData, setIsLoading, id) => {
   try {
     setIsLoading(true);
@@ -17,7 +17,7 @@ export const getUserComments = async (setCommentsData, setIsLoading, id) => {
     }
 
     // Make the GET request using axios
-    const response = await axios.get(`${baseurl}/api/k1/posts/${id}/comments`, {
+    const response = await axios.get(`${API_URL}/api/k1/posts/${id}/comments`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`, // Add the token to the Authorization header
@@ -47,7 +47,7 @@ export const getCommentReplies = async (setIsLoading, id) => {
 
     // Make the GET request using axios
     const response = await axios.get(
-      `${baseurl}/api/k1/comments/${id}/replies`,
+      `${API_URL}/api/k1/comments/${id}/replies`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -80,7 +80,7 @@ export const getCommentReplies = async (setIsLoading, id) => {
 
 //     // Make the GET request using axios
 //     const response = await axios.post(
-//       `${baseurl}/api/k1/comments/${id}/LikeComment`,
+//       `${API_URL}/api/k1/comments/${id}/LikeComment`,
 //       {
 //         headers: {
 //           "Content-Type": "application/json",
@@ -113,7 +113,7 @@ export const LikeComment = async (id) => {
 
     // Make the GET request
     const response = await fetch(
-      `${baseurl}/api/k1/comments/${id}/LikeComment`,
+      `${API_URL}/api/k1/comments/${id}/LikeComment`,
       {
         method: "POST",
         headers: {
@@ -154,7 +154,7 @@ export const unlikeComment = async (id) => {
 
     // Make the GET request
     const response = await fetch(
-      `${baseurl}/api/k1/comments/${id}/unlikeComment`,
+      `${API_URL}/api/k1/comments/${id}/unlikeComment`,
       {
         method: "DELETE",
         headers: {
@@ -194,7 +194,7 @@ export const LikeReply = async (id) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/replies/${id}/likeReply`, {
+    const response = await fetch(`${API_URL}/api/k1/replies/${id}/likeReply`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -233,7 +233,7 @@ export const unlikeReply = async (id) => {
 
     // Make the GET request
     const response = await fetch(
-      `${baseurl}/api/k1/replies/${id}/unlikeReply`,
+      `${API_URL}/api/k1/replies/${id}/unlikeReply`,
       {
         method: "DELETE",
         headers: {
@@ -273,7 +273,7 @@ export const deleteComment = async (id) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/comments/${id}`, {
+    const response = await fetch(`${API_URL}/api/k1/comments/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -312,7 +312,7 @@ export const deleteReply = async (id) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/replies/${id}`, {
+    const response = await fetch(`${API_URL}/api/k1/replies/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -350,7 +350,7 @@ export const sendCommentReport = async (reportId) => {
       return;
     }
 
-    const response = await fetch(`${baseurl}/api/k1/comments/report`, {
+    const response = await fetch(`${API_URL}/api/k1/comments/report`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -383,7 +383,7 @@ export const sendReplyReport = async (reportId) => {
       Alert.alert("Error", "No token found. Please log in again.");
       return;
     }
-    const response = await fetch(`${baseurl}/api/k1/replies/report`, {
+    const response = await fetch(`${API_URL}/api/k1/replies/report`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

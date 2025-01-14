@@ -23,28 +23,7 @@ const ITEM_WIDTH = windowWidth * 0.65; // Width of each item
 const ITEM_HEIGHT = 300; // Height of each item
 const SPACER = 70; // Space around items
 
-const data = [
-  { id: "1" },
-  { id: "2", color: "#00FF00" },
-  { id: "3", color: "#0000FF" },
-  { id: "4", color: "#FFA500" },
-  { id: "5", color: "#800080" },
-  { id: "1" },
-  { id: "2", color: "#00FF00" },
-  { id: "3", color: "#0000FF" },
-  { id: "4", color: "#FFA500" },
-  { id: "5", color: "#800080" },
-  { id: "1" },
-  { id: "2", color: "#00FF00" },
-  { id: "3", color: "#0000FF" },
-  { id: "4", color: "#FFA500" },
-  { id: "5", color: "#800080" },
-  { id: "1" },
-  { id: "2", color: "#00FF00" },
-  { id: "3", color: "#0000FF" },
-  { id: "4", color: "#FFA500" },
-  { id: "5", color: "#800080" },
-];
+
 
 const Parallax = ({ spaces, navigation, followingSpaces }) => {
   const scrollX = useSharedValue(0);

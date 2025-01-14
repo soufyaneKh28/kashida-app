@@ -15,6 +15,7 @@ import axios from "axios";
 import { baseurl } from "../api/user";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
+import { API_URL } from "@env";
 export default function Security({ navigation }) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -46,7 +47,7 @@ export default function Security({ navigation }) {
         return;
       }
       const response = await axios.patch(
-        `${baseurl}/api/k1/users/updateMyPassword`,
+        `${API_URL}/api/k1/users/updateMyPassword`,
         {
           passwordCurrent: currentPassword,
           password: newPassword,

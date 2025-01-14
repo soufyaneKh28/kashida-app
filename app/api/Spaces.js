@@ -1,4 +1,5 @@
-const baseurl = "http://10.0.2.2:7000";
+// const API_URL = "http://10.0.2.2:7000";
+import { API_URL } from "@env";
 import axios from "axios";
 import { Alert } from "react-native";
 import * as SecureStore from "expo-secure-store";
@@ -14,7 +15,7 @@ export const GetSpaces = async (setCategories, setIsLoading) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/category`, {
+    const response = await fetch(`${API_URL}/api/k1/category`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +59,7 @@ export const GetSpacePost = async (setPosts, setIsLoading, title) => {
   //   }
 
   //   // Make the GET request using axios
-  //   const response = await axios.get(`${baseurl}/api/k1/posts`, {
+  //   const response = await axios.get(`${API_URL}/api/k1/posts`, {
   //     headers: {
   //       "Content-Type": "application/json",
   //       Authorization: `Bearer ${token}`, // Add the token to the Authorization header
@@ -91,7 +92,7 @@ export const GetSpacePost = async (setPosts, setIsLoading, title) => {
 
     // Make the GET request
     const response = await fetch(
-      `${baseurl}/api/k1/posts?categories=${title}`,
+      `${API_URL}/api/k1/posts?categories=${title}`,
       {
         method: "GET",
         headers: {
@@ -126,7 +127,7 @@ export const GetSpacePost = async (setPosts, setIsLoading, title) => {
 };
 
 export const joinSpace = async (space) => {
-  const url = `${baseurl}/api/k1/users/joinSpace`; // Replace BASE_URL with your actual base URL
+  const url = `${API_URL}/api/k1/users/joinSpace`; // Replace BASE_URL with your actual base URL
   const token = await SecureStore.getItemAsync("jwtToken");
   try {
     const response = await axios.post(
@@ -159,7 +160,7 @@ export const joinSpace = async (space) => {
   }
 };
 // export const UnjoinSpace = async (space) => {
-//   const url = `${baseurl}/api/k1/users/unjoinSpace`; // Replace BASE_URL with your actual base URL
+//   const url = `${API_URL}/api/k1/users/unjoinSpace`; // Replace BASE_URL with your actual base URL
 //   const token = await SecureStore.getItemAsync("jwtToken");
 //   try {
 //     const response = await axios.delete(
@@ -203,7 +204,7 @@ export const UnjoinSpace = async (space) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/users/unjoinSpace`, {
+    const response = await fetch(`${API_URL}/api/k1/users/unjoinSpace`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

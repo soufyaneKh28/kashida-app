@@ -20,7 +20,8 @@ import { PlusIcon } from "react-native-heroicons/solid";
 import { SelectList } from "react-native-dropdown-select-list";
 import * as ImagePicker from "expo-image-picker";
 import * as SecureStore from "expo-secure-store";
-import { baseurl } from "../api/user";
+// import { baseurl } from "../api/user";
+import { API_URL } from "@env";
 const Posting = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [caption, setCaption] = useState("");
@@ -95,7 +96,7 @@ const Posting = ({ navigation }) => {
       formData.append("categories", selected);
 
       // Log the URL and formData for debugging
-      console.log("API URL:", `${baseurl}/api/k1/posts`);
+      console.log("API URL:", `${API_URL}/api/k1/posts`);
       console.log("FormData:", formData);
 
       setIsLoading(true);

@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { CheckIcon, PlusIcon } from "react-native-heroicons/outline";
 import { baseurl } from "../api/user";
+import { API_URL } from "@env";
 const FollowBtn = ({ followState = false, userId }) => {
   const [isClicked, setisClicked] = useState(followState);
 
@@ -27,7 +28,7 @@ const FollowBtn = ({ followState = false, userId }) => {
 
       // Make the GET request
       const response = await fetch(
-        `${baseurl}/api/k1/follow/${userId}/follow`,
+        `${API_URL}/api/k1/follow/${userId}/follow`,
         {
           method: "POST",
           headers: {
@@ -67,7 +68,7 @@ const FollowBtn = ({ followState = false, userId }) => {
 
       // Make the GET request
       const response = await fetch(
-        `${baseurl}/api/k1/follow/${userId}/unfollow`,
+        `${API_URL}/api/k1/follow/${userId}/unfollow`,
         {
           method: "DELETE",
           headers: {

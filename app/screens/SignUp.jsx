@@ -33,6 +33,7 @@ import { ScrollView } from "react-native";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store"; // Import expo-secure-store
 import { AuthContext } from "../AuthContext";
+import { API_URL } from "@env";
 const SignUp = () => {
   const navigation = useNavigation();
   const router = useRouter();
@@ -49,7 +50,7 @@ const SignUp = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await fetch("http://10.0.2.2:7000/api/k1/users/signup", {
+      const response = await fetch(`${API_URL}/api/k1/users/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

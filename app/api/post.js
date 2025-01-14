@@ -1,8 +1,8 @@
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 
-const baseurl = "http://10.0.2.2:7000";
-
+// const API_URL = "http://10.0.2.2:7000";
+import { API_URL } from "@env";
 export const likePost = async (id) => {
   try {
     // Retrieve the JWT token from SecureStore
@@ -13,7 +13,7 @@ export const likePost = async (id) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/posts/${id}/likePost`, {
+    const response = await fetch(`${API_URL}/api/k1/posts/${id}/likePost`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +50,7 @@ export const unLikePost = async (id) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/posts/${id}/unlikePost`, {
+    const response = await fetch(`${API_URL}/api/k1/posts/${id}/unlikePost`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -87,7 +87,7 @@ export const deletePost = async (id) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/posts/${id}`, {
+    const response = await fetch(`${API_URL}/api/k1/posts/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -124,7 +124,7 @@ export const sendPostReport = async (reportId) => {
       return;
     }
 
-    const response = await fetch(`${baseurl}/api/k1/posts/report`, {
+    const response = await fetch(`${API_URL}/api/k1/posts/report`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

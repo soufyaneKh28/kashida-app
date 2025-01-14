@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import Collapse from "../components/Collapse";
 import RoadMapCollapse from "../components/RoadMapCollapse";
 import DownloadModal from "../components/DownloadModal";
+import Mashq from "../components/Mashq";
 
 const Roadmaps = () => {
-
   return (
     <SafeAreaView className=" bg-white flex-1">
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
@@ -20,6 +20,7 @@ const Roadmaps = () => {
             className=" "
           />
         </View>
+
         <RoadMapCollapse />
         <Image
           source={require("../../assets/images/road.png")}

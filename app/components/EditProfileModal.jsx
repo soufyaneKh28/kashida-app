@@ -19,7 +19,7 @@ import { baseurl, updateUserProfile } from "../api/user";
 import * as SecureStore from "expo-secure-store";
 import { DateTime } from "luxon";
 import { PencilIcon } from "react-native-heroicons/outline";
-
+import { API_URL } from "@env";
 export default function EditProfileModal({
   isVisible,
   onClose,
@@ -95,7 +95,7 @@ export default function EditProfileModal({
       // console.log("Token:", token);
       // console.log("FormData:", JSON.stringify([...formData2.entries()]));
 
-      const response = await fetch(`${baseurl}/api/k1/users/updateMe`, {
+      const response = await fetch(`${API_URL}/api/k1/users/updateMe`, {
         method: "PATCH",
         body: formData2,
         headers: {

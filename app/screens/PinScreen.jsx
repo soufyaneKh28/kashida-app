@@ -41,7 +41,7 @@ import axios from "axios";
 // import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
 const windowWidth = Dimensions.get("window").width;
-
+import { API_URL } from "@env";
 const defaultDataWith6Colors = [
   { color: "#FF0000" },
   { color: "#00FF00" },
@@ -57,21 +57,21 @@ const PinScreen = ({ route }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [newComment, setNewComment] = useState("");
   // const [comment, setComment] = useState();
- const [myId, setMyId] = useState("");
+  const [myId, setMyId] = useState("");
   const [userData, setUserData] = useState();
   const [loading, setIsLoading] = useState();
 
   useEffect(() => {
-    gettingData()
+    gettingData();
   }, []);
-console.log('====================================');
-console.log(myId);
-console.log('====================================');
- async function gettingData(){
-  let token = await SecureStore.getItemAsync("jwtToken");
-  getUserPosts(setUserData, setIsLoading);
-  const decoded = jwtDecode(token);
-  setMyId(decoded.id);
+  console.log("====================================");
+  console.log(myId);
+  console.log("====================================");
+  async function gettingData() {
+    let token = await SecureStore.getItemAsync("jwtToken");
+    getUserPosts(setUserData, setIsLoading);
+    const decoded = jwtDecode(token);
+    setMyId(decoded.id);
   }
   const progress = useSharedValue(0);
 
@@ -99,7 +99,7 @@ console.log('====================================');
     try {
       const token = await SecureStore.getItemAsync("jwtToken");
       const response = await axios.post(
-        `${baseurl}/api/k1/posts/${pin._id}/comments/`,
+        `${API_URL}/api/k1/posts/${pin._id}/comments/`,
         formData,
         {
           headers: {
@@ -212,12 +212,13 @@ console.log('====================================');
           {/* user */}
           <Pressable
             onPress={() =>
-              pin?.user?._id != myId ?
-              navigation.push("ProfileOther", {
-                id: pin?.user?._id,
-              }) : navigation.navigate("ProfileStack" ,{
-                screen:"Profile",
-              })
+              pin?.user?._id != myId
+                ? navigation.push("ProfileOther", {
+                    id: pin?.user?._id,
+                  })
+                : navigation.navigate("ProfileStack", {
+                    screen: "Profile",
+                  })
             }
           >
             <View className="flex-row items-center">

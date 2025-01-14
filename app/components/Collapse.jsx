@@ -58,7 +58,7 @@ const Collapse = ({ title, children }) => {
           }}
           style={styles.innerContent}
         >
-          <Text style={styles.text}>{children}</Text>
+          {children}
         </View>
       </Animated.View>
     </View>
@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
   innerContent: {
     position: "absolute", // Ensure content takes full space for measurement
     width: "100%",
+    zIndex: 100,
   },
   text: {
     padding: 10,

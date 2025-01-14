@@ -1,10 +1,13 @@
 // api/userApi.js
 import axios from "axios";
-export const baseurl = "http://10.0.2.2:7000";
-
+// export const API_URL = "http://10.0.2.2:7000";
+import { API_URL } from "@env";
 import { Alert } from "react-native";
 import * as SecureStore from "expo-secure-store";
 
+console.log("====================================");
+// console.log(" REACT_APP_API_URL", REACT_APP_API_URL);
+console.log("====================================");
 export const getUserPosts = async (setUserData, setIsLoading) => {
   try {
     setIsLoading(true);
@@ -18,7 +21,7 @@ export const getUserPosts = async (setUserData, setIsLoading) => {
     }
 
     // Make the GET request using axios
-    const response = await axios.get(`${baseurl}/api/k1/posts`, {
+    const response = await axios.get(`${API_URL}/api/k1/posts`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`, // Add the token to the Authorization header
@@ -51,7 +54,7 @@ export const getUserProfile = async (setUserProfile, setIsLoading, id) => {
     }
 
     // Make the GET request using axios
-    const response = await axios.get(`${baseurl}/api/k1/users/${id}`, {
+    const response = await axios.get(`${API_URL}/api/k1/users/${id}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`, // Add the token to the Authorization header
@@ -99,7 +102,7 @@ export const updateUserProfile = async (userId, updatedData) => {
       }
     });
 
-    const response = await fetch(`${baseurl}/users/updateMe`, {
+    const response = await fetch(`${API_URL}/users/updateMe`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`, // Assume we have a function to get the auth token
@@ -134,7 +137,7 @@ export const getUserFollowers = async (setUserFollow, setIsLoading, id) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/follow/${id}/followers`, {
+    const response = await fetch(`${API_URL}/api/k1/follow/${id}/followers`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -175,7 +178,7 @@ export const getUserFollowings = async (setUserFollow, setIsLoading, id) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/follow/${id}/followings`, {
+    const response = await fetch(`${API_URL}/api/k1/follow/${id}/followings`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -212,7 +215,7 @@ export const getlikedposts = async (id) => {
     }
 
     // Make the GET request
-    const response = await fetch(`${baseurl}/api/k1/likedPosts/${id}`, {
+    const response = await fetch(`${API_URL}/api/k1/likedPosts/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -253,7 +256,7 @@ export const getPostsByUser = async (setUserData, setIsLoading, id) => {
     }
 
     // Make the GET request using Axios
-    const response = await axios.get(`${baseurl}/api/k1/posts`, {
+    const response = await axios.get(`${API_URL}/api/k1/posts`, {
       params: { user: id }, // Query parameter
       headers: {
         Authorization: `Bearer ${token}`, // Add the token to the Authorization header
