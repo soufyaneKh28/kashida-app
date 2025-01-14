@@ -59,6 +59,16 @@ export const PinSkeleton = ({ isEven }) => (
   </View>
 );
 
+export const UserSkeleton = () => (
+  <View style={styles.userSkeleton}>
+    <View style={styles.userInfo}>
+      <SkeletonLoader width={48} height={48} style={styles.avatar} />
+      <SkeletonLoader width={120} height={20} style={styles.username} />
+    </View>
+    <SkeletonLoader width={100} height={36} style={styles.followButton} />
+  </View>
+);
+
 const styles = StyleSheet.create({
   categorySkeleton: {
     marginRight: 8,
@@ -75,5 +85,27 @@ const styles = StyleSheet.create({
   },
   pinTitle: {
     borderRadius: 4,
+  },
+  userSkeleton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    width: "100%",
+  },
+  userInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  avatar: {
+    borderRadius: 24,
+  },
+  username: {
+    borderRadius: 4,
+  },
+  followButton: {
+    borderRadius: 8,
   },
 });

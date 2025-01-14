@@ -59,12 +59,12 @@ export default function HomeScreen({ navigation }) {
           showsHorizontalScrollIndicator={false}
           style={styles.categoriesContainer}
         >
-          {categories?.map((category, i) => (
+          {categories?.map((catergory, i) => (
             <Category
-              title={category.name}
+              title={catergory.name}
               key={i}
               category={category}
-              onPress={() => setCategory(category.name)}
+              onPress={() => setCategory(catergory.name)}
             />
           ))}
         </ScrollView>

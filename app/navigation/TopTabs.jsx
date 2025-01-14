@@ -1,8 +1,8 @@
+import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { View, Text, Animated } from "react-native";
 import HomeScreen from "../screens/HomeScreen";
 import FollowingScreen from "../screens/FollowingScreen";
-import HomeStack from "./HomeStack";
-import { SafeAreaView, Text } from "react-native";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -13,12 +13,12 @@ export default function TopTabs() {
         tabBarStyle: {
           elevation: 0,
           shadowOpacity: 0,
-          backgroundColor: "white",
+          backgroundColor: "#ffffff",
           borderBottomWidth: 0,
           paddingTop: 10,
         },
         tabBarIndicatorStyle: {
-          backgroundColor: "transparent", // Hide the indicator
+          backgroundColor: "transparent",
         },
         tabBarLabel: ({ focused, color }) => (
           <Text
@@ -34,22 +34,36 @@ export default function TopTabs() {
         ),
         tabBarItemStyle: {
           width: "auto",
-          marginHorizontal: 16, // Add gap between tabs
+          marginHorizontal: 16,
         },
-        tabBarActiveTintColor: "#7FB9E6",
-        tabBarInactiveTintColor: "#AADAFF",
+        tabBarActiveTintColor: "#7fb9e6",
+        tabBarInactiveTintColor: "#aadaff",
         tabBarPressColor: "transparent",
         tabBarContentContainerStyle: {
-          justifyContent: "center", // Center tabs horizontally
+          justifyContent: "center",
         },
-        tabBarGap: 5, // Gap between tabs
+        tabBarGap: 5,
+        swipeEnabled: true,
+        animationEnabled: true,
       })}
       style={{
         width: "100%",
       }}
     >
-      <Tab.Screen name="Feed" component={HomeScreen} />
-      <Tab.Screen name="Following" component={FollowingScreen} />
+      <Tab.Screen
+        name="Feed"
+        component={HomeScreen}
+        options={{
+          tabBarAccessibilityLabel: "Feed Tab",
+        }}
+      />
+      <Tab.Screen
+        name="Following"
+        component={FollowingScreen}
+        options={{
+          tabBarAccessibilityLabel: "Following Tab",
+        }}
+      />
     </Tab.Navigator>
   );
 }
