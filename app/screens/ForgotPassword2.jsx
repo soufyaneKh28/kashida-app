@@ -13,6 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeftIcon } from "react-native-heroicons/outline";
 import { baseurl } from "../api/user";
 import { API_URL } from "@env";
+import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "../styles/colors";
 
 export default function ForgotPassword2({ navigation, route }) {
   const [code, setCode] = useState("");
@@ -115,7 +117,7 @@ export default function ForgotPassword2({ navigation, route }) {
             placeholderTextColor="#78746D"
           />
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleVerifyCode}
             disabled={loading}
@@ -123,8 +125,33 @@ export default function ForgotPassword2({ navigation, route }) {
             <Text style={styles.buttonText}>
               {loading ? "Verifying..." : "Verify Code"}
             </Text>
+          </TouchableOpacity> */}
+          <TouchableOpacity
+            className="my-1"
+            activeOpacity={0.8}
+            disabled={loading}
+            style={[loading && styles.buttonDisabled]}
+            onPress={handleVerifyCode}
+          >
+            <LinearGradient
+              colors={["#0E1B24", "#095E67"]}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              style={styles.gradient}
+            >
+              <Text
+                className="text-white"
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 15,
+                }}
+              >
+                <Text style={styles.buttonText}>
+                  {loading ? "Verifying..." : "Verify Code"}
+                </Text>
+              </Text>
+            </LinearGradient>
           </TouchableOpacity>
-
           <TouchableOpacity
             onPress={handleResendCode}
             disabled={timeLeft > 0}
@@ -150,11 +177,18 @@ export default function ForgotPassword2({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.background,
   },
   content: {
     flex: 1,
     padding: 16,
+  },
+  gradient: {
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 16,
   },
   backButton: {
     padding: 8,
@@ -178,9 +212,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   input: {
-    backgroundColor: "#EFF0F2",
+    backgroundColor: colors.inputBackground,
     borderRadius: 16,
     padding: 16,
+
     fontSize: 16,
     color: "#0E1922",
     textAlign: "center",

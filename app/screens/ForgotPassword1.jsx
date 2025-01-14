@@ -10,17 +10,17 @@ import {
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeftIcon, EnvelopeIcon } from "react-native-heroicons/outline";
-import { baseurl } from "../api/user";
+import { EnvelopeIcon } from "react-native-heroicons/outline";
 import BackArrow from "../components/BackArrow";
 import { API_URL } from "@env";
+import { colors } from "../styles/colors";
+import CustomButton from "../components/CustomButton";
+import { LinearGradient } from "expo-linear-gradient";
+
 export default function ForgotPassword1({ navigation }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // console.log('====================================');
-  console.log(email);
-  // console.log('====================================');
   const handleSendCode = async () => {
     if (!email || !email.includes("@")) {
       Alert.alert("Error", "Please enter a valid email address");
@@ -38,9 +38,6 @@ export default function ForgotPassword1({ navigation }) {
       });
 
       const data = await response.json();
-      console.log("====================================");
-      console.log(data);
-      console.log("====================================");
       if (response.ok) {
         navigation.navigate("ForgotPassword2", { email: email });
       } else {
@@ -63,8 +60,6 @@ export default function ForgotPassword1({ navigation }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.content}
       >
-        {/* Header */}
-
         <View style={styles.headerContainer}>
           <Text style={styles.title}>You Forgot Your Password?</Text>
           <Text style={styles.subtitle}>
@@ -73,10 +68,9 @@ export default function ForgotPassword1({ navigation }) {
           </Text>
         </View>
 
-        {/* Form */}
         <View style={styles.formContainer}>
           <View style={styles.inputContainer}>
-            <EnvelopeIcon color="#0E1922" style={styles.inputIcon} />
+            <EnvelopeIcon color={colors.text} style={styles.inputIcon} />
             <TextInput
               placeholder="Your Email"
               style={styles.input}
@@ -84,18 +78,34 @@ export default function ForgotPassword1({ navigation }) {
               onChangeText={setEmail}
               keyboardType="email-address"
               autoCapitalize="none"
-              placeholderTextColor="#78746D"
+              placeholderTextColor={colors.textSecondary}
             />
           </View>
-
           <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleSendCode}
+            className="my-1"
+            activeOpacity={0.8}
             disabled={loading}
+            style={[loading && styles.buttonDisabled]}
+            onPress={handleSendCode}
           >
-            <Text style={styles.buttonText}>
-              {loading ? "Sending..." : "Send Code"}
-            </Text>
+            <LinearGradient
+              colors={["#0E1B24", "#095E67"]}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              style={styles.gradient}
+            >
+              <Text
+                className="text-white"
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 15,
+                }}
+              >
+                <Text style={styles.buttonText}>
+                  {loading ? "Sending..." : "Send Code"}
+                </Text>
+              </Text>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -106,16 +116,19 @@ export default function ForgotPassword1({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.background,
+  },
+  gradient: {
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 16,
   },
   content: {
     flex: 1,
     padding: 16,
     paddingTop: 80,
-  },
-  backButton: {
-    padding: 8,
-    marginBottom: 24,
   },
   headerContainer: {
     marginBottom: 32,
@@ -123,12 +136,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "600",
-    color: "#0E1922",
+    color: colors.text,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: "#78746D",
+    color: colors.textSecondary,
     lineHeight: 24,
   },
   formContainer: {
@@ -145,26 +158,27 @@ const styles = StyleSheet.create({
     left: 16,
   },
   input: {
-    backgroundColor: "#EFF0F2",
+    backgroundColor: colors.inputBackground,
     borderRadius: 16,
     padding: 16,
     paddingLeft: 48,
     fontSize: 16,
-    color: "#0E1922",
+    color: colors.text,
   },
   button: {
-    backgroundColor: "#008087",
+    backgroundColor: colors.primary,
     borderRadius: 16,
     padding: 16,
     alignItems: "center",
     marginTop: 16,
   },
   buttonDisabled: {
-    backgroundColor: "#b3bec3",
+    backgroundColor: colors.buttonDisabled,
   },
   buttonText: {
-    color: "#ffffff",
+    color: colors.background,
     fontSize: 16,
     fontWeight: "600",
   },
 });
+

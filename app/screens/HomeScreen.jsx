@@ -6,6 +6,7 @@ import { getUserPosts } from "../api/user";
 import { getCategories } from "../api/me";
 import { CategorySkeleton, PinSkeleton } from "../components/SkeletonLoader";
 
+import { colors } from "../styles/colors";
 export default function HomeScreen({ navigation }) {
   const [userData, setUserData] = useState(null);
   const [category, setCategory] = useState("All");
@@ -129,7 +130,7 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.background,
     paddingHorizontal: 16,
   },
   categoriesContainer: {

@@ -1,37 +1,31 @@
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
   TextInput,
   Image,
   ActivityIndicator,
-  ActivityIndicatorBase,
-  Button,
-  Pressable,
+  TouchableOpacity,
   KeyboardAvoidingView,
   StatusBar,
+  StyleSheet,
+  ScrollView,
 } from "react-native";
-import React, { useState } from "react";
-// import { FIREBASE_AUTH } from "../../FirebaseConfig";
+import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import * as SecureStore from "expo-secure-store";
+import { AuthContext } from "../AuthContext";
+import { API_URL } from "@env";
 import {
   LockClosedIcon,
   EnvelopeIcon,
-  AdjustmentsHorizontalIcon,
-  MagnifyingGlassIcon,
   EyeSlashIcon,
   EyeIcon,
 } from "react-native-heroicons/outline";
-import { TouchableOpacity } from "react-native";
-import { router, useRouter } from "expo-router";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import CustomButton from "../components/CustomButton";
-import { SafeAreaView } from "react-native-safe-area-context";
-import OutlineButton from "../components/OutlineButton";
-import { ScrollView } from "react-native";
-import * as SecureStore from "expo-secure-store";
-import { useContext } from "react";
-import { AuthContext } from "../AuthContext";
-import { baseurl } from "../api/user";
-import { API_URL } from "@env";
+import { colors } from "../styles/colors";
+
 const Login = () => {
   const navigation = useNavigation();
   const router = useRouter();
@@ -40,13 +34,15 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const { setIsLoggedIn } = useContext(AuthContext);
+
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
   const handleLogin = async () => {
-    if (email === "" || password === "" || !email.includes("@"))
-      return alert("please add valid email and password");
+    if (email === "" || password === "" || !email.includes("@")) {
+      return alert("Please add valid email and password");
+    }
     try {
       setLoading(true);
       const response = await fetch(`${API_URL}/api/k1/users/login`, {
@@ -60,11 +56,8 @@ const Login = () => {
         }),
       });
 
-      // Check if the response is ok (status code 200-299)
       if (!response.ok) {
-        // If not OK, throw an error with response details
-        const responseBody = await response.json(); // Read response body once
-
+        const responseBody = await response.json();
         throw new Error(
           `Error: ${response.status} - ${
             responseBody.message || "Failed to log in"
@@ -72,59 +65,45 @@ const Login = () => {
         );
       }
 
-      // Only read response body once
       const responseBody = await response.json();
 
       if (responseBody.token) {
-        // console.log(responseBody.user.id);
-        console.log("response", responseBody);
-        console.log("Token:", responseBody.token);
-        // Store JWT token securely using SecureStore
         await SecureStore.setItemAsync("jwtToken", responseBody.token);
         alert("Login successful!");
-        // Optionally navigate to home or another screen
-        // router.replace("navigation/BottomTabs");
         setIsLoggedIn(true);
-        // navigation.replace("bottomTabs");
         const token = await SecureStore.getItemAsync("jwtToken");
         console.log("token from secure Store", token);
       } else {
         alert("Token not found in response.");
       }
     } catch (error) {
-      // console.error("Error during login:", error);
-      alert(`Failed to log in, please try again.${error}`);
+      alert(`Failed to log in, please try again. ${error}`);
+    } finally {
+      setLoading(false);
     }
   };
-  console.log("email: ", email);
-  console.log("password: ", password);
+
   return (
     <>
-      <StatusBar barStyle={"dark-content"} translucent={true} />
-      <ScrollView className=" bg-white">
-        <SafeAreaView className="bg-white h-full flex-1 px-3">
+      <StatusBar barStyle="light-content" translucent={true} />
+      <ScrollView style={styles.scrollView}>
+        <SafeAreaView style={styles.container}>
           <Image
             source={require("../../assets/images/kashidaMark.png")}
-            className=" absolute top-[-200px] left-[-100px]"
+            style={styles.backgroundImage}
           />
-          {/* <Image /> */}
-          <View className="mt-[250px]">
-            <Text className="text-[#3C3A36] font-medium text-[20px] text-center">
-              Welcome Artist
-            </Text>
-            <Text className="text-center text-[#78746D]">
+          <View style={styles.headerContainer}>
+            <Text style={styles.headerTitle}>Welcome Artist</Text>
+            <Text style={styles.headerSubtitle}>
               Enter your Email & Password to Sign in
             </Text>
           </View>
           <KeyboardAvoidingView>
-            <View className="mt-10 relative">
-              <EnvelopeIcon
-                color="#0E1922"
-                style={{ position: "absolute", zIndex: 3, top: 12, left: 12 }}
-              />
+            <View style={styles.inputContainer}>
+              <EnvelopeIcon color="#0E1922" style={styles.inputIcon} />
               <TextInput
                 placeholder="Your Email"
-                className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-[16px]"
+                style={styles.input}
                 value={email}
                 placeholderTextColor="gray"
                 autoCapitalize="none"
@@ -132,26 +111,21 @@ const Login = () => {
                 keyboardType="email-address"
               />
             </View>
-            <View className="mt-3 relative">
-              <LockClosedIcon
-                color="#0E1922"
-                style={{ position: "absolute", zIndex: 3, top: 12, left: 12 }}
-              />
+            <View style={styles.inputContainer}>
+              <LockClosedIcon color="#0E1922" style={styles.inputIcon} />
               <TextInput
                 secureTextEntry={!isPasswordVisible}
                 placeholder="Your Password"
                 placeholderTextColor="gray"
                 autoCapitalize="none"
-                className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-[16px]"
+                style={styles.input}
                 value={password}
                 onChangeText={(text) => setPassword(text)}
                 keyboardType="default"
-                // This hides the password text
               />
-
               <TouchableOpacity
                 onPress={togglePasswordVisibility}
-                style={{ position: "absolute", zIndex: 3, top: 12, right: 12 }}
+                style={styles.passwordToggle}
               >
                 {isPasswordVisible ? (
                   <EyeIcon size={24} color="#888" />
@@ -160,18 +134,15 @@ const Login = () => {
                 )}
               </TouchableOpacity>
             </View>
-            <View
-              className="my-6 flex-row mt-2 "
-              style={{ justifyContent: "flex-end" }}
-            >
+            <View style={styles.forgotPasswordContainer}>
               <TouchableOpacity
-                className=" py-3"
+                style={styles.forgotPasswordButton}
                 onPress={() => navigation.push("ForgotPassword1")}
               >
-                <Text className="font-bold">Forgot Password?</Text>
+                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
               </TouchableOpacity>
             </View>
-            <View className=" mt-5">
+            <View style={styles.loginButtonContainer}>
               <CustomButton onPress={handleLogin}>
                 {loading ? (
                   <ActivityIndicator size="small" color="#fff" />
@@ -180,34 +151,10 @@ const Login = () => {
                 )}
               </CustomButton>
             </View>
-            {/* <View className="flex flex-row items-center justify-center mt-5 ">
-              <View className="w-full ms-3 bg-[#ECEEF2] h-[2px]" />
-              <Text className="mx-4">OR</Text>
-              <View className="w-[100%] bg-[#ECEEF2] h-[2px]" />
-            </View>
-            <View className="mt-5">
-              <OutlineButton>
-                <Image
-                  className=" mx-3"
-                  source={require("../../assets/images/google.png")}
-                />
-                <Text
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 15,
-                  }}
-                  className="text-black "
-                >
-                  Sign In With Google
-                </Text>
-              </OutlineButton>
-            </View> */}
-            <View className="flex-row justify-center mt-8">
-              <Text className="text-[#565656] text-[14px] font-medium">
-                Don't Have an Account?
-              </Text>
+            <View style={styles.signUpContainer}>
+              <Text style={styles.signUpText}>Don't Have an Account?</Text>
               <TouchableOpacity onPress={() => navigation.push("SignUp")}>
-                <Text className="text-[#0E1922] font-black ms-1">Sign Up</Text>
+                <Text style={styles.signUpButtonText}>Sign Up</Text>
               </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
@@ -216,5 +163,86 @@ const Login = () => {
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  scrollView: {
+    backgroundColor: colors.background,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    paddingHorizontal: 12,
+  },
+  backgroundImage: {
+    position: "absolute",
+    top: -200,
+    left: -100,
+  },
+  headerContainer: {
+    marginTop: 250,
+  },
+  headerTitle: {
+    color: "#3C3A36",
+    fontWeight: "500",
+    fontSize: 20,
+    textAlign: "center",
+  },
+  headerSubtitle: {
+    textAlign: "center",
+    color: "#78746D",
+  },
+  inputContainer: {
+    marginTop: 12,
+    position: "relative",
+  },
+  inputIcon: {
+    position: "absolute",
+    zIndex: 3,
+    top: 12,
+    left: 12,
+  },
+  input: {
+    backgroundColor: "#ffffff",
+    width: "100%",
+    borderRadius: 16,
+    paddingLeft: 45,
+    padding: 16,
+  },
+  passwordToggle: {
+    position: "absolute",
+    zIndex: 3,
+    top: 12,
+    right: 12,
+  },
+  forgotPasswordContainer: {
+    marginVertical: 24,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  forgotPasswordButton: {
+    paddingVertical: 12,
+  },
+  forgotPasswordText: {
+    fontWeight: "bold",
+  },
+  loginButtonContainer: {
+    marginTop: 20,
+  },
+  signUpContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 32,
+  },
+  signUpText: {
+    color: "#565656",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  signUpButtonText: {
+    color: "#0E1922",
+    fontWeight: "900",
+    marginLeft: 4,
+  },
+});
 
 export default Login;

@@ -1,39 +1,33 @@
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
   TextInput,
   Image,
   ActivityIndicator,
-  ActivityIndicatorBase,
-  Button,
-  Pressable,
+  TouchableOpacity,
   KeyboardAvoidingView,
   SafeAreaView,
+  ScrollView,
+  StyleSheet,
 } from "react-native";
-import React, { useContext, useState } from "react";
-// import { FIREBASE_AUTH } from "../../FirebaseConfig";
+import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import {
   LockClosedIcon,
   EnvelopeIcon,
-  AdjustmentsHorizontalIcon,
-  MagnifyingGlassIcon,
   EyeIcon,
   EyeSlashIcon,
-  UserCircleIcon,
   UserIcon,
-  ArrowLeftCircleIcon,
   ArrowLeftIcon,
 } from "react-native-heroicons/outline";
-import { TouchableOpacity } from "react-native";
-import { router, useRouter } from "expo-router";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import OutlineButton from "../components/OutlineButton";
 import CustomButton from "../components/CustomButton";
-import { ScrollView } from "react-native";
-import axios from "axios";
-import * as SecureStore from "expo-secure-store"; // Import expo-secure-store
+import * as SecureStore from "expo-secure-store";
 import { AuthContext } from "../AuthContext";
 import { API_URL } from "@env";
+import { colors } from "../styles/colors";
+
 const SignUp = () => {
   const navigation = useNavigation();
   const router = useRouter();
@@ -44,12 +38,14 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const { setIsLoggedIn } = useContext(AuthContext);
+
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
   const handleSignup = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`${API_URL}/api/k1/users/signup`, {
         method: "POST",
         headers: {
@@ -63,10 +59,8 @@ const SignUp = () => {
         }),
       });
 
-      // Check if the response is ok (status code 200-299)
       if (!response.ok) {
-        // If not OK, throw an error with response details
-        const responseBody = await response.json(); // Read response body once
+        const responseBody = await response.json();
         throw new Error(
           `Error: ${response.status} - ${
             responseBody.message || "Failed to sign up"
@@ -74,11 +68,8 @@ const SignUp = () => {
         );
       }
 
-      // Only read response body once
       const responseBody = await response.json();
       if (responseBody.token) {
-        console.log("Token:", responseBody.token);
-        // Store JWT token securely using SecureStore
         await SecureStore.setItemAsync("jwtToken", responseBody.token);
         alert("User successfully signed up!");
         setIsLoggedIn(true);
@@ -88,172 +79,120 @@ const SignUp = () => {
     } catch (error) {
       console.error("Error during sign-up:", error);
       alert("Failed to sign up, please try again.");
+    } finally {
+      setLoading(false);
     }
   };
-  console.log("username:", username);
-  console.log("email:", email);
-  console.log("password:", password);
-  console.log("Confirm:", passwordConfirm);
+
   return (
-    <ScrollView className=" bg-white">
-      <SafeAreaView className="bg-white h-full   relative">
+    <ScrollView style={styles.scrollView}>
+      <SafeAreaView style={styles.container}>
         <Image
           source={require("../../assets/images/kashidaMark.png")}
-          className=" absolute top-[-200px] left-[-100px]"
+          style={styles.backgroundImage}
         />
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          className="bg-white w-[41px] h-[41px] items-center justify-center rounded-[16px] mt-[20px] ms-[10px] shadow-2xl absolute "
+          style={styles.backButton}
         >
-          <ArrowLeftIcon color={"black"} />
+          <ArrowLeftIcon color={colors.text} />
         </TouchableOpacity>
-        {/* <Image /> */}
-        <View className="px-3">
-          <View className="mt-[250px]">
-            <Text className="text-[#3C3A36] font-medium text-[20px] text-center">
-              Welcome Artist
-            </Text>
-            <Text className="text-center text-[#78746D]">
+        <View style={styles.content}>
+          <View style={styles.headerContainer}>
+            <Text style={styles.headerTitle}>Welcome Artist</Text>
+            <Text style={styles.headerSubtitle}>
               Sign up and enjoy our community
             </Text>
           </View>
           <KeyboardAvoidingView>
-            {/* Start of input fields */}
-            <View className="mt-10 relative">
-              <UserIcon
-                color="#0E1922"
-                style={{ position: "absolute", zIndex: 3, top: 12, left: 12 }}
-              />
+            <View style={styles.inputContainer}>
+              <UserIcon color={colors.text} style={styles.inputIcon} />
               <TextInput
                 placeholder="Username"
-                className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-[16px]"
+                style={styles.input}
                 value={username}
                 autoCapitalize="none"
-                placeholderTextColor="gray"
+                placeholderTextColor={colors.textSecondary}
                 onChangeText={(text) => setUsername(text)}
                 keyboardType="default"
               />
             </View>
-            <View className="mt-3 relative">
-              <EnvelopeIcon
-                color="#0E1922"
-                style={{ position: "absolute", zIndex: 3, top: 12, left: 12 }}
-              />
+            <View style={styles.inputContainer}>
+              <EnvelopeIcon color={colors.text} style={styles.inputIcon} />
               <TextInput
                 placeholder="Your Email"
-                className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-[16px]"
+                style={styles.input}
                 value={email}
                 autoCapitalize="none"
-                placeholderTextColor="gray"
+                placeholderTextColor={colors.textSecondary}
                 onChangeText={(text) => setEmail(text)}
                 keyboardType="email-address"
               />
             </View>
-
-            <View className="mt-3 relative">
-              <LockClosedIcon
-                color="#0E1922"
-                style={{ position: "absolute", zIndex: 3, top: 12, left: 12 }}
-              />
+            <View style={styles.inputContainer}>
+              <LockClosedIcon color={colors.text} style={styles.inputIcon} />
               <TextInput
                 secureTextEntry={!isPasswordVisible}
                 placeholder="Your Password"
-                autoCapitalize="none"
-                placeholderTextColor="gray"
-                className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-[16px]"
+                style={styles.input}
                 value={password}
+                autoCapitalize="none"
+                placeholderTextColor={colors.textSecondary}
                 onChangeText={(text) => setPassword(text)}
                 keyboardType="default"
-                // This hides the password text
               />
-
               <TouchableOpacity
                 onPress={togglePasswordVisibility}
-                style={{ position: "absolute", zIndex: 3, top: 12, right: 12 }}
+                style={styles.passwordToggle}
               >
                 {isPasswordVisible ? (
-                  <EyeIcon size={24} color="#888" />
+                  <EyeIcon size={24} color={colors.textSecondary} />
                 ) : (
-                  <EyeSlashIcon size={24} color="#888" />
+                  <EyeSlashIcon size={24} color={colors.textSecondary} />
                 )}
               </TouchableOpacity>
             </View>
-            <View className="mt-3 relative">
-              <LockClosedIcon
-                color="#0E1922"
-                style={{ position: "absolute", zIndex: 3, top: 12, left: 12 }}
-              />
+            <View style={styles.inputContainer}>
+              <LockClosedIcon color={colors.text} style={styles.inputIcon} />
               <TextInput
                 secureTextEntry={!isPasswordVisible}
                 placeholder="Confirm Password"
-                autoCapitalize="none"
-                placeholderTextColor="gray"
-                className=" bg-[#EFF0F2]  w-full  rounded-[16px] ps-[45px] p-[16px]"
+                style={styles.input}
                 value={passwordConfirm}
+                autoCapitalize="none"
+                placeholderTextColor={colors.textSecondary}
                 onChangeText={(text) => setPasswordConfirm(text)}
                 keyboardType="default"
-                // This hides the password text
               />
-
               <TouchableOpacity
                 onPress={togglePasswordVisibility}
-                style={{ position: "absolute", zIndex: 3, top: 12, right: 12 }}
+                style={styles.passwordToggle}
               >
                 {isPasswordVisible ? (
-                  <EyeIcon size={24} color="#888" />
+                  <EyeIcon size={24} color={colors.textSecondary} />
                 ) : (
-                  <EyeSlashIcon size={24} color="#888" />
+                  <EyeSlashIcon size={24} color={colors.textSecondary} />
                 )}
               </TouchableOpacity>
             </View>
-
-            {/* end of input fields */}
-            {/* terms and condition start */}
-            <Text className="text-center text-[#78746D] px-3 leading-6 mt-3">
+            <Text style={styles.termsText}>
               By continuing you agree to our{" "}
-              <Text className="text-[#0E1922] font-bold">Terms of Service</Text>{" "}
-              and
-              <Text className="text-[#0E1922] font-bold"> Privacy Policy</Text>
+              <Text style={styles.termsLink}>Terms of Service</Text> and
+              <Text style={styles.termsLink}> Privacy Policy</Text>
             </Text>
-            <View className=" mt-3">
+            <View style={styles.buttonContainer}>
               {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color={colors.primary} />
               ) : (
-                <>
-                  <CustomButton onPress={handleSignup}>
-                    Create Account
-                  </CustomButton>
-                </>
+                <CustomButton onPress={handleSignup}>
+                  Create Account
+                </CustomButton>
               )}
             </View>
-            {/* <View className="flex flex-row items-center justify-center mt-5 ">
-          <View className="w-full ms-3 bg-[#ECEEF2] h-[2px]" />
-          <Text className="mx-4">OR</Text>
-          <View className="w-[100%] bg-[#ECEEF2] h-[2px]" />
-          </View> */}
-            {/* <View className="mt-5">
-          <OutlineButton>
-          <Image
-          className=" mx-3"
-          source={require("../../assets/images/google.png")}
-          />
-          <Text
-          style={{
-            fontWeight: "bold",
-            fontSize: 15,
-            }}
-            className="text-black "
-            >
-            Sign In With Google
-            </Text>
-            </OutlineButton>
-            </View> */}
-            <View className="flex-row justify-center mt-8">
-              <Text className="text-[#565656] text-[14px] font-medium">
-                Already Have an Account?
-              </Text>
-              <TouchableOpacity onPress={() => navigation.goBack("")}>
-                <Text className="text-[#0E1922] font-black ms-1">Sign In</Text>
+            <View style={styles.signInContainer}>
+              <Text style={styles.signInText}>Already Have an Account?</Text>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Text style={styles.signInLink}>Sign In</Text>
               </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
@@ -262,5 +201,110 @@ const SignUp = () => {
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  scrollView: {
+    backgroundColor: colors.background,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    position: "relative",
+  },
+  backgroundImage: {
+    position: "absolute",
+    top: -200,
+    left: -100,
+  },
+  backButton: {
+    backgroundColor: colors.background,
+    width: 41,
+    height: 41,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 16,
+    marginTop: 20,
+    marginLeft: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    position: "absolute",
+    zIndex: 1,
+  },
+  content: {
+    paddingHorizontal: 12,
+  },
+  headerContainer: {
+    marginTop: 250,
+  },
+  headerTitle: {
+    color: colors.text,
+    fontWeight: "500",
+    fontSize: 20,
+    textAlign: "center",
+  },
+  headerSubtitle: {
+    textAlign: "center",
+    color: colors.textSecondary,
+  },
+  inputContainer: {
+    marginTop: 12,
+    position: "relative",
+  },
+  inputIcon: {
+    position: "absolute",
+    zIndex: 3,
+    top: 12,
+    left: 12,
+  },
+  input: {
+    backgroundColor: colors.inputBackground,
+    width: "100%",
+    borderRadius: 16,
+    paddingLeft: 45,
+    padding: 16,
+    color: colors.text,
+  },
+  passwordToggle: {
+    position: "absolute",
+    zIndex: 3,
+    top: 12,
+    right: 12,
+  },
+  termsText: {
+    textAlign: "center",
+    color: colors.textSecondary,
+    paddingHorizontal: 12,
+    lineHeight: 24,
+    marginTop: 12,
+  },
+  termsLink: {
+    color: colors.linkText,
+    fontWeight: "bold",
+  },
+  buttonContainer: {
+    marginTop: 12,
+  },
+  signInContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 32,
+  },
+  signInText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  signInLink: {
+    color: colors.linkText,
+    fontWeight: "900",
+    marginLeft: 4,
+  },
+});
 
 export default SignUp;

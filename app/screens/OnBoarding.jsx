@@ -1,9 +1,5 @@
-// import { View, Text, Image, Button } from "react-native";
-import React from "react";
-import Onboarding from "react-native-onboarding-swiper";
+import React, { useRef, useState } from "react";
 import { useNavigation } from "expo-router";
-// import { TouchableOpacity } from "react-native";
-// import { useNavigation } from "@react-navigation/native";
 import {
   SafeAreaView,
   Image,
@@ -16,6 +12,8 @@ import {
   Dimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "../styles/colors";
+
 const { width, height } = Dimensions.get("window");
 
 const COLORS = { primary: "#fff", white: "#fff" };
@@ -44,18 +42,11 @@ const slides = [
 
 const Slide = ({ item }) => {
   return (
-    <View className=" mt-20" style={{ alignItems: "center" }}>
-      <Image
-        source={item?.image}
-        style={{ height: "70%", width, resizeMode: "contain" }}
-      />
-      <View className=" mt-10">
-        <Text className=" max-w-[340px] text-[24px] font-semibold text-center">
-          {item?.title}
-        </Text>
-        <Text className=" max-w-[300px] text-center mt-3 text-[#78746D]">
-          {item?.subtitle}
-        </Text>
+    <View style={styles.slideContainer}>
+      <Image source={item?.image} style={styles.slideImage} />
+      <View style={styles.slideTextContainer}>
+        <Text style={styles.slideTitle}>{item?.title}</Text>
+        <Text style={styles.slideSubtitle}>{item?.subtitle}</Text>
       </View>
     </View>
   );
@@ -63,9 +54,9 @@ const Slide = ({ item }) => {
 
 const OnBoarding = () => {
   const navigation = useNavigation();
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const ref = useRef(null);
 
-  const [currentSlideIndex, setCurrentSlideIndex] = React.useState(0);
-  const ref = React.useRef();
   const updateCurrentSlideIndex = (e) => {
     const contentOffsetX = e.nativeEvent.contentOffset.x;
     const currentIndex = Math.round(contentOffsetX / width);
@@ -74,111 +65,58 @@ const OnBoarding = () => {
 
   const goToNextSlide = () => {
     const nextSlideIndex = currentSlideIndex + 1;
-    if (nextSlideIndex != slides.length) {
+    if (nextSlideIndex !== slides.length) {
       const offset = nextSlideIndex * width;
       ref?.current.scrollToOffset({ offset });
-      setCurrentSlideIndex(currentSlideIndex + 1);
+      setCurrentSlideIndex(nextSlideIndex);
     }
   };
+
   const skip = () => {
     const lastSlideIndex = slides.length - 1;
     const offset = lastSlideIndex * width;
     ref?.current.scrollToOffset({ offset });
     setCurrentSlideIndex(lastSlideIndex);
   };
-  // const Skip = ({ isLight, skipLabel, ...props }) => (
-  //   <Button
-  //     title={"Skip"}
-  //     onPress={() => navigation.replace("Login")}
-  //     buttonStyle={{
-  //       backgroundColor: "red",
-  //     }}
-  //     containerViewStyle={{
-  //       marginVertical: 10,
-  //       width: 70,
-  //     }}
-  //     textStyle={{ color: "#fff" }}
-  //     {...props}
-  //   >
-  //     {skipLabel}
-  //   </Button>
-  // );
-
-  // const Next = ({ ...props }) => (
-  //   <TouchableOpacity
-  //     className="w-full bg-black "
-  //     title={"Next"}
-  //     buttonStyle={{
-  //       backgroundColor: "red",
-  //     }}
-  //     containerViewStyle={{
-  //       marginVertical: 10,
-  //       width: 70,
-  //       backgroundColor: "red",
-  //     }}
-  //     textStyle={{ color: "#fff" }}
-  //     {...props}
-  //   >
-  //     <Text className="text-white">Next</Text>
-  //   </TouchableOpacity>
-  // );
-
-  // const Done = ({ ...props }) => (
-  //   <Button
-  //     title={"Done"}
-  //     containerViewStyle={{
-  //       marginVertical: 10,
-  //       width: 70,
-  //       // backgroundColor: backgroundColor(isLight),
-  //     }}
-  //     //   textStyle={{ color: color(isLight) }}
-  //     {...props}
-  //   />
-  // );
 
   const Footer = () => {
     return (
-      <View
-        className="pt-5"
-        style={{
-          height: height * 0.25,
-          // justifyContent: "space-between",
-          paddingHorizontal: 20,
-        }}
-      >
-        {/* Indicator container */}
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginTop: 20,
-          }}
-        >
-          {/*  height: 2.5,
-    width: 10,
-    backgroundColor: "grey",
-    marginHorizontal: 3,
-    borderRadius: 2, */}
-          {/* Render indicator */}
+      <View style={styles.footer}>
+        <View style={styles.indicatorContainer}>
           {slides.map((_, index) => (
             <View
               key={index}
-              className={` h-2   mx-1 rounded-md ${
-                currentSlideIndex == index
-                  ? " w-4 bg-gray-900  "
-                  : "w-2 bg-[#D5D4D4]"
-              }`}
+              style={[
+                styles.indicator,
+                currentSlideIndex === index
+                  ? styles.indicatorActive
+                  : styles.indicatorInactive,
+              ]}
             />
           ))}
         </View>
 
-        {/* Render buttons */}
-        <View className="w-full flex-col my-5" style={{ marginBottom: 20 }}>
-          {currentSlideIndex == slides.length - 1 ? (
-            <View style={{ height: 50 }}>
+        <View style={styles.buttonContainer}>
+          {currentSlideIndex === slides.length - 1 ? (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.replace("Login")}
+            >
+              <LinearGradient
+                colors={["#0E1B24", "#095E67"]}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={styles.gradient}
+              >
+                <Text style={styles.buttonText}>GET STARTED</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.buttonGroup}>
               <TouchableOpacity
-                style={styles.btn}
-                onPress={() => navigation.replace("Login")}
+                activeOpacity={0.8}
+                onPress={goToNextSlide}
+                style={styles.button}
               >
                 <LinearGradient
                   colors={["#0E1B24", "#095E67"]}
@@ -186,55 +124,15 @@ const OnBoarding = () => {
                   end={{ x: 1, y: 0.5 }}
                   style={styles.gradient}
                 >
-                  <Text
-                    className="text-white"
-                    style={{ fontWeight: "bold", fontSize: 15 }}
-                  >
-                    GET STARTED
-                  </Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View className=" gap-1">
-              <TouchableOpacity activeOpacity={0.8} onPress={goToNextSlide}>
-                <LinearGradient
-                  colors={["#0E1B24", "#095E67"]}
-                  start={{ x: 0, y: 0.5 }}
-                  end={{ x: 1, y: 0.5 }}
-                  style={styles.gradient}
-                >
-                  <Text
-                    className="text-white"
-                    style={{
-                      fontWeight: "bold",
-                      fontSize: 15,
-                    }}
-                  >
-                    NEXT
-                  </Text>
+                  <Text style={styles.buttonText}>NEXT</Text>
                 </LinearGradient>
               </TouchableOpacity>
               <TouchableOpacity
                 activeOpacity={0.8}
-                className="w-full p-4  border border-[#0E1922] "
                 onPress={skip}
-                style={{
-                  paddingVertical: 15,
-                  paddingHorizontal: 25,
-                  borderRadius: 10,
-                  alignItems: "center",
-                }}
+                style={styles.skipButton}
               >
-                <Text
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 15,
-                  }}
-                  className="text-black "
-                >
-                  SKIP
-                </Text>
+                <Text style={styles.skipButtonText}>SKIP</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -244,66 +142,114 @@ const OnBoarding = () => {
   };
 
   return (
-    <SafeAreaView className="h-full">
-      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
-        <StatusBar backgroundColor={COLORS.primary} />
-        <FlatList
-          ref={ref}
-          onMomentumScrollEnd={updateCurrentSlideIndex}
-          contentContainerStyle={{ height: height * 0.75 }}
-          showsHorizontalScrollIndicator={false}
-          horizontal
-          data={slides}
-          pagingEnabled
-          renderItem={({ item }) => <Slide item={item} />}
-        />
-        <Footer />
-      </SafeAreaView>
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor={COLORS.primary} />
+      <FlatList
+        ref={ref}
+        onMomentumScrollEnd={updateCurrentSlideIndex}
+        contentContainerStyle={styles.flatListContent}
+        showsHorizontalScrollIndicator={false}
+        horizontal
+        data={slides}
+        pagingEnabled
+        renderItem={({ item }) => <Slide item={item} />}
+      />
+      <Footer />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  subtitle: {
-    color: COLORS.white,
-    fontSize: 13,
-    marginTop: 10,
-    maxWidth: "70%",
-    textAlign: "center",
-    lineHeight: 23,
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
   },
-  title: {
-    color: COLORS.white,
-    fontSize: 22,
-    fontWeight: "bold",
+  flatListContent: {
+    height: height * 0.75,
+  },
+  slideContainer: {
     marginTop: 20,
-    textAlign: "center",
+    alignItems: "center",
   },
-  image: {
-    height: "100%",
-    width: "100%",
+  slideImage: {
+    height: "70%",
+    width,
     resizeMode: "contain",
   },
-  indicator: {
-    height: 2.5,
-    width: 10,
-    backgroundColor: "grey",
-    marginHorizontal: 3,
-    borderRadius: 2,
+  slideTextContainer: {
+    marginTop: 40,
+    alignItems: "center",
   },
-  // btn: {
-  //   flex: 1,
-  //   height: 50,
-  //   borderRadius: 5,
-  //   backgroundColor: "#fff",
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  // },
+  slideTitle: {
+    maxWidth: 340,
+    fontSize: 24,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  slideSubtitle: {
+    maxWidth: 300,
+    textAlign: "center",
+    marginTop: 12,
+    color: "#78746D",
+  },
+  footer: {
+    height: height * 0.25,
+    paddingTop: 20,
+    paddingHorizontal: 20,
+  },
+  indicatorContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  indicator: {
+    height: 8,
+    marginHorizontal: 4,
+    borderRadius: 4,
+  },
+  indicatorActive: {
+    width: 16,
+    backgroundColor: "#0E1922",
+  },
+  indicatorInactive: {
+    width: 8,
+    backgroundColor: "#D5D4D4",
+  },
+  buttonContainer: {
+    width: "100%",
+    flexDirection: "column",
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  buttonGroup: {
+    gap: 4,
+  },
+  button: {
+    height: 50,
+  },
   gradient: {
     paddingVertical: 15,
     paddingHorizontal: 25,
     borderRadius: 10,
     alignItems: "center",
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 15,
+  },
+  skipButton: {
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 10,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#0E1922",
+  },
+  skipButtonText: {
+    color: "black",
+    fontWeight: "bold",
+    fontSize: 15,
   },
 });
 
