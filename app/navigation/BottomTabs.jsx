@@ -13,6 +13,7 @@ import HomeStack from "./HomeStack";
 import ProfileStack from "./ProfileStack";
 import HomeScreen from "../screens/HomeScreen";
 import SpacesStack from "./SpacesStack";
+import TopTabs from "./TopTabs";
 
 const Tab = createBottomTabNavigator();
 
@@ -22,12 +23,12 @@ const BottomTabs = () => {
   return (
     <Tab.Navigator
       screenOptions={{
+        animation: "shift",
         tabBarShowLabel: false, // Hides the tab labels
         headerShown: false,
         tabBarStyle: {
-          // position: "absolute",
-          // marginBottom: 15,
-          // marginHorizontal: 20,
+          // animation:"",
+          // animationDuration: 300,
           display: "flex",
           justifyContent: "center",
           // borderRadius: 16,

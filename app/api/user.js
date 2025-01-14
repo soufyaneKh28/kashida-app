@@ -63,6 +63,7 @@ export const getUserProfile = async (setUserProfile, setIsLoading, id) => {
     console.log("User Profile:", response.data?.data);
     console.log("Success", "User data retrieved successfully!");
     setIsLoading(false);
+    return response.data?.data;
   } catch (error) {
     console.error("Error fetching getUserProfile:", error);
     setIsLoading(false); // Stop loading in case of error
@@ -232,7 +233,7 @@ export const getlikedposts = async (id) => {
     // console.log("getlikedposts Data:", userData?.data.likedPosts);
     console.log("Success", "getlikedposts retrieved successfully!");
 
-    return userData?.data.likedPosts;
+    return userData?.data.posts;
     // Handle the user data (e.g., update state or UI)
   } catch (error) {
     console.error("Error fetching getlikedposts:", error);
@@ -240,9 +241,10 @@ export const getlikedposts = async (id) => {
   }
 };
 
-export const getPostsByUser = async (id) => {
+export const getPostsByUser = async (setUserData, setIsLoading, id) => {
   try {
     // Retrieve the JWT token from SecureStore
+    setIsLoading(true);
     const token = await SecureStore.getItemAsync("jwtToken");
     if (!token) {
       Alert.alert("Error", "No token found. Please log in again.");
@@ -261,7 +263,9 @@ export const getPostsByUser = async (id) => {
     // Handle response data
 
     console.log(" getPostsByUser:", response.data.data.posts);
+    setUserData(response.data?.data.posts);
     console.log("Success", "getPostsByUser retrieved successfully!");
+    setIsLoading(false);
     return response.data.data.posts;
   } catch (error) {
     console.error("Error fetching getPostsByUser:", error);

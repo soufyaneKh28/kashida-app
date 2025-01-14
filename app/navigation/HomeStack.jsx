@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 // import { BlurView } from "expo-blur";
 
 import ProfileOther from "../screens/ProfileOther";
+import TopTabs from "./TopTabs";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,7 +16,7 @@ export default function HomeStack() {
   const navigation = useNavigation();
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="TopTabs" component={TopTabs} />
       <Stack.Screen
         name="Pin"
         component={PinScreen}

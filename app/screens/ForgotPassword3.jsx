@@ -50,9 +50,9 @@ export default function ForgotPassword3({ navigation, route }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
-          code,
-          newPassword,
+          email: email,
+          password: newPassword,
+          passwordConfirm: confirmPassword,
         }),
       });
 
@@ -72,7 +72,11 @@ export default function ForgotPassword3({ navigation, route }) {
       setLoading(false);
     }
   };
-
+  console.log("====================================");
+  console.log(email);
+  console.log(newPassword);
+  console.log(confirmPassword);
+  console.log("====================================");
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView

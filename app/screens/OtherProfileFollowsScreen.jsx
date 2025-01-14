@@ -24,7 +24,7 @@ const OtherProfileFollowsScreen = ({ navigation, route }) => {
   };
 
   console.log("====================================");
-  console.log(title);
+  console.log("mainUserId", mainUserId);
   console.log("====================================");
   // let userFollowData = [];
 

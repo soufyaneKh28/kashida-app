@@ -38,32 +38,35 @@ const Posting = ({ navigation }) => {
   ];
 
   const pickImage = async () => {
-    // Request permission to access media
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (status !== "granted") {
-      alert("Sorry, we need camera roll permissions to make this work!");
-      return;
-    }
-    // Open image picker
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsMultipleSelection: true,
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
       allowsEditing: true,
+      // aspect: [4, 3],
       quality: 1,
     });
 
-    if (!result.canceled) {
-      setSelectedImage([
-        ...selectedImage,
+    console.log(result);
+
+    if (!result.canceled && result.assets) {
+      // Using functional update to safely update state
+      setSelectedImage((prevImages) => [
+        ...prevImages,
         ...result.assets.map((asset) => asset.uri),
       ]);
-      console.log("====================================");
-      console.log("this is the selected image");
-      console.log(selectedImage);
-      console.log("====================================");
+
+      // Log to verify what's being added
+      console.log("New images:", selectedImage);
+      console.log(
+        "New images:",
+        result.assets.map((asset) => asset.uri)
+      );
     }
   };
+
+  console.log("====================================");
+  console.log("this is the selected image");
+  console.log(selectedImage);
+  console.log("====================================");
 
   const uploadData = async () => {
     if (!selectedImage || !title || !caption || !selected) {
@@ -91,10 +94,15 @@ const Posting = ({ navigation }) => {
       formData.append("description", caption);
       formData.append("categories", selected);
 
-      console.log(formData);
+      // Log the URL and formData for debugging
+      console.log("API URL:", `${baseurl}/api/k1/posts`);
+      console.log("FormData:", formData);
+
       setIsLoading(true);
       const token = await SecureStore.getItemAsync("jwtToken");
-      const response = await fetch(`${baseurl}/api/k1/posts"`, {
+
+      // Removed the extra quotation mark here
+      const response = await fetch(`${baseurl}/api/k1/posts`, {
         method: "POST",
         body: formData,
         headers: {
@@ -103,19 +111,23 @@ const Posting = ({ navigation }) => {
         },
       });
 
+      // Log response status for debugging
+      console.log("Response status:", response.status);
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // Move setIsLoading(false) after throwing the error
         setIsLoading(false);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
       setIsLoading(false);
       Alert.alert("Success", "Data uploaded successfully!");
-      console.log(data);
+      console.log("Response data:", data);
       navigation.goBack();
     } catch (error) {
       Alert.alert("Upload Failed", error.message);
-      console.error(error);
+      console.error("Full error:", error);
       setIsLoading(false);
     }
   };

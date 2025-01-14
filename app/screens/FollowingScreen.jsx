@@ -3,24 +3,27 @@ import { View, ScrollView, RefreshControl, StyleSheet } from "react-native";
 import Category from "../components/Category";
 import Pin from "../components/Pin";
 import { getUserPosts } from "../api/user";
-import { getCategories } from "../api/me";
+import { getCategories, getMyFollowing } from "../api/me";
 import { CategorySkeleton, PinSkeleton } from "../components/SkeletonLoader";
 
-export default function HomeScreen({ navigation }) {
-  const [userData, setUserData] = useState(null);
+export default function FollowingScreen({ navigation }) {
+  const [followingData, setFollowingData] = useState(null);
   const [category, setCategory] = useState("All");
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [userFollow, setUserFollow] = useState([]);
 
   const onRefresh = useCallback(() => {
     setIsLoading(true);
-    getUserPosts(setUserData, setIsLoading);
+    getUserPosts(setFollowingData, setIsLoading);
     getCategories(setCategories);
+    getMyFollowing(setUserFollow);
   }, []);
 
   useEffect(() => {
-    getUserPosts(setUserData, setIsLoading);
+    getUserPosts(setFollowingData, setIsLoading);
     getCategories(setCategories);
+    getMyFollowing(setUserFollow);
   }, []);
 
   const renderContent = () => {
@@ -59,18 +62,18 @@ export default function HomeScreen({ navigation }) {
           showsHorizontalScrollIndicator={false}
           style={styles.categoriesContainer}
         >
-          {categories?.map((category, i) => (
+          {categories?.map((catergory, i) => (
             <Category
-              title={category.name}
+              title={catergory.name}
               key={i}
               category={category}
-              onPress={() => setCategory(category.name)}
+              onPress={() => setCategory(catergory.name)}
             />
           ))}
         </ScrollView>
         <View style={styles.masonryContainer}>
           <View style={styles.column}>
-            {userData
+            {followingData
               ?.filter((post) => {
                 if (category === "All") return post;
                 return post.categories === category;
@@ -90,7 +93,7 @@ export default function HomeScreen({ navigation }) {
               ))}
           </View>
           <View style={styles.column}>
-            {userData
+            {followingData
               ?.filter((post) => {
                 if (category === "All") return post;
                 return post.categories === category;

@@ -18,7 +18,12 @@ import {
   ShareIcon,
 } from "react-native-heroicons/solid";
 import Pin from "../components/Pin";
-import { getPostsByUser, getUserPosts, getUserProfile } from "../api/user"; // Import the API call
+import {
+  getlikedposts,
+  getPostsByUser,
+  getUserPosts,
+  getUserProfile,
+} from "../api/user"; // Import the API call
 import { Animated, useAnimatedValue } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeftIcon } from "react-native-heroicons/outline";
@@ -37,13 +42,14 @@ const ProfileOther = ({ route, navigation }) => {
   const [isPosts, setIsPosts] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
   const [userFollowing, setUserFollowing] = useState([]);
-  const [userPosts, setUserPosts] = useState(null);
+  const [userPosts, setUserPosts] = useState();
+  const [myLikedPosts, setMyLikedPosts] = useState(null);
   const [mainUserId, setMainUserId] = useState("");
-  const [isloading, setIsLoading] = useState(false);
-  const handleLogout = async () => {
-    await SecureStore.deleteItemAsync("jwtToken"); // Clear the token from SecureStore
-    router.replace("navigation/AuthStack");
-  };
+  const [isloading, setIsLoading] = useState(true);
+  // const handleLogout = async () => {
+  //   await SecureStore.deleteItemAsync("jwtToken"); // Clear the token from SecureStore
+  //   router.replace("navigation/AuthStack");
+  // };
 
   function handleIsLike() {
     setIsPosts(false);
@@ -75,27 +81,25 @@ const ProfileOther = ({ route, navigation }) => {
   }, [fadeAnim, transAnim, isPosts, isLikes]);
 
   useEffect(() => {
-    async function getAllData() {
-      const user = await getUserProfile(setUserProfile, setIsLoading, id);
-      let token = await SecureStore.getItemAsync("jwtToken");
-
-      const userPosts1 = await getPostsByUser(id);
-      setUserPosts(userPosts1);
-      console.log("====================================");
-      console.log("userrr", userPosts1);
-      console.log("====================================");
-      const decoded = jwtDecode(token);
-      // getUserPosts({ setuserProfile, setIsLoading });
-      getMyFollowing(setUserFollowing, setIsLoading);
-      setMainUserId(decoded.id);
-
-      // console.log("====================================");
-    }
-    getAllData();
+    GEtAllData();
   }, []);
 
+  async function GEtAllData() {
+    // getUserPosts({ setuserProfile, setIsLoading });
+    getUserProfile(setUserProfile, setIsLoading, id);
+    getMyFollowing(setUserFollowing, setIsLoading);
+    const userPosts1 = await getPostsByUser(setUserPosts, setIsLoading, id);
+    setUserPosts(userPosts1);
+    const likedPosts = await getlikedposts(id);
+    setMyLikedPosts(likedPosts);
+    let token = await SecureStore.getItemAsync("jwtToken");
+    const decoded = jwtDecode(token);
+    setMainUserId(decoded.id);
+  }
+
   console.log("====================================");
-  console.log("==================ffff=================");
+
+  console.log("setMyLikedPostssetMyLikedPosts===", myLikedPosts);
   console.log("====================================");
 
   return (
@@ -284,12 +288,69 @@ const ProfileOther = ({ route, navigation }) => {
                       opacity: fadeAnim,
                       translateY: transAnim, // Bind opacity to animated value
                     }}
-                    className="flex-row justify-between"
+                    className="flex-row justify-center gap-2 px-3 "
                   >
                     {/* first Col */}
-                    <View className=" w-[50%] px-1   ">
-                      {/* {userPosts
-                        ?.filter((_, i) => i % 2 === 1)
+                    {userPosts && userPosts.length > 0 ? (
+                      <>
+                        <View className=" w-[50%]">
+                          {userPosts
+                            ?.filter((_, i) => i % 2 === 1)
+                            .map((pin, i) => (
+                              <Pin
+                                title={pin.title}
+                                uri={pin.photos[0]}
+                                key={i}
+                                pin={pin}
+                                isEven={false}
+                              />
+                            ))}
+                        </View>
+                        {/* /* second col */}
+                        <View className=" w-[50%]">
+                          {userPosts
+                            ?.filter((_, i) => i % 2 === 0)
+                            .map((pin, i) => (
+                              <Pin
+                                title={pin.title}
+                                uri={pin.photos[0]}
+                                key={i}
+                                pin={pin}
+                                isEven={true}
+                              />
+                            ))}
+                        </View>
+                      </>
+                    ) : (
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          marginTop: 50,
+                        }}
+                      >
+                        <Text style={{ fontWeight: "700" }}>
+                          there is no Posts
+                        </Text>
+                      </View>
+                    )}
+                  </Animated.View>
+                )
+              ) : null}
+
+              {/* Likes View */}
+              {isLikes ? (
+                isloading ? (
+                  <ActivityIndicator size="large" />
+                ) : myLikedPosts && myLikedPosts.length > 0 ? (
+                  <View className="flex-row justify-center gap-2 px-3 ">
+                    {/* first Col */}
+                    <View className=" w-[50%]    ">
+                      {myLikedPosts
+                        ?.filter(
+                          (post, i) => i % 2 === 1 && post.photos?.length != 0
+                        )
                         .map((pin, i) => (
                           <Pin
                             title={pin.title}
@@ -297,35 +358,45 @@ const ProfileOther = ({ route, navigation }) => {
                             key={i}
                             pin={pin}
                             isEven={false}
+                            likedState={true}
                           />
-                        ))} */}
+                        ))}
                     </View>
                     {/* second col */}
-                    <View className=" w-[50%]  px-1   ">
-                      {/* {userProfile
-                    ?.filter((_, i) => i % 2 === 0)
-                    .map((pin, i) => (
-                      <Pin
-                        title={pin.title}
-                        uri={pin.photos[0]}
-                        key={i}
-                        pin={pin}
-                        isEven={true}
-                      />
-                    ))} */}
+                    <View className=" w-[50%]    ">
+                      {myLikedPosts
+                        ?.filter(
+                          (post, i) => i % 2 === 0 && post.photos?.length != 0
+                        )
+                        .map((pin, i) => (
+                          <Pin
+                            title={pin.title}
+                            uri={pin.photos[0]}
+                            key={i}
+                            pin={pin}
+                            isEven={true}
+                            // likedState={true}
+                          />
+                        ))}
                     </View>
-                  </Animated.View>
+                  </View>
+                ) : (
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: 50,
+                    }}
+                  >
+                    <Text style={{ fontWeight: "700" }}>
+                      there is no Liked Posts posts
+                    </Text>
+                  </View>
                 )
               ) : null}
-
-              {/* Likes View */}
-              {isLikes ? (
-                <View>
-                  <Text>Likes</Text>
-                </View>
-              ) : null}
             </View>
-            <Button title="log out" onPress={handleLogout} />
+            {/* <Button title="log out" onPress={handleLogout} /> */}
           </ScrollView>
         </>
       )}

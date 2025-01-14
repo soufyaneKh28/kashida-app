@@ -7,9 +7,17 @@ import { HeartIcon as HeartOutline } from "react-native-heroicons/outline";
 import { HeartIcon as HeartFill } from "react-native-heroicons/solid";
 import { likePost, unLikePost } from "../api/post";
 
-const Pin = ({ title, uri, onPress, id, isEven, pin }) => {
+const Pin = ({
+  title,
+  uri,
+  onPress,
+  id,
+  isEven,
+  pin,
+  likedState = pin.hasLiked,
+}) => {
   const navigation = useNavigation();
-  const [isLiked, setIsLiked] = useState(pin.hasLiked);
+  const [isLiked, setIsLiked] = useState(likedState);
 
   const toggleIcon = () => {
     if (isLiked) {

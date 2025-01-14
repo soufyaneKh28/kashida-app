@@ -30,15 +30,16 @@
     "plugins": [
       "expo-router",
       [
-        "expo-media-library",
+        "expo-image-picker",
         {
-          "photosPermission": "The app needs access to save images.",
-          "savePhotosPermission": "The app needs access to save images."
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
+  
     ],
     "experiments": {
       "typedRoutes": true
     }
   }
 }
+

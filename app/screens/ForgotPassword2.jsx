@@ -16,7 +16,7 @@ import { baseurl } from "../api/user";
 export default function ForgotPassword2({ navigation, route }) {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(120);
   const { email } = route.params;
 
   useEffect(() => {
@@ -31,16 +31,16 @@ export default function ForgotPassword2({ navigation, route }) {
 
     setLoading(true);
     try {
-      const response = await fetch(`${baseurl}/api/k1/users/resendCode`, {
+      const response = await fetch(`${baseurl}/api/k1/users/forgotPassword`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: email }),
       });
 
       if (response.ok) {
-        setTimeLeft(60);
+        setTimeLeft(120);
         Alert.alert("Success", "New code has been sent to your email");
       } else {
         Alert.alert("Error", "Failed to resend code");
@@ -65,7 +65,7 @@ export default function ForgotPassword2({ navigation, route }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, code }),
+        body: JSON.stringify({ email: email, verificationCode: code }),
       });
 
       if (response.ok) {
@@ -79,7 +79,9 @@ export default function ForgotPassword2({ navigation, route }) {
       setLoading(false);
     }
   };
-
+  console.log("====================================");
+  console.log(code);
+  console.log("====================================");
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView

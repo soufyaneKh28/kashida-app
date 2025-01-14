@@ -18,12 +18,22 @@ const FollowComponent = ({
     return (
       <View className="w-full flex-row items-center mt-2 py-3 justify-between">
         <Pressable
+          // onPress={() =>
+          //   navigation.push("ProfileOther", {
+          //     user: user,
+          //     id: user.following._id,
+          //     followState: followState,
+          //   })
+          // }
+
           onPress={() =>
-            navigation.push("ProfileOther", {
-              user: user,
-              id: user.following._id,
-              followState: followState,
-            })
+            mainUserId != user.following._id
+              ? navigation.push("ProfileOther", {
+                  user: user,
+                  id: user.following._id,
+                  followState: followState,
+                })
+              : navigation.navigate("Profile")
           }
         >
           <View className="flex-row items-center">
@@ -50,7 +60,7 @@ const FollowComponent = ({
 
             <View className="ms-3">
               <Text className=" font-bold">{user?.following?.username}</Text>
-              <Text>@userName</Text>
+              {/* <Text>@userName</Text> */}
             </View>
           </View>
         </Pressable>
@@ -66,11 +76,13 @@ const FollowComponent = ({
       <View className="w-full flex-row items-center mt-2 py-3 justify-between">
         <Pressable
           onPress={() =>
-            navigation.push("ProfileOther", {
-              user: user,
-              id: user.follower._id,
-              followState: followState,
-            })
+            mainUserId != user.follower._id
+              ? navigation.push("ProfileOther", {
+                  user: user,
+                  id: user.follower._id,
+                  followState: followState,
+                })
+              : navigation.navigate("Profile")
           }
         >
           <View className="flex-row items-center">
@@ -96,8 +108,10 @@ const FollowComponent = ({
             )}
 
             <View className="ms-3">
-              <Text className=" font-bold">{user?.follower?.username}</Text>
-              <Text>@userName</Text>
+              <Text className=" font-bold text-lg">
+                {user?.follower?.username}
+              </Text>
+              {/* <Text>@userName</Text> */}
             </View>
           </View>
         </Pressable>

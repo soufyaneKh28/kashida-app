@@ -38,6 +38,8 @@ import * as SecureStore from "expo-secure-store";
 // import { KeyboardAvoidingView } from "react-native-web";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import axios from "axios";
+// import * as SecureStore from "expo-secure-store";
+import { jwtDecode } from "jwt-decode";
 const windowWidth = Dimensions.get("window").width;
 
 const defaultDataWith6Colors = [
@@ -54,22 +56,23 @@ const PinScreen = ({ route }) => {
   const navigation = useNavigation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [newComment, setNewComment] = useState("");
-  const [comment, setComment] = useState();
-
+  // const [comment, setComment] = useState();
+ const [myId, setMyId] = useState("");
   const [userData, setUserData] = useState();
   const [loading, setIsLoading] = useState();
-  console.log("====================================");
-  console.log("pin from pin details", pin);
-  console.log("====================================");
 
   useEffect(() => {
-    getUserPosts(setUserData, setIsLoading);
-
+    gettingData()
   }, []);
-  console.log("====================================");
-  console.log("photos", pin.photos);
-  console.log("====================================");
-
+console.log('====================================');
+console.log(myId);
+console.log('====================================');
+ async function gettingData(){
+  let token = await SecureStore.getItemAsync("jwtToken");
+  getUserPosts(setUserData, setIsLoading);
+  const decoded = jwtDecode(token);
+  setMyId(decoded.id);
+  }
   const progress = useSharedValue(0);
 
   const renderItem =
@@ -85,58 +88,56 @@ const PinScreen = ({ route }) => {
         />
       );
 
+  const handleSubmitComment = async () => {
+    // Create form data
+    console.log("pressed");
+    if (newComment.length === 0)
+      return Alert.alert("there is no comment to add please write something");
+    const formData = new FormData();
+    formData.append("comment", newComment);
 
-
-      const handleSubmitComment = async () => {
-        // Create form data
-    console.log("pressed")
-        if (newComment.length === 0)
-          return Alert.alert("there is no comment to add please write something");
-        const formData = new FormData();
-        formData.append("comment", newComment);
-    
-        try {
-          const token = await SecureStore.getItemAsync("jwtToken");
-          const response = await axios.post(
-            `${baseurl}/api/k1/posts/${pin._id}/comments/`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-                Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-              },
-            }
-          );
-    
-          console.log("Response:", response.data);
-          Alert.alert("Success", "Comment submitted successfully");
-          // setComments([
-          //   ...comments,
-          //   {
-          //     _id: "2",
-          //     photo: [],
-          //     comment: newComment,
-          //     user: {
-          //       _id: "6733cc60cd36dbdde4faf94e",
-          //       username: "admin",
-          //       photo: [me.photo[0]],
-          //     },
-          //     post: "677ab8402b7ba85eccb63a2b",
-    
-          //     likes: 0,
-          //     reply: 0,
-          //     createdAt: 0,
-          //     __v: 0,
-          //     hasLiked: false,
-          //   },
-          // ]);
-          setNewComment(""); // Clear the input after successful submission
-        } catch (error) {
-          console.error("Error:", error);
-          Alert.alert("Error", "Failed to submit comment");
+    try {
+      const token = await SecureStore.getItemAsync("jwtToken");
+      const response = await axios.post(
+        `${baseurl}/api/k1/posts/${pin._id}/comments/`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+          },
         }
-      };
-    
+      );
+
+      console.log("Response:", response.data);
+      Alert.alert("Success", "Comment submitted successfully");
+      // setComments([
+      //   ...comments,
+      //   {
+      //     _id: "2",
+      //     photo: [],
+      //     comment: newComment,
+      //     user: {
+      //       _id: "6733cc60cd36dbdde4faf94e",
+      //       username: "admin",
+      //       photo: [me.photo[0]],
+      //     },
+      //     post: "677ab8402b7ba85eccb63a2b",
+
+      //     likes: 0,
+      //     reply: 0,
+      //     createdAt: 0,
+      //     __v: 0,
+      //     hasLiked: false,
+      //   },
+      // ]);
+      setNewComment(""); // Clear the input after successful submission
+    } catch (error) {
+      console.error("Error:", error);
+      Alert.alert("Error", "Failed to submit comment");
+    }
+  };
+
   return (
     <SafeAreaView className=" bg-white flex-1">
       <ScrollView>
@@ -211,14 +212,21 @@ const PinScreen = ({ route }) => {
           {/* user */}
           <Pressable
             onPress={() =>
+              pin?.user?._id != myId ?
               navigation.push("ProfileOther", {
                 id: pin?.user?._id,
+              }) : navigation.navigate("ProfileStack" ,{
+                screen:"Profile",
               })
             }
           >
             <View className="flex-row items-center">
               <Image
-                source={{  uri:pin?.user.photo[0] ? pin?.user.photo[0]: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" }}
+                source={{
+                  uri: pin?.user.photo[0]
+                    ? pin?.user.photo[0]
+                    : "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+                }}
                 width={35}
                 height={35}
                 className="rounded-full"
@@ -237,27 +245,26 @@ const PinScreen = ({ route }) => {
           </View>
 
           {/* Adding Comment */}
-  
+
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
             style={styles.inputContainer}
           >
-
             <TextInput
               style={styles.input}
               value={newComment}
               onChangeText={setNewComment}
               placeholder={"Add a comment..."}
               multiline
-              />
-            <TouchableOpacity style={styles.sendBtn} onPress={handleSubmitComment} >
+            />
+            <TouchableOpacity
+              style={styles.sendBtn}
+              onPress={handleSubmitComment}
+            >
               <FontAwesome name="send" size={20} color="#F3FAFF" />
             </TouchableOpacity>
           </KeyboardAvoidingView>
-            
-
-    
 
           <View className="w-full mt-6 mb-3 bg-[#ECEEF2] h-[2px]" />
 
