@@ -18,6 +18,7 @@ import { baseurl } from "../api/user";
 import {
   deleteComment,
   getCommentReplies,
+  sendCommentReport,
   unlikeComment,
 } from "../api/Comments";
 import { LikeComment } from "../api/Comments";
@@ -89,7 +90,7 @@ const Comment = ({ comment, userId, onReply }) => {
   };
 
   const handleReport = () => {
-    onReport(comment._id);
+    sendCommentReport(comment._id);
     setModalVisible(false);
   };
   return (

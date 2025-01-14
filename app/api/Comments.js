@@ -340,3 +340,71 @@ export const deleteReply = async (id) => {
     alert("Error", "Failed to fetch deleteComment. Please try again.");
   }
 };
+
+export const sendCommentReport = async (reportId) => {
+  try {
+    // Retrieve the JWT token from SecureStore
+    const token = await SecureStore.getItemAsync("jwtToken");
+    if (!token) {
+      Alert.alert("Error", "No token found. Please log in again.");
+      return;
+    }
+
+    const response = await fetch(`${baseurl}/api/k1/comments/report`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Add Authorization header if needed
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        reportType: "comment",
+        reportId: reportId,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    Alert.alert("Report sent successfully");
+    return data;
+  } catch (error) {
+    console.error("Error sending comment report:", error);
+    throw error;
+  }
+};
+
+export const sendReplyReport = async (reportId) => {
+  try {
+    const token = await SecureStore.getItemAsync("jwtToken");
+    if (!token) {
+      Alert.alert("Error", "No token found. Please log in again.");
+      return;
+    }
+    const response = await fetch(`${baseurl}/api/k1/replies/report`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Add Authorization header if needed
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        reportType: "reply",
+        reportId: reportId,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    Alert.alert("Report sent successfully");
+    return data;
+  } catch (error) {
+    console.error("Error sending reply report:", error);
+    throw error;
+  }
+};

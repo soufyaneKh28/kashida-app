@@ -12,7 +12,12 @@ import React, { useState } from "react";
 import { HeartIcon as HeartFill } from "react-native-heroicons/solid";
 import { HeartIcon as HeartOutline } from "react-native-heroicons/outline";
 import { formatRelativeTime } from "../api/timeUtils";
-import { deleteReply, LikeReply, unlikeReply } from "../api/Comments";
+import {
+  deleteReply,
+  LikeReply,
+  sendReplyReport,
+  unlikeReply,
+} from "../api/Comments";
 
 const { width, height } = Dimensions.get("window");
 const Reply = ({ reply, userId }) => {
@@ -49,7 +54,7 @@ const Reply = ({ reply, userId }) => {
   };
 
   const handleReport = () => {
-    onReport(reply._id);
+    sendReplyReport(reply._id);
     setModalVisible(false);
   };
   return (

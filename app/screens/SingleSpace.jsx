@@ -21,7 +21,7 @@ import { GetSpacePost } from "../api/Spaces";
 import CommentsModal from "../components/CommentsModal";
 import { useNavigation } from "@react-navigation/native";
 import { getMe } from "../api/me";
-import { deletePost } from "../api/post";
+import { deletePost, sendPostReport } from "../api/post";
 const { width, height } = Dimensions.get("window");
 const SingleSpace = ({ route }) => {
   const [posts, setPosts] = useState([]);
@@ -85,7 +85,7 @@ const SingleSpace = ({ route }) => {
   };
 
   const handleReport = () => {
-    onReport(comment._id);
+    sendPostReport(selectedPost._id);
     setModalVisible(false);
   };
   const handleCancel = () => {
@@ -246,86 +246,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: "#F3FAFF",
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 15,
-  },
-  commentsList: {
-    padding: 10,
-  },
-  commentContainer: {
-    flexDirection: "row",
-    marginBottom: 15,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  commentContent: {
-    flex: 1,
-  },
-  commentHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 5,
-  },
-  username: {
-    fontWeight: "bold",
-    marginRight: 10,
-  },
-  time: {
-    color: "#888",
-    fontSize: 12,
-  },
-  commentText: {
-    marginBottom: 5,
-  },
-  commentActions: {
-    flexDirection: "row",
-    marginTop: 5,
-  },
-  actionButton: {
-    color: "#888",
-    marginRight: 15,
-  },
-  likeButton: {
-    padding: 5,
-  },
-  repliesContainer: {
-    marginTop: 10,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    padding: 10,
-    alignItems: "center",
-    paddingVertical: 20,
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
-  },
-  inputAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    marginRight: 10,
-  },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-  },
-  sendBtn: {
-    backgroundColor: "#00868C",
-    padding: 8,
-    marginStart: 10,
-    borderRadius: 50,
-  },
+
   modalView: {
     backgroundColor: "white",
     borderRadius: 20,

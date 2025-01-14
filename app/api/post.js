@@ -114,3 +114,38 @@ export const deletePost = async (id) => {
     alert("Error", "Failed to fetch user data. Please try again.");
   }
 };
+
+
+export const sendPostReport = async (reportId) => {
+  try {
+    const token = await SecureStore.getItemAsync("jwtToken");
+    if (!token) {
+      Alert.alert("Error", "No token found. Please log in again.");
+      return;
+    }
+
+    const response = await fetch(`${baseurl}/api/k1/posts/report`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Add Authorization header if needed
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        reportType: "post",
+        reportId: reportId,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    Alert.alert("Report sent successfully");
+    return data;
+  } catch (error) {
+    console.error("Error sending report:", error);
+    throw error;
+  }
+};
