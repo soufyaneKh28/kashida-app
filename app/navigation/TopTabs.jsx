@@ -3,6 +3,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { View, Text, Animated } from "react-native";
 import HomeScreen from "../screens/HomeScreen";
 import FollowingScreen from "../screens/FollowingScreen";
+import { colors } from "../styles/colors";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -13,7 +14,7 @@ export default function TopTabs() {
         tabBarStyle: {
           elevation: 0,
           shadowOpacity: 0,
-          backgroundColor: "#ffffff",
+          backgroundColor: colors.background,
           borderBottomWidth: 0,
           paddingTop: 10,
         },

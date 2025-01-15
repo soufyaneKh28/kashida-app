@@ -1,8 +1,7 @@
+import React, { useState } from "react";
 import {
   View,
   Text,
-  Modal,
-  Button,
   ScrollView,
   TouchableOpacity,
   TextInput,
@@ -11,17 +10,17 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
 } from "react-native";
-import React, { useState } from "react";
-import { router } from "expo-router";
-import BackArrow from "../components/BackArrow";
 import { SafeAreaView } from "react-native";
 import { PlusIcon } from "react-native-heroicons/solid";
 import { SelectList } from "react-native-dropdown-select-list";
 import * as ImagePicker from "expo-image-picker";
 import * as SecureStore from "expo-secure-store";
-// import { baseurl } from "../api/user";
 import { API_URL } from "@env";
+import BackArrow from "../components/BackArrow";
+import { colors } from "../styles/colors";
+
 const Posting = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [caption, setCaption] = useState("");
@@ -42,20 +41,17 @@ const Posting = ({ navigation }) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      // aspect: [4, 3],
       quality: 1,
     });
 
     console.log(result);
 
     if (!result.canceled && result.assets) {
-      // Using functional update to safely update state
       setSelectedImage((prevImages) => [
         ...prevImages,
         ...result.assets.map((asset) => asset.uri),
       ]);
 
-      // Log to verify what's being added
       console.log("New images:", selectedImage);
       console.log(
         "New images:",
@@ -95,15 +91,13 @@ const Posting = ({ navigation }) => {
       formData.append("description", caption);
       formData.append("categories", selected);
 
-      // Log the URL and formData for debugging
       console.log("API URL:", `${API_URL}/api/k1/posts`);
       console.log("FormData:", formData);
 
       setIsLoading(true);
       const token = await SecureStore.getItemAsync("jwtToken");
 
-      // Removed the extra quotation mark here
-      const response = await fetch(`${baseurl}/api/k1/posts`, {
+      const response = await fetch(`${API_URL}/api/k1/posts`, {
         method: "POST",
         body: formData,
         headers: {
@@ -112,11 +106,9 @@ const Posting = ({ navigation }) => {
         },
       });
 
-      // Log response status for debugging
       console.log("Response status:", response.status);
 
       if (!response.ok) {
-        // Move setIsLoading(false) after throwing the error
         setIsLoading(false);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -134,54 +126,50 @@ const Posting = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView className="py-3  bg-white flex-1 ">
+    <SafeAreaView style={styles.container}>
       {isLoading ? (
-        <View className="flex-1 justify-center items-center ">
-          <ActivityIndicator size={"large"} />
-          <Text className=" font-bold text-xl mt-3">Uploading Your Post </Text>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" />
+          <Text style={styles.loadingText}>Uploading Your Post</Text>
         </View>
       ) : (
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
+          style={styles.keyboardAvoidingView}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <ScrollView className=" pb-[200px] px-4">
+          <ScrollView contentContainerStyle={styles.scrollViewContent}>
             <BackArrow navigation={navigation} />
-            <View className="mt-5">
-              <Text className=" text-center mt text-xl font-bold">
-                Create Post
-              </Text>
+            <View style={styles.headerContainer}>
+              <Text style={styles.headerText}>Create Post</Text>
             </View>
 
-            <View className="mt-10 ">
-              {/* Adding images inputs */}
-              <Text className=" text-lg font-normal ">Add a Media</Text>
+            <View style={styles.formContainer}>
+              <Text style={styles.sectionTitle}>Add a Media</Text>
               <ScrollView
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
-                className=" mt-3"
+                style={styles.imageScrollView}
               >
                 {selectedImage?.map((image, i) => (
                   <Image
                     key={i}
                     source={{ uri: image }}
-                    className="w-[230px] h-[230px] me-2 rounded-[10px]"
+                    style={styles.selectedImage}
                   />
                 ))}
                 <TouchableOpacity
                   onPress={pickImage}
-                  className=" bg-[#F3FAFF] me-2 w-[230px] h-[230px] justify-center items-center rounded-[10px]"
+                  style={styles.addImageButton}
                 >
-                  <PlusIcon size={32} color={"#D9D9D9"} />
+                  <PlusIcon size={32} color="black" />
                 </TouchableOpacity>
               </ScrollView>
 
-              {/*Adding title */}
-              <View className="mt-5 ">
-                <Text className="text-lg font-normal ">Title</Text>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Title</Text>
                 <TextInput
                   placeholder="Your Title"
-                  className=" bg-[#F3FAFF]  w-full text-lg  rounded-[56px] mt-3  p-[16px]"
+                  style={styles.input}
                   value={title}
                   placeholderTextColor="gray"
                   autoCapitalize="none"
@@ -189,42 +177,36 @@ const Posting = ({ navigation }) => {
                   keyboardType="email-address"
                 />
               </View>
-              {/*Adding title */}
-              <View className="mt-5 ">
-                <Text className="text-lg font-normal ">Caption</Text>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Caption</Text>
                 <TextInput
-                  placeholder="Your Title"
-                  className=" bg-[#F3FAFF]  w-full leading-6 text-lg  rounded-[26px] mt-3 h-[100px] text-start  p-[16px]"
+                  placeholder="Your Caption"
+                  style={styles.textArea}
                   value={caption}
                   multiline={true}
                   numberOfLines={10}
-                  style={{
-                    height: 150,
-                    textAlignVertical: "top",
-                  }}
                   placeholderTextColor="gray"
                   autoCapitalize="none"
                   onChangeText={(text) => setCaption(text)}
-                  keyboardType="email-address"
+                  keyboardType="default"
                 />
               </View>
-              <View className="mt-5">
-                <Text className="text-lg mb-3 font-normal ">
-                  Select a Space
-                </Text>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Select a Space</Text>
                 <SelectList
                   setSelected={(val) => setSelected(val)}
                   data={data}
                   save="value"
+                  boxStyles={styles.selectListBox}
+                  dropdownStyles={styles.selectListDropdown}
                 />
               </View>
             </View>
 
-            <TouchableOpacity
-              onPress={uploadData}
-              className="bg-[#00868C] py-3 mt-10 mb-10 rounded-[50px] w-full flex-row justify-center"
-            >
-              <Text className="text-center text-white text-lg ">Post</Text>
+            <TouchableOpacity onPress={uploadData} style={styles.postButton}>
+              <Text style={styles.postButtonText}>Post</Text>
             </TouchableOpacity>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -232,5 +214,117 @@ const Posting = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    paddingVertical: 12,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    fontWeight: "bold",
+    fontSize: 20,
+    marginTop: 12,
+    color: colors.text,
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    paddingBottom: 200,
+    paddingHorizontal: 16,
+  },
+  headerContainer: {
+    marginTop: 20,
+  },
+  headerText: {
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.text,
+  },
+  formContainer: {
+    marginTop: 40,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "normal",
+    color: colors.text,
+  },
+  imageScrollView: {
+    marginTop: 12,
+  },
+  selectedImage: {
+    width: 230,
+    height: 230,
+    marginRight: 8,
+    borderRadius: 10,
+  },
+  addImageButton: {
+    backgroundColor: colors.inputBackground,
+    width: 230,
+    height: 230,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  inputContainer: {
+    marginTop: 20,
+  },
+  inputLabel: {
+    fontSize: 18,
+    fontWeight: "normal",
+    color: colors.text,
+  },
+  input: {
+    backgroundColor: colors.inputBackground,
+    width: "100%",
+    fontSize: 18,
+    borderRadius: 56,
+    marginTop: 12,
+    padding: 16,
+    color: colors.text,
+  },
+  textArea: {
+    backgroundColor: colors.inputBackground,
+    width: "100%",
+    fontSize: 18,
+    borderRadius: 26,
+    marginTop: 12,
+    padding: 16,
+    height: 150,
+    textAlignVertical: "top",
+    color: colors.text,
+  },
+  selectListBox: {
+    backgroundColor: colors.inputBackground,
+    borderRadius: 56,
+    marginTop: 12,
+  },
+  selectListDropdown: {
+    backgroundColor: colors.inputBackground,
+    // borderColor: colors.border,
+  },
+  postButton: {
+    backgroundColor: colors.primary,
+    paddingVertical: 12,
+    marginTop: 40,
+    marginBottom: 40,
+    borderRadius: 50,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  postButtonText: {
+    textAlign: "center",
+    color: colors.background,
+    fontSize: 18,
+  },
+});
 
 export default Posting;

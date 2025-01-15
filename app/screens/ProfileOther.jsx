@@ -31,6 +31,7 @@ import FollowBtn from "../components/FollowBtn";
 import { getMyFollowing } from "../api/me";
 
 import { jwtDecode } from "jwt-decode";
+import { colors } from "../styles/colors";
 const ProfileOther = ({ route, navigation }) => {
   const { id, followState, user } = route.params;
   const router = useRouter();
@@ -103,7 +104,7 @@ const ProfileOther = ({ route, navigation }) => {
   console.log("====================================");
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       {isloading ? (
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}

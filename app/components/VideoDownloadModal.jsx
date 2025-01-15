@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import Modal from "react-native-modal";
 import { PlayIcon } from "react-native-heroicons/solid";
+import { colors } from "../styles/colors";
 
 const { width } = Dimensions.get("window");
 
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container: {
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.background,
     borderRadius: 20,
     padding: 20,
     width: width - 40,

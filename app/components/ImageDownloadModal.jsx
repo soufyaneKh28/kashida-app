@@ -22,6 +22,7 @@ import Animated, {
   useAnimatedGestureHandler,
   withTiming,
 } from "react-native-reanimated";
+import { colors } from "../styles/colors";
 
 const { width, height } = Dimensions.get("window");
 
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   container: {
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.background,
     borderRadius: 20,
     padding: 20,
     width: width - 40,

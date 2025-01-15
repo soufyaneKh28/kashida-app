@@ -8,6 +8,7 @@ import {
   StatusBar,
 } from "react-native";
 import BackArrow from "../components/BackArrow";
+import { colors } from "../styles/colors";
 
 const Terms = ({ navigation }) => {
   return (
@@ -96,7 +97,7 @@ const Terms = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.background,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   header: {

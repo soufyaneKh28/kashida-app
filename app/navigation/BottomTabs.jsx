@@ -14,6 +14,7 @@ import ProfileStack from "./ProfileStack";
 import HomeScreen from "../screens/HomeScreen";
 import SpacesStack from "./SpacesStack";
 import TopTabs from "./TopTabs";
+import { colors } from "../styles/colors";
 
 const Tab = createBottomTabNavigator();
 
@@ -33,7 +34,7 @@ const BottomTabs = () => {
           justifyContent: "center",
           // borderRadius: 16,
           height: 70,
-          // backgroundColor: "#0E1922",
+          backgroundColor: colors.background,
         },
 
         tabBarActiveTintColor: "#00C8D1", // Text/icon color for active tab

@@ -1,34 +1,75 @@
-import { View, Text, SafeAreaView, ScrollView, Image } from "react-native";
-import React, { useState } from "react";
-import Collapse from "../components/Collapse";
+import React from "react";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  Image,
+  StyleSheet,
+} from "react-native";
 import RoadMapCollapse from "../components/RoadMapCollapse";
-import DownloadModal from "../components/DownloadModal";
-import Mashq from "../components/Mashq";
+import { colors } from "../styles/colors";
 
 const Roadmaps = () => {
   return (
-    <SafeAreaView className=" bg-white flex-1">
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <Image
           source={require("../../assets/images/kashidaOut.png")}
-          className=" absolute top-[10px] z-0 left-[-100px]"
+          style={styles.backgroundImage}
         />
-        <Text className=" text-center mt-4 text-lg font-bold">Roadmaps</Text>
-        <View className=" flex-row justify-center mt-10">
+        <Text style={styles.title}>Roadmaps</Text>
+        <View style={styles.imageContainer}>
           <Image
             source={require("../../assets/images/roadmap.png")}
-            className=" "
+            style={styles.roadmapImage}
           />
         </View>
 
         <RoadMapCollapse />
         <Image
           source={require("../../assets/images/road.png")}
-          className=" w-full h-[65px] mt-20"
+          style={styles.roadImage}
         />
       </ScrollView>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  scrollViewContent: {
+    paddingBottom: 40,
+  },
+  backgroundImage: {
+    position: "absolute",
+    top: 10,
+    left: -100,
+    zIndex: 0,
+  },
+  title: {
+    textAlign: "center",
+    marginTop: 16,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.text,
+  },
+  imageContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 40,
+  },
+  roadmapImage: {
+    // Add any specific styles for the roadmap image if needed
+  },
+  roadImage: {
+    width: "100%",
+    height: 65,
+    marginTop: 80,
+  },
+});
 
 export default Roadmaps;

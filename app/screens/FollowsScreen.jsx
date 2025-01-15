@@ -1,27 +1,25 @@
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
-  Image,
   ActivityIndicator,
   RefreshControl,
+  StyleSheet,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
 import { ArrowLeftIcon } from "react-native-heroicons/outline";
 import FollowComponent from "../components/FollowComponent";
 import { getMyFollowers, getMyFollowing } from "../api/me";
+import { colors } from "../styles/colors";
 
 const FollowsScreen = ({ navigation, route }) => {
   const { title, mainUserId } = route.params;
-  const [isloading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [userFollow, setUserFollow] = useState([]);
   const [screenTitle, setScreenTitle] = useState(title);
 
-  console.log("====================================");
-  console.log(mainUserId);
-  console.log("====================================");
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   };
@@ -47,30 +45,28 @@ const FollowsScreen = ({ navigation, route }) => {
       setIsLoading(false);
     }
   }, [title]);
-  console.log("====================================");
-  console.log(userFollow);
-  console.log("====================================");
+
   return (
-    <SafeAreaView className="bg-white flex-1">
+    <SafeAreaView style={styles.container}>
       <TouchableOpacity
         onPress={() => navigation.goBack()}
-        className="bg-white w-[41px] h-[41px] items-center justify-center rounded-[16px] mt-[20px] ms-[10px] shadow-xl shadow-black absolute z-10"
+        style={styles.backButton}
       >
-        <ArrowLeftIcon color={"black"} />
+        <ArrowLeftIcon color={colors.text} />
       </TouchableOpacity>
 
-      <View className=" text-center w-full mt-[25px]">
-        <Text className="text-center text-lg font-medium">{title}</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.titleText}>{title}</Text>
       </View>
       <ScrollView
-        className="flex-1 p-3 mt-8"
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
         refreshControl={
-          <RefreshControl refreshing={isloading} onRefresh={onRefresh} />
+          <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
         }
       >
-        {/* Follower Component */}
-        {isloading ? (
-          <ActivityIndicator size="large" />
+        {isLoading ? (
+          <ActivityIndicator size="large" color={colors.primary} />
         ) : (
           <>
             {userFollow?.map((user) => (
@@ -89,5 +85,49 @@ const FollowsScreen = ({ navigation, route }) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  backButton: {
+    backgroundColor: colors.background,
+    width: 41,
+    height: 41,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 16,
+    marginTop: 20,
+    marginLeft: 10,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    position: "absolute",
+    zIndex: 10,
+  },
+  titleContainer: {
+    width: "100%",
+    marginTop: 25,
+  },
+  titleText: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "500",
+    color: colors.text,
+  },
+  scrollView: {
+    flex: 1,
+    marginTop: 32,
+  },
+  scrollViewContent: {
+    padding: 12,
+  },
+});
 
 export default FollowsScreen;

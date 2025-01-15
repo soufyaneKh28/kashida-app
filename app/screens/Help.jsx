@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import Collapse from "../components/Collapse"; // Make sure this path is correct
 import BackArrow from "../components/BackArrow";
+import { colors } from "../styles/colors";
 
 const Help = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -50,24 +51,32 @@ const Help = ({ navigation }) => {
 
         <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
         <Collapse title="How do I reset my password?">
-          You can reset your password by going to the login screen and tapping
-          on "Forgot Password". Follow the instructions sent to your email to
-          create a new password.
+          <Text style={styles.sectionContent}>
+            You can reset your password by going to the login screen and tapping
+            on "Forgot Password". Follow the instructions sent to your email to
+            create a new password.
+          </Text>
         </Collapse>
         <Collapse title="How can I update my profile?">
-          Go to the Profile tab and tap on the "Edit Profile" button. You can
-          update your information there, including your name, profile picture,
-          and bio.
+          <Text style={styles.sectionContent}>
+            Go to the Profile tab and tap on the "Edit Profile" button. You can
+            update your information there, including your name, profile picture,
+            and bio.
+          </Text>
         </Collapse>
         <Collapse title="Is my personal information secure?">
-          We take your privacy seriously. All personal information is encrypted
-          and stored securely. We never share your data with third parties
-          without your explicit consent.
+          <Text style={styles.sectionContent}>
+            We take your privacy seriously. All personal information is
+            encrypted and stored securely. We never share your data with third
+            parties without your explicit consent.
+          </Text>
         </Collapse>
         <Collapse title="How do I delete my account?">
-          To delete your account, go to Settings - Account - Delete Account.
-          Please note that this action is irreversible and all your data will be
-          permanently deleted.
+          <Text style={styles.sectionContent}>
+            To delete your account, go to Settings - Account - Delete Account.
+            Please note that this action is irreversible and all your data will
+            be permanently deleted.
+          </Text>
         </Collapse>
 
         <Text style={styles.sectionTitle}>Contact Us</Text>
@@ -127,7 +136,7 @@ const Help = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.background,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   header: {
@@ -166,6 +175,9 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginBottom: 16,
   },
+  sectionContent: {
+    padding: 10,
+  },
   paragraph: {
     fontSize: 16,
     color: "#333",
@@ -185,7 +197,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "#f3faff",
+    backgroundColor: colors.inputBackground,
     padding: 12,
     borderRadius: 8,
     fontSize: 16,

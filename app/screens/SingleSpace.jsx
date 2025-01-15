@@ -22,6 +22,7 @@ import CommentsModal from "../components/CommentsModal";
 import { useNavigation } from "@react-navigation/native";
 import { getMe } from "../api/me";
 import { deletePost, sendPostReport } from "../api/post";
+import { colors } from "../styles/colors";
 const { width, height } = Dimensions.get("window");
 const SingleSpace = ({ route }) => {
   const [posts, setPosts] = useState([]);
@@ -145,7 +146,7 @@ const SingleSpace = ({ route }) => {
         contentContainerStyle={{
           width: "100%",
           gap: 10,
-          backgroundColor: "white",
+          backgroundColor: colors.background,
         }}
       />
       {!isLoading && posts.length === 0 && (
@@ -226,7 +227,7 @@ export default SingleSpace;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: colors.background,
   },
   gradient: {
     height: 240,
@@ -244,7 +245,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     overflow: "hidden",
-    backgroundColor: "#F3FAFF",
+    backgroundColor: colors.background,
   },
 
   modalView: {

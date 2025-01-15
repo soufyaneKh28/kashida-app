@@ -8,6 +8,7 @@ import {
   StatusBar,
 } from "react-native";
 import BackArrow from "../components/BackArrow";
+import { colors } from "../styles/colors";
 
 const Policy = ({ navigation }) => {
   return (
@@ -17,7 +18,7 @@ const Policy = ({ navigation }) => {
     >
       <View style={styles.header}>
         <BackArrow navigation={navigation} />
-        <Text style={styles.headerTitle}>Terms of Use</Text>
+        <Text style={styles.headerTitle}>Privacy Policy</Text>
       </View>
       <View style={styles.content}>
         <Text style={styles.title}>Privacy Policy</Text>
@@ -72,7 +73,7 @@ const Policy = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.background,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   header: {

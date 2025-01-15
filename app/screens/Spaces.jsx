@@ -1,28 +1,21 @@
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
   SafeAreaView,
   Image,
-  Dimensions,
   StyleSheet,
   ScrollView,
   ActivityIndicator,
   RefreshControl,
+  Dimensions,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
-
-import Carousel from "react-native-reanimated-carousel";
-import Animated, {
-  Extrapolate,
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-} from "react-native-reanimated";
-import Parallax from "../components/Parallax";
-import { GetSpaces } from "../api/Spaces";
 import { useNavigation } from "@react-navigation/native";
-import { getMe } from "../api/me";
+import Parallax from "../components/Parallax";
 import ParallaxJoin from "../components/ParallaxJoin";
+import { GetSpaces } from "../api/Spaces";
+import { getMe } from "../api/me";
+import { colors } from "../styles/colors";
 
 const Spaces = () => {
   const [spaces, setSpaces] = useState([]);
@@ -35,11 +28,9 @@ const Spaces = () => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   };
 
-  // pull to refresh
   const onRefresh = useCallback(() => {
     setIsLoading(true);
     wait(2000).then(() => setIsLoading(false));
-    // getPostData();
     fetchData();
   }, []);
 
@@ -54,13 +45,7 @@ const Spaces = () => {
         return;
       }
 
-      // setMe(userSpaces.data.data);
-      // console.log("====================================");
-      // await getMe(setMe, setIsLoading);
-      console.log("====================================");
-      // setMe(() => userSpaces?.data.data);
       console.log("meeeeeeee1", me);
-      console.log("====================================");
       console.log("meee2", userSpaces);
       console.log("spaces", allSpaces);
       const filteredSpaces = allSpaces.filter((space) =>
@@ -70,42 +55,6 @@ const Spaces = () => {
       );
       setFollowingSpaces(filteredSpaces);
       console.log("Filtered spaces:", filteredSpaces);
-
-      // Update followingSpaces state
-      // console.log("userSpaces");
-      // console.log(userSpaces.data.data?.name);
-      // console.log("====================================");
-      // for(let i = 0 ; i< spaces.length -0 ;i++){
-      //   if (["Naskh","Thuluth"].)
-      // }
-      // userSpaces
-      //   ? spaces.forEach((space) => {
-      //       if ([...userSpaces.data.data?.name].includes(space.name)) {
-      //         return console.log(space.name);
-      //       }
-      //     })
-      //   : null;
-      // let filteredSpaces = [];
-      // userSpaces
-      //   ? spaces.filter((space) =>
-      //       userSpaces.data.data.joinedSpaces.some(
-      //         (joinedSpace) => joinedSpace.name === space.name
-      //       )
-      //     )
-      //   : null;
-      console.log("====================================");
-      // console.log("filteredSpaces");
-      // console.log(filteredSpaces);
-      // console.log("meeeeeeee");
-      // console.log(me);
-      console.log("====================================");
-      // setFollowingSpaces(filteredSpaces);
-      // console.log("====================================");
-      // // console.log("follwwing me", me.joinedSpaces);
-      // console.log("follwwing followingSpaces", followingSpaces);
-      // console.log("follwwing userSpaces", userSpaces.data.data.joinedSpaces);
-
-      console.log("====================================");
 
       setIsLoading(false);
     } catch (error) {
@@ -118,45 +67,39 @@ const Spaces = () => {
   useEffect(() => {
     fetchData();
   }, []);
- 
+
   return (
-    <SafeAreaView className=" bg-white flex-1">
+    <SafeAreaView style={styles.container}>
       {isLoading ? (
-        <View className=" flex-1 justify-center items-center">
-          <ActivityIndicator size="large" />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
         <ScrollView
-          className="pb-[500px]"
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollViewContent}
           refreshControl={
             <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
           }
-          contentContainerStyle={{ paddingBottom: 100 }}
         >
           <Image
             source={require("../../assets/images/kashidaOut.png")}
-            className=" absolute top-[10px] z-0 left-[-100px]"
+            style={styles.backgroundImage}
           />
-          <Text className=" text-center mt-4 text-lg font-bold">Spaces</Text>
+          <Text style={styles.title}>Spaces</Text>
 
-          {/* Following Scroll View */}
-
-          <Text className=" text-xl px-3 text-gray-600 font-bold mt-10">
-            Following
-          </Text>
+          <Text style={styles.sectionTitle}>Following</Text>
           {followingSpaces && followingSpaces.length > 0 ? (
             <ParallaxJoin spaces={followingSpaces} navigation={navigation} />
           ) : (
-            <View className=" h-[250px] justify-center items-center">
-              <Text className="text-center font-bold">
-                there is no joint spaces
+            <View style={styles.emptyFollowingContainer}>
+              <Text style={styles.emptyFollowingText}>
+                There are no joined spaces
               </Text>
             </View>
           )}
 
-          <Text className=" text-xl px-3 text-gray-600 font-bold mt-10">
-            Recommended
-          </Text>
+          <Text style={styles.sectionTitle}>Recommended</Text>
 
           <Parallax
             spaces={spaces}
@@ -170,6 +113,51 @@ const Spaces = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scrollView: {
+    paddingBottom: 500,
+  },
+  scrollViewContent: {
+    paddingBottom: 100,
+  },
+  backgroundImage: {
+    position: "absolute",
+    top: 10,
+    left: -100,
+    zIndex: 0,
+  },
+  title: {
+    textAlign: "center",
+    marginTop: 16,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.text,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    paddingHorizontal: 12,
+    color: colors.textSecondary,
+    fontWeight: "bold",
+    marginTop: 40,
+  },
+  emptyFollowingContainer: {
+    height: 250,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyFollowingText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    color: colors.text,
+  },
   CarouselItem: {
     flex: 1,
     justifyContent: "center",
@@ -180,4 +168,5 @@ const styles = StyleSheet.create({
     height: "100%",
   },
 });
+
 export default Spaces;

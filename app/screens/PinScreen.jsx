@@ -42,6 +42,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 const windowWidth = Dimensions.get("window").width;
 import { API_URL } from "@env";
+import { colors } from "../styles/colors";
 const defaultDataWith6Colors = [
   { color: "#FF0000" },
   { color: "#00FF00" },
@@ -139,7 +140,7 @@ const PinScreen = ({ route }) => {
   };
 
   return (
-    <SafeAreaView className=" bg-white flex-1">
+    <SafeAreaView className=" bg-[#F3FAFF] flex-1">
       <ScrollView>
         <Carousel
           loop={false}
@@ -151,7 +152,7 @@ const PinScreen = ({ route }) => {
           data={pin.photos}
           style={{
             width: "100%",
-            backgroundColor: "black",
+            backgroundColor: colors.background,
             borderBottomRightRadius: 20,
             borderBottomLeftRadius: 20,
           }}
@@ -334,26 +335,27 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: "row",
-    
+
     alignItems: "center",
-    marginTop:10
+    marginTop: 10,
     // borderTopWidth: 1,
     // borderTopColor: "#eee",
   },
   input: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 20,
-        paddingHorizontal: 15,
-        paddingVertical: 10,
-      },
-      sendBtn: {
-        backgroundColor: "#00868C",
-        padding: 8,
-        marginStart: 10,
-        borderRadius: 50,
-      },
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    backgroundColor: colors.inputBackground,
+  },
+  sendBtn: {
+    backgroundColor: "#00868C",
+    padding: 8,
+    marginStart: 10,
+    borderRadius: 50,
+  },
 });
 export default PinScreen;
 

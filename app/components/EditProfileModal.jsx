@@ -20,6 +20,7 @@ import * as SecureStore from "expo-secure-store";
 import { DateTime } from "luxon";
 import { PencilIcon } from "react-native-heroicons/outline";
 import { API_URL } from "@env";
+import { colors } from "../styles/colors";
 export default function EditProfileModal({
   isVisible,
   onClose,
@@ -323,7 +324,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.background,
   },
   header: {
     alignItems: "center",
@@ -378,7 +379,7 @@ const styles = StyleSheet.create({
     color: "#0e1922",
   },
   input: {
-    backgroundColor: "#f3faff",
+    backgroundColor: colors.inputBackground,
     padding: 16,
     borderRadius: 8,
     fontSize: 16,
@@ -388,7 +389,7 @@ const styles = StyleSheet.create({
     height: 120,
   },
   birthdayButton: {
-    backgroundColor: "#f3faff",
+    backgroundColor: colors.inputBackground,
     padding: 16,
     borderRadius: 8,
   },
@@ -397,7 +398,7 @@ const styles = StyleSheet.create({
     color: "#0e1922",
   },
   saveButton: {
-    backgroundColor: "#00868c",
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 8,
     marginTop: 16,

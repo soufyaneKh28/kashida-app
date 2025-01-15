@@ -16,6 +16,7 @@ import { baseurl } from "../api/user";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import { API_URL } from "@env";
+import { colors } from "../styles/colors";
 export default function Security({ navigation }) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -172,7 +173,7 @@ export default function Security({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.background,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   header: {
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "#f3faff",
+    backgroundColor: colors.inputBackground,
     borderRadius: 12,
     padding: 16,
     fontSize: 16,

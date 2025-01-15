@@ -15,6 +15,7 @@ import { ArrowDownTrayIcon } from "react-native-heroicons/outline";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import * as IntentLauncher from "expo-intent-launcher";
+import { colors } from "../styles/colors";
 
 const { width } = Dimensions.get("window");
 
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container: {
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.background,
     borderRadius: 20,
     padding: 20,
     width: width - 40,
